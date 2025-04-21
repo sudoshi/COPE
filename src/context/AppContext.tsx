@@ -68,6 +68,13 @@ type UserProfile = {
   }[];
 };
 
+interface CheckInEntry {
+  id: string;
+  date: Date;
+  timeOfDay: 'morning' | 'afternoon' | 'evening';
+  data: any; // Type this according to the specific check-in data
+}
+
 interface AppContextType {
   // User data
   userProfile: UserProfile | null;
@@ -96,6 +103,10 @@ interface AppContextType {
   setIsLoading: (loading: boolean) => void;
   error: string | null;
   setError: (error: string | null) => void;
+
+  // Check-in tracking
+  dailyCheckIns: CheckInEntry[];
+  addCheckIn: (timeOfDay: 'morning' | 'afternoon' | 'evening', data: any) => void;
 }
 
 // Create the context with a default value
@@ -125,6 +136,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // App state
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Check-in tracking
+  const [dailyCheckIns, setDailyCheckIns] = useState<CheckInEntry[]>([]);
+
+  const addCheckIn = (timeOfDay: 'morning' | 'afternoon' | 'evening', data: any) => {
+    const newCheckIn = {
+      id: generateId(),
+      date: new Date(),
+      timeOfDay,
+      data,
+    };
+    setDailyCheckIns([newCheckIn, ...dailyCheckIns]);
+  };
 
   // Initialize with sample data
   useEffect(() => {
@@ -336,6 +360,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsLoading,
     error,
     setError,
+    dailyCheckIns,
+    addCheckIn,
   };
 
   return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
