@@ -89,4 +89,3 @@ COPE/
 │   └── utils/           # Utility functions
 ├── App.tsx              # Main app component
 └── package.json         # Dependencies
-```
