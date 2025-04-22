@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Image, Text, StyleSheet, ViewStyle, ImageSourcePropType } from 'react-native';
+import { View, Image, Text, StyleSheet, ViewStyle, ImageStyle, ImageSourcePropType } from 'react-native';
+import { useThemeColor } from '../../hooks/useThemeColor';
 
 interface AvatarProps {
   source?: ImageSourcePropType;
@@ -40,8 +41,11 @@ export const Avatar: React.FC<AvatarProps> = ({
     }
   };
 
+  const backgroundColor = useThemeColor({}, 'background');
+  const containerStyle = [styles.container, { backgroundColor }, getSizeStyle()];
+  // Only pass style to View, not Image
   return (
-    <View style={[styles.container, getSizeStyle(), style]}>
+    <View style={[...containerStyle, style]}>
       {source ? (
         <Image source={source} style={styles.image} />
       ) : (
@@ -54,7 +58,7 @@ export const Avatar: React.FC<AvatarProps> = ({
 interface AvatarImageProps {
   source: ImageSourcePropType;
   alt?: string;
-  style?: ViewStyle;
+  style?: ImageStyle;
 }
 
 export const AvatarImage: React.FC<AvatarImageProps> = ({
@@ -89,8 +93,9 @@ export const AvatarFallback: React.FC<AvatarFallbackProps> = ({
     }
   };
 
+  const backgroundColor = useThemeColor({}, 'icon');
   return (
-    <View style={[styles.fallback, style]}>
+    <View style={[styles.fallback, { backgroundColor }, style]}>
       <Text style={[styles.fallbackText, getFallbackSizeStyle()]}>{children}</Text>
     </View>
   );
@@ -100,7 +105,6 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 9999,
     overflow: 'hidden',
-    backgroundColor: '#e5e7eb',
   },
   small: {
     width: 32,
@@ -123,7 +127,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9ca3af',
   },
   fallbackText: {
     color: 'white',

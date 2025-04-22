@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { useThemeColor } from '../../hooks/useThemeColor';
 
 interface ButtonProps {
   title: string;
@@ -23,30 +24,32 @@ const Button: React.FC<ButtonProps> = ({
   const getButtonStyle = () => {
     switch (variant) {
       case 'primary':
-        return styles.primaryButton;
+        return { backgroundColor: useThemeColor({}, 'tint') };
       case 'secondary':
-        return styles.secondaryButton;
+        return { backgroundColor: useThemeColor({}, 'tabIconDefault') };
       case 'outline':
-        return styles.outlineButton;
+        return {
+          backgroundColor: 'transparent',
+          borderWidth: 1,
+          borderColor: useThemeColor({}, 'icon'),
+        };
       case 'ghost':
-        return styles.ghostButton;
+        return { backgroundColor: 'transparent' };
       default:
-        return styles.primaryButton;
+        return { backgroundColor: useThemeColor({}, 'tint') };
     }
   };
 
   const getTextStyle = () => {
     switch (variant) {
       case 'primary':
-        return styles.primaryText;
       case 'secondary':
-        return styles.secondaryText;
+        return { color: useThemeColor({}, 'text') };
       case 'outline':
-        return styles.outlineText;
       case 'ghost':
-        return styles.ghostText;
+        return { color: useThemeColor({}, 'icon') };
       default:
-        return styles.primaryText;
+        return { color: useThemeColor({}, 'text') };
     }
   };
 

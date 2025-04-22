@@ -77,6 +77,12 @@ const AppStack = () => {
 // Root Navigator
 const AppNavigator = () => {
   const { user, loading } = useAuth();
+  const [isNavigationReady, setIsNavigationReady] = useState(false);
+
+  // Set navigation ready state when component mounts
+  useEffect(() => {
+    setIsNavigationReady(true);
+  }, []);
 
   if (loading) {
     return (
@@ -84,6 +90,10 @@ const AppNavigator = () => {
         <ActivityIndicator size="large" color="#7c3aed" />
       </View>
     );
+  }
+
+  if (!isNavigationReady) {
+    return null;
   }
 
   return (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { useThemeColor } from '../../hooks/useThemeColor';
 
 interface BadgeProps {
   children: React.ReactNode;
@@ -25,7 +26,7 @@ const Badge: React.FC<BadgeProps> = ({
       case 'info':
         return styles.info;
       default:
-        return styles.default;
+        return { backgroundColor: useThemeColor({}, 'background') };
     }
   };
 
@@ -40,7 +41,7 @@ const Badge: React.FC<BadgeProps> = ({
       case 'info':
         return styles.infoText;
       default:
-        return styles.defaultText;
+        return { color: useThemeColor({}, 'text') };
     }
   };
 

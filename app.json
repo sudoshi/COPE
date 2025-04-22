@@ -4,11 +4,11 @@
     "slug": "COPE",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/COPE.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/COPE.png",
       "resizeMode": "contain",
       "backgroundColor": "#7c3aed"
     },
@@ -21,7 +21,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/COPE.png",
         "backgroundColor": "#7c3aed"
       },
       "package": "com.copeapp.mentalhealth"
@@ -29,9 +29,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-dev-client"
-    ],
+    "plugins": [],
     "description": "COPE - Mental Health Tracking App"
   }
 }
