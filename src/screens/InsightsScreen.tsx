@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui';
 import { Badge } from '../components/ui';
 import { Button } from '../components/ui';
 import { Progress } from '../components/ui';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const InsightsScreen = () => {
   return (

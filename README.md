@@ -15,9 +15,11 @@ COPE is a React Native mobile application designed to help users track and manag
 
 - Node.js (v14 or newer)
 - npm or yarn
-- Expo CLI
+- React Native CLI
 - iOS Simulator (for iOS development)
 - Android Emulator (for Android development)
+- Xcode (for iOS builds)
+- Android Studio (for Android builds)
 
 ### Installation
 
@@ -43,17 +45,21 @@ npm run ios
 npm run android
 ```
 
-#### Web
+> **Note:** The app now uses the React Native CLI for native builds. Expo and Metro are no longer required or supported.
 
-```bash
-npm run web
-```
+## Notifications
+
+This project uses [`react-native-push-notification`](https://github.com/zo0r/react-native-push-notification) for local notifications. Notifications are scheduled for daily check-ins (morning, afternoon, evening). See `src/utils/notifications.ts` for implementation details.
+
+- On first launch, the app will request notification permissions.
+- For Android, notification channels are created automatically.
+- For iOS, ensure you have the correct permissions set in your Xcode project.
 
 ## Development
 
 This project uses:
 
-- React Native with Expo
+- React Native (CLI)
 - TypeScript
 - React Navigation for navigation
 - Custom UI components
@@ -74,7 +80,6 @@ The project includes VS Code launch configurations for debugging:
 - Debug iOS
 - Debug Android
 - Attach to packager
-- Debug in Exponent
 
 ## Project Structure
 

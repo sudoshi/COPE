@@ -7,7 +7,7 @@ import { Button } from '../components/ui';
 import { Progress } from '../components/ui';
 import { Slider } from '../components/ui';
 import { Avatar, AvatarImage, AvatarFallback } from '../components/ui';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useAppContext } from '../context/AppContext';
 import { formatDate, getRelativeTime } from '../utils/dateUtils';
 

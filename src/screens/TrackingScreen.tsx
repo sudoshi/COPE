@@ -6,7 +6,7 @@ import { Badge } from '../components/ui';
 import { Button } from '../components/ui';
 import { Progress } from '../components/ui';
 import { Slider } from '../components/ui';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const TrackingScreen = () => {
   const [moodValue, setMoodValue] = useState(7);
