@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Settings index
+// COPE Mobile — Settings index
 // Navigation hub for all settings sub-screens.
 // Includes inline Appearance toggle (system / light / dark).
 // =============================================================================
@@ -7,7 +7,7 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 import { useColorScheme, type SchemePref } from '../../hooks/useColorScheme';
 
 const NAV_ITEMS = [

@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Messaging service (Resend email)
+// COPE API — Messaging service (Resend email)
 // Handles all outbound email: patient invites, welcome emails.
 //
 // Graceful degradation: if RESEND_API_KEY is absent (local dev without key),
@@ -19,7 +19,7 @@ function getClient(): Resend | null {
 }
 
 // App deep-link scheme — used in invite email CTAs.
-const APP_SCHEME = 'mindlog';
+const APP_SCHEME = 'cope';
 
 // ---------------------------------------------------------------------------
 // Shared HTML layout
@@ -31,7 +31,7 @@ function emailLayout(bodyHtml: string): string {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MindLog</title>
+  <title>COPE</title>
 </head>
 <body style="margin:0;padding:0;background:#0f1117;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
@@ -44,7 +44,7 @@ function emailLayout(bodyHtml: string): string {
           <tr>
             <td style="background:linear-gradient(135deg,#6C63FF,#3B82F6);padding:28px 32px;">
               <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">
-                MindLog
+                COPE
               </h1>
               <p style="margin:4px 0 0;color:rgba(255,255,255,0.75);font-size:13px;">
                 Mental health tracking for you and your care team
@@ -67,7 +67,7 @@ function emailLayout(bodyHtml: string): string {
                 <strong style="color:#9ca3af;">${config.crisisLinePhone}</strong>
                 (${config.crisisLinePhone === '988' ? '988 Suicide &amp; Crisis Lifeline' : 'Crisis Line'}) —
                 available 24/7.<br /><br />
-                This email was sent by MindLog on behalf of your care team.
+                This email was sent by COPE on behalf of your care team.
                 If you did not expect this email, you can safely ignore it.
               </p>
             </td>
@@ -134,22 +134,22 @@ export async function sendInviteEmail(opts: InviteEmailOpts): Promise<void> {
       ${orgName}
     </p>
     <h2 style="margin:0 0 16px;color:#f0f4ff;font-size:22px;font-weight:700;line-height:1.3;">
-      ${clinicianName} has invited you to MindLog
+      ${clinicianName} has invited you to COPE
     </h2>
     <p style="margin:0;color:#8892a4;font-size:15px;line-height:1.7;">
-      MindLog helps you track your mood, sleep, and wellbeing between appointments —
+      COPE helps you track your mood, sleep, and wellbeing between appointments —
       giving your care team the insights they need to support you better.
     </p>
 
     ${personalBlock}
 
     <p style="margin:20px 0 0;color:#c8d0e0;font-size:14px;line-height:1.6;">
-      To get started, download the MindLog app and tap the button below to
+      To get started, download the COPE app and tap the button below to
       create your account.
     </p>
 
     <div style="text-align:center;margin:8px 0 4px;">
-      ${ctaButton(deepLink, 'Open MindLog &amp; Create Account')}
+      ${ctaButton(deepLink, 'Open COPE &amp; Create Account')}
     </div>
 
     <p style="margin:16px 0 0;color:#4b5563;font-size:12px;text-align:center;">
@@ -165,10 +165,10 @@ export async function sendInviteEmail(opts: InviteEmailOpts): Promise<void> {
     </div>
   `;
 
-  const subject = `${orgName} — ${clinicianName} has invited you to MindLog`;
+  const subject = `${orgName} — ${clinicianName} has invited you to COPE`;
   const html = emailLayout(bodyHtml);
   const text = [
-    `${clinicianName} has invited you to MindLog (${orgName}).`,
+    `${clinicianName} has invited you to COPE (${orgName}).`,
     personalMessage ? `\nMessage: "${personalMessage}"` : '',
     `\nCreate your account using invite code: ${token}`,
     `Or open this link: ${deepLink}`,
@@ -196,7 +196,7 @@ export async function sendWelcomeEmail(opts: WelcomeEmailOpts): Promise<void> {
 
   const bodyHtml = `
     <h2 style="margin:0 0 16px;color:#f0f4ff;font-size:22px;font-weight:700;line-height:1.3;">
-      Welcome to MindLog, ${firstName}! 🎉
+      Welcome to COPE, ${firstName}! 🎉
     </h2>
     <p style="margin:0 0 16px;color:#8892a4;font-size:15px;line-height:1.7;">
       Your account has been created and ${clinicianName} can now see your check-ins
@@ -212,7 +212,7 @@ export async function sendWelcomeEmail(opts: WelcomeEmailOpts): Promise<void> {
     </ul>
 
     <div style="text-align:center;">
-      ${ctaButton(appLink, 'Open MindLog')}
+      ${ctaButton(appLink, 'Open COPE')}
     </div>
 
     <div style="background:#1e2535;border-radius:8px;padding:14px 18px;margin:24px 0 0;">
@@ -224,10 +224,10 @@ export async function sendWelcomeEmail(opts: WelcomeEmailOpts): Promise<void> {
     </div>
   `;
 
-  const subject = `Welcome to MindLog, ${firstName}!`;
+  const subject = `Welcome to COPE, ${firstName}!`;
   const html = emailLayout(bodyHtml);
   const text = [
-    `Welcome to MindLog, ${firstName}!`,
+    `Welcome to COPE, ${firstName}!`,
     `Your account is ready. ${clinicianName} can now see your check-ins.`,
     `Open the app to get started: ${appLink}`,
   ].join('\n');
@@ -253,7 +253,7 @@ export async function sendCredentialsEmail(opts: CredentialsEmailOpts): Promise<
 
   const bodyHtml = `
     <h2 style="margin:0 0 16px;color:#f0f4ff;font-size:22px;font-weight:700;line-height:1.3;">
-      Welcome to MindLog, ${firstName}!
+      Welcome to COPE, ${firstName}!
     </h2>
     <p style="margin:0 0 16px;color:#8892a4;font-size:15px;line-height:1.7;">
       Your demo account has been created. Use the credentials below to sign in
@@ -278,21 +278,21 @@ export async function sendCredentialsEmail(opts: CredentialsEmailOpts): Promise<
     </p>
 
     <div style="text-align:center;margin:8px 0 4px;">
-      ${ctaButton(loginUrl, 'Sign in to MindLog')}
+      ${ctaButton(loginUrl, 'Sign in to COPE')}
     </div>
 
     <div style="background:#1e2535;border-radius:8px;padding:14px 18px;margin:24px 0 0;">
       <p style="margin:0;color:#6b7280;font-size:12px;line-height:1.6;">
-        This is an automated message. If you did not request a MindLog account,
+        This is an automated message. If you did not request a COPE account,
         you can safely ignore this email.
       </p>
     </div>
   `;
 
-  const subject = 'Your MindLog access credentials';
+  const subject = 'Your COPE access credentials';
   const html = emailLayout(bodyHtml);
   const text = [
-    `Welcome to MindLog, ${firstName}!`,
+    `Welcome to COPE, ${firstName}!`,
     `\nYour demo account has been created.`,
     `\nEmail: ${to}`,
     `Temporary password: ${tempPassword}`,

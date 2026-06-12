@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Audit middleware tests
+// COPE API — Audit middleware tests
 // Failed logins audit with sentinel actor values ('unknown'); these must be
 // stored as NULL, not rejected by the uuid columns. A regression here silently
 // drops the audit trail for the most security-relevant events.
@@ -14,7 +14,7 @@ const sqlMock = vi.hoisted(() => {
   fn.json = (v: unknown) => v; // pass-through stand-in for sql.json()
   return fn;
 });
-vi.mock('@mindlog/db', () => ({ sql: sqlMock }));
+vi.mock('@cope/db', () => ({ sql: sqlMock }));
 
 import { auditLog } from './audit.js';
 

@@ -1,4 +1,4 @@
-# MindLog
+# COPE
 
 A mental wellness tracking platform for patients with depression, anxiety, and bipolar disorder. Patients track daily mood, sleep, exercise, medication adherence, triggers, and symptoms via a mobile app. Clinicians monitor patient cohorts, receive real-time alerts, and generate clinical reports through a web dashboard.
 
@@ -60,7 +60,7 @@ A mental wellness tracking platform for patients with depression, anxiety, and b
 ### Monorepo Structure
 
 ```
-MindLog/
+COPE/
 ├── apps/
 │   ├── api/           # Fastify REST API + WebSocket
 │   ├── web/           # React + Vite clinician dashboard
@@ -90,7 +90,7 @@ MindLog/
 ```bash
 # Clone and install
 git clone <repo>
-cd MindLog
+cd COPE
 npm install
 
 # Configure environment
@@ -101,7 +101,7 @@ cp .env.demo .env
 npm run demo:infra
 
 # Build shared packages
-npx turbo run build --filter=@mindlog/shared --filter=@mindlog/db
+npx turbo run build --filter=@cope/shared --filter=@cope/db
 
 # Run migrations and seed demo data
 npm run demo:setup
@@ -125,14 +125,14 @@ cd apps/mobile && npx expo start
 **Clinician Dashboard:**
 | Email | Password |
 |-------|----------|
-| `dr.kim@mindlogdemo.com` | `Demo@Clinic1!` |
+| `dr.kim@copedemo.com` | `Demo@Clinic1!` |
 
 **Patient Mobile App:**
 | Email | Password | Story |
 |-------|----------|-------|
-| `alice@mindlogdemo.com` | `Demo@Patient1!` | Recovering — improving mood |
-| `bob@mindlogdemo.com` | `Demo@Patient1!` | Volatile — mood swings, active alerts |
-| `david@mindlogdemo.com` | `Demo@Patient1!` | Crisis — declining, critical alerts |
+| `alice@copedemo.com` | `Demo@Patient1!` | Recovering — improving mood |
+| `bob@copedemo.com` | `Demo@Patient1!` | Volatile — mood swings, active alerts |
+| `david@copedemo.com` | `Demo@Patient1!` | Crisis — declining, critical alerts |
 
 See [DEMO.md](DEMO.md) for the full demo guide with 7 clinicians and 146 patients.
 
@@ -144,10 +144,10 @@ Interactive HTML wireframes are in `COPEApp-Prototype/`. Open in a browser to ex
 
 | File | Description |
 |------|-------------|
-| `mindlog-wireframes.html` | Patient mobile app flow |
-| `mindlog-ux-flow.html` | Patient UX journey |
-| `mindlog-clinician.html` | Clinician dashboard |
-| `mindlog-v2-interactive.html` | Extended interactive prototype |
+| `cope-wireframes.html` | Patient mobile app flow |
+| `cope-ux-flow.html` | Patient UX journey |
+| `cope-clinician.html` | Clinician dashboard |
+| `cope-v2-interactive.html` | Extended interactive prototype |
 | `MobileAppCoreDesignPrinciples.md` | Clinical design rationale |
 
 ### Design System

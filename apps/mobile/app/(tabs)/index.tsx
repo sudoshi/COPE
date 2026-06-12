@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Today screen (daily check-in hub)
+// COPE Mobile — Today screen (daily check-in hub)
 // Phase 7b: offline/synced chip via @react-native-community/netinfo
 // Phase 11b: LinearGradient header
 // Phase 11i: 2×2 stat card grid (mood, streak, progress, status)
@@ -14,7 +14,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import NetInfo from '@react-native-community/netinfo';
-import { DESIGN_TOKENS, MOOD_COLORS, MOOD_LABELS, MOOD_EMOJIS, CRISIS_CONTACTS } from '@mindlog/shared';
+import { DESIGN_TOKENS, MOOD_COLORS, MOOD_LABELS, MOOD_EMOJIS, CRISIS_CONTACTS } from '@cope/shared';
 import { COLOR, FONTS, GRADIENT } from '../../constants/DesignTokens';
 import { useTodayEntry } from '../../hooks/useTodayEntry';
 import { apiFetch } from '../../services/auth';

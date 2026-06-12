@@ -3,7 +3,7 @@
 # Navigates from the Profile tab into the Settings screen and verifies the
 # appearance theme toggle section loads with System / Light / Dark options.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

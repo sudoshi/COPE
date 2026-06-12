@@ -1,11 +1,11 @@
 // =============================================================================
-// MindLog Web — WebSocket hook for real-time alert feed
+// COPE Web — WebSocket hook for real-time alert feed
 // Connects to GET /ws (upgraded to WebSocket by Fastify).
 // Auto-reconnects with exponential backoff on disconnect.
 // =============================================================================
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { WS_EVENTS } from '@mindlog/shared';
+import { WS_EVENTS } from '@cope/shared';
 
 export interface LiveAlert {
   alertId: string;

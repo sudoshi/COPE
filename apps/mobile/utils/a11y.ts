@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Accessibility helpers (WCAG 2.1 AA)
+// COPE Mobile — Accessibility helpers (WCAG 2.1 AA)
 // Shared utilities that generate consistent accessibilityLabel strings for
 // mood scores, date ranges, medication names, and other clinical values.
 //

@@ -3,7 +3,7 @@
 # Verifies that tapping the Register tab reveals all expected form fields
 # for invite-only patient registration: invite code, name, DOB, email, password.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 
@@ -17,7 +17,7 @@ appId: com.mindlog.app
 # Verify onboarding screen loaded with branding
 - extendedWaitUntil:
     visible:
-      text: "MindLog"
+      text: "COPE"
     timeout: 10000
 
 - assertVisible:

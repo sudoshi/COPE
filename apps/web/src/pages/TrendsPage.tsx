@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Population Trends page (new — matches prototype v-trends view)
+// COPE Web — Population Trends page (new — matches prototype v-trends view)
 // Shows aggregate caseload metrics from the snapshot + caseload data.
 // =============================================================================
 

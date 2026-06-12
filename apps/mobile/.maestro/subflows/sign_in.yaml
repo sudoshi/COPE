@@ -2,14 +2,14 @@
 # Subflow: Sign in as demo patient
 # Reused by most flows that require authentication
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 
 # Wait for onboarding screen to load
 - extendedWaitUntil:
     visible:
-      text: "MindLog"
+      text: "COPE"
     timeout: 10000
 
 # Ensure we're on the Sign In tab

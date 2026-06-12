@@ -1,9 +1,9 @@
 // =============================================================================
-// MindLog API — Audit logging middleware
+// COPE API — Audit logging middleware
 // Call auditLog() inside route handlers for HIPAA audit trail.
 // =============================================================================
 
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import type { JwtPayload } from '../plugins/auth.js';
 
 export type AuditAction =

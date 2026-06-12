@@ -1,7 +1,7 @@
 // =============================================================================
-// MindLog API — OMOP CDM v5.4 Exporter
+// COPE API — OMOP CDM v5.4 Exporter
 //
-// Pure mapper functions: MindLog DB rows → OMOP CDM table rows.
+// Pure mapper functions: COPE DB rows → OMOP CDM table rows.
 // No I/O.  All functions are stateless and side-effect-free.
 //
 // Output: Tab-separated values (TSV) suitable for bulk-loading into any

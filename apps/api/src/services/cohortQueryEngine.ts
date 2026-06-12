@@ -1,13 +1,13 @@
 // =============================================================================
-// MindLog API — Cohort Query Engine
+// COPE API — Cohort Query Engine
 //
 // Converts a CohortFilterGroup DSL → parameterized postgres.js SQL fragments.
 // All field names are validated against a whitelist to prevent SQL injection.
 // All values are parameterized via postgres.js template literals.
 // =============================================================================
 
-import { sql } from '@mindlog/db';
-import type { CohortFilterRule, CohortFilterGroup } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import type { CohortFilterRule, CohortFilterGroup } from '@cope/shared';
 
 // ---------------------------------------------------------------------------
 // Field whitelist → column mapping (mv_patient_cohort_stats aliased as "mcs")

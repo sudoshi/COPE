@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — VoiceRecorder component
+// COPE Mobile — VoiceRecorder component
 // Animated waveform UI, start/stop controls, 5-minute max, real-time amplitude.
 // Uploads recording to /api/v1/voice/transcribe via apiFetch.
 // =============================================================================

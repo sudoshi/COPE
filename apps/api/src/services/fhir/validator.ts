@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — FHIR R4 Validation (lightweight, no SDK)
+// COPE API — FHIR R4 Validation (lightweight, no SDK)
 //
 // Validates that our mapped FHIR resources contain the minimum required fields
 // before they are served to clients.  This is intentionally simple — we do

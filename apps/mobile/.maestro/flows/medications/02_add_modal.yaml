@@ -4,7 +4,7 @@
 # that all expected form fields are present, that input can be entered into
 # the medication name field, and that the modal can be dismissed via Cancel.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

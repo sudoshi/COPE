@@ -7,7 +7,7 @@
 # medication. All assertions after navigation use optional: true to handle
 # cases where no medications are assigned.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

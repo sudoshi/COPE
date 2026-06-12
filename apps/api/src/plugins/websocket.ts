@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — WebSocket plugin
+// COPE API — WebSocket plugin
 // Provides real-time alert delivery to clinician dashboard clients.
 //
 // Architecture:
@@ -8,8 +8,8 @@
 //   - This plugin subscribes to Redis and fans out to all matching WS connections
 //
 // Channel naming:
-//   mindlog:alerts:{orgId}          — all alerts for an org
-//   mindlog:alerts:{orgId}:{userId} — targeted to a specific clinician
+//   cope:alerts:{orgId}          — all alerts for an org
+//   cope:alerts:{orgId}:{userId} — targeted to a specific clinician
 // =============================================================================
 
 import fp from 'fastify-plugin';
@@ -17,7 +17,7 @@ import type { FastifyInstance } from 'fastify';
 import fastifyWebSocket from '@fastify/websocket';
 import { Redis } from 'ioredis';
 import { config } from '../config.js';
-import { WS_EVENTS } from '@mindlog/shared';
+import { WS_EVENTS } from '@cope/shared';
 
 // ---------------------------------------------------------------------------
 // Redis clients — one for publish, one for subscribe
@@ -67,7 +67,7 @@ export async function publishAlert(
 ): Promise<void> {
   const pub = getPublisher();
   const payload = JSON.stringify({ type: WS_EVENTS.ALERT_CREATED, data: { ...event, patientId } });
-  await pub.publish(`mindlog:alerts:${orgId}`, payload);
+  await pub.publish(`cope:alerts:${orgId}`, payload);
 }
 
 export async function publishPatientStatusChange(
@@ -77,7 +77,7 @@ export async function publishPatientStatusChange(
 ): Promise<void> {
   const pub = getPublisher();
   const payload = JSON.stringify({ type: WS_EVENTS.PATIENT_STATUS_CHANGED, data: { patientId, status } });
-  await pub.publish(`mindlog:alerts:${orgId}`, payload);
+  await pub.publish(`cope:alerts:${orgId}`, payload);
 }
 
 // ---------------------------------------------------------------------------
@@ -133,13 +133,13 @@ async function websocketPlugin(fastify: FastifyInstance): Promise<void> {
 
   // Pattern subscribe to all org channels
   sub.on('pmessage', (_pattern: string, channel: string, message: string) => {
-    // channel = mindlog:alerts:{orgId}
+    // channel = cope:alerts:{orgId}
     const parts = channel.split(':');
     const orgId = parts[2];
     if (orgId) broadcast(orgId, message);
   });
 
-  await sub.psubscribe('mindlog:alerts:*');
+  await sub.psubscribe('cope:alerts:*');
 
   // Connect publisher lazily
   await getPublisher().connect();

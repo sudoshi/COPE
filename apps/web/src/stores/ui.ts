@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — UI store
+// COPE Web — UI store
 // Lightweight cross-component state for page-level metadata.
 // Follows the same minimal pub/sub pattern as auth.ts.
 // =============================================================================

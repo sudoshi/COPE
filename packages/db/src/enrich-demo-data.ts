@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — Demo Data Enrichment Script
+// COPE — Demo Data Enrichment Script
 //
 // Enhances existing demo data with clinically realistic details for mental
 // health professional demonstrations. Adds:
@@ -345,7 +345,7 @@ function generateQIDSSR(depressionLevel: string): { score: number; itemResponses
 // ---------------------------------------------------------------------------
 
 async function enrichDemoData(): Promise<void> {
-  console.log('\nMindLog — Demo Data Enrichment');
+  console.log('\nCOPE — Demo Data Enrichment');
   console.log('================================');
   console.log('Enhancing data for clinical demonstration...\n');
 
@@ -360,7 +360,7 @@ async function enrichDemoData(): Promise<void> {
   }[]>`
     SELECT id, first_name, last_name, risk_level, status, organisation_id
     FROM patients
-    WHERE organisation_id = (SELECT id FROM organisations WHERE name = 'MindLog Demo Clinic' LIMIT 1)
+    WHERE organisation_id = (SELECT id FROM organisations WHERE name = 'COPE Demo Clinic' LIMIT 1)
   `;
 
   if (patients.length === 0) {
@@ -374,7 +374,7 @@ async function enrichDemoData(): Promise<void> {
   // Get clinicians for note attribution
   const clinicians = await sql<{ id: string; first_name: string; last_name: string }[]>`
     SELECT id, first_name, last_name FROM clinicians
-    WHERE organisation_id = (SELECT id FROM organisations WHERE name = 'MindLog Demo Clinic' LIMIT 1)
+    WHERE organisation_id = (SELECT id FROM organisations WHERE name = 'COPE Demo Clinic' LIMIT 1)
   `;
 
   const orgId = patients[0]!.organisation_id;

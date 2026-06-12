@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Entry point
+// COPE API — Entry point
 // =============================================================================
 
 // Sentry must be initialised before any other import
@@ -8,7 +8,7 @@ initSentry();
 
 import { buildApp } from './app.js';
 import { config } from './config.js';
-import { closeDb } from '@mindlog/db';
+import { closeDb } from '@cope/db';
 
 const app = await buildApp();
 

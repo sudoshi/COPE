@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Drilldown Modal Component
+// COPE Web — Drilldown Modal Component
 // Reusable modal for KPI drilldowns showing patient lists with summary stats
 // =============================================================================
 

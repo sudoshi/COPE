@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Population Dashboard (redesigned to match prototype)
+// COPE Web — Population Dashboard (redesigned to match prototype)
 // Layout: 5-metric row + two-column (heatmap/dist LEFT, alerts/checkin RIGHT)
 // =============================================================================
 

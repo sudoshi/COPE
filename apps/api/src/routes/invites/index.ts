@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Patient invite routes
+// COPE API — Patient invite routes
 // POST   /api/v1/invites                  clinician — create invite + send email
 // GET    /api/v1/invites                  clinician — list own invites
 // GET    /api/v1/invites/validate/:token  PUBLIC    — validate token for pre-fill
@@ -9,8 +9,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { CreateInviteSchema, UuidSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { CreateInviteSchema, UuidSchema } from '@cope/shared';
 import { sendInviteEmail } from '../../services/messaging.js';
 import { auditLog } from '../../middleware/audit.js';
 

@@ -10,7 +10,7 @@
     "noEmit": true,
     "types": ["vite/client"],
     "paths": {
-      "@mindlog/shared": ["../../packages/shared/src/index.ts"],
+      "@cope/shared": ["../../packages/shared/src/index.ts"],
       "@/*": ["./src/*"]
     }
   },

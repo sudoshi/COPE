@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — AI Insights Worker (BullMQ)
+// COPE API — AI Insights Worker (BullMQ)
 //
 // Processes AI inference jobs for clinical decision support.
 // All inference is gated behind:
@@ -25,7 +25,7 @@
 // =============================================================================
 
 import { Worker, Queue } from 'bullmq';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import { config } from '../config.js';
 import { connection } from './rules-engine.js';
 import { computeRiskScore, persistRiskScore } from '../services/riskScoring.js';
@@ -35,7 +35,7 @@ import { generateCompletion, computeCostCents } from '../services/llmClient.js';
 // Queue — exported so routes can enqueue jobs
 // ---------------------------------------------------------------------------
 
-export const AI_INSIGHTS_QUEUE_NAME = 'mindlog-ai-insights';
+export const AI_INSIGHTS_QUEUE_NAME = 'cope-ai-insights';
 
 export const aiInsightsQueue = new Queue(AI_INSIGHTS_QUEUE_NAME, {
   connection,

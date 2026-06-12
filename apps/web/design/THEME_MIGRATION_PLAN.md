@@ -1,6 +1,6 @@
-# MindLog Dark Theme Migration Plan
+# COPE Dark Theme Migration Plan
 
-This document outlines the non-destructive migration strategy for applying the new dark theme design system to the MindLog web application.
+This document outlines the non-destructive migration strategy for applying the new dark theme design system to the COPE web application.
 
 ---
 

@@ -1,6 +1,6 @@
 // =============================================================================
-// MindLog — Shared Entity Types
-// Derived from mindlog-schema.sql. Keep in sync with DB migrations.
+// COPE — Shared Entity Types
+// Derived from cope-schema.sql. Keep in sync with DB migrations.
 // =============================================================================
 
 // MedicationFrequency is defined in schemas/index.ts (Zod-derived).

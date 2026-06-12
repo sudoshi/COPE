@@ -1,4 +1,4 @@
-# MindLog Developer Notes
+# COPE Developer Notes
 
 Quick reference for common gotchas and conventions learned during development.
 

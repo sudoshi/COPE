@@ -5,7 +5,7 @@
 # displaying both 988 (Suicide & Crisis Lifeline) and 741741 (Crisis Text
 # Line). This provides a second always-accessible path to crisis contacts.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

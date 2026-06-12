@@ -4,7 +4,7 @@
 # safety banner with crisis contact information (988 Lifeline).
 # Tests progressive escalation from passive to frequent thoughts.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

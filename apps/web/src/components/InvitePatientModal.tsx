@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Invite Patient Modal
+// COPE Web — Invite Patient Modal
 // POST /invites — sends invite email to a prospective patient.
 // =============================================================================
 

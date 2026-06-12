@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Check-in flow (multi-step)
+// COPE Mobile — Check-in flow (multi-step)
 // Steps: mood → mania → wellbeing → lifestyle → wellness → triggers → symptoms → journal → submit
 // Phase 8c: new clinical domains; Phase 11g: Animated slide transitions
 // =============================================================================
@@ -13,7 +13,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS, MOOD_COLORS, MOOD_LABELS, MOOD_EMOJIS, CRISIS_CONTACTS } from '@mindlog/shared';
+import { DESIGN_TOKENS, MOOD_COLORS, MOOD_LABELS, MOOD_EMOJIS, CRISIS_CONTACTS } from '@cope/shared';
 import { COLOR, FONTS } from '../constants/DesignTokens';
 import { apiFetch, getStoredUser } from '../services/auth';
 import { database } from '../db/index';

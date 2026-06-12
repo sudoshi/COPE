@@ -1,5 +1,5 @@
 -- =============================================================================
--- MindLog — Migration 004: Expanded daily entry for evidence-based clinical data
+-- COPE — Migration 004: Expanded daily entry for evidence-based clinical data
 -- Adds 16 new clinical domain columns to daily_entries and sleep_logs,
 -- covering all domains from COPEApp-Prototype/MobileAppCoreDesignPrinciples.md:
 --   Mania pole (ASRM), Anxiety (GAD-2), Suicidal ideation (C-SSRS),

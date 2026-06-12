@@ -17,17 +17,17 @@ const MOCK_USERS = [
   { id: 4, name: "Dr. Rachel Kim", email: "rkim@ccf.org", role: "admin", status: "active", lastLogin: "2026-02-22T14:10:00Z", mfaEnabled: true, source: "manual", patientsAssigned: 0, department: "IT - Clinical Informatics" },
   { id: 5, name: "Tom Bradford, RN", email: "tbradford@memorial.org", role: "nurse", status: "active", lastLogin: "2026-02-20T08:15:00Z", mfaEnabled: false, source: "ldap", patientsAssigned: 120, department: "Outpatient Psych" },
   { id: 6, name: "Dr. Anthony Russo", email: "arusso@memorial.org", role: "pcp", status: "suspended", lastLogin: "2026-02-10T11:00:00Z", mfaEnabled: true, source: "ldap", patientsAssigned: 15, department: "Internal Medicine" },
-  { id: 7, name: "System Admin (Service)", email: "svc-mindlog@mindlog.health", role: "system", status: "active", lastLogin: "2026-02-22T14:32:00Z", mfaEnabled: true, source: "manual", patientsAssigned: 0, department: "System" },
+  { id: 7, name: "System Admin (Service)", email: "svc-cope@cope.health", role: "system", status: "active", lastLogin: "2026-02-22T14:32:00Z", mfaEnabled: true, source: "manual", patientsAssigned: 0, department: "System" },
 ];
 
 const MOCK_AUDIT_LOG = [
-  { id: 1, timestamp: "2026-02-22T14:32:01Z", user: "svc-mindlog@mindlog.health", action: "fhir_sync", resource: "Observation", detail: "Batch write 47 observations to Epic Memorial Hermann", status: "success", ip: "10.0.1.50", ehrTarget: "Epic - Memorial Hermann" },
-  { id: 2, timestamp: "2026-02-22T14:28:15Z", user: "svc-mindlog@mindlog.health", action: "fhir_sync", resource: "QuestionnaireResponse", detail: "Write 12 PHQ-9 responses to Oracle Health Geisinger", status: "success", ip: "10.0.1.50", ehrTarget: "Oracle Health - Geisinger" },
-  { id: 3, timestamp: "2026-02-22T14:15:03Z", user: "svc-mindlog@mindlog.health", action: "fhir_sync", resource: "Observation", detail: "Token refresh failed - Epic Cleveland Clinic", status: "error", ip: "10.0.1.50", ehrTarget: "Epic - Cleveland Clinic" },
+  { id: 1, timestamp: "2026-02-22T14:32:01Z", user: "svc-cope@cope.health", action: "fhir_sync", resource: "Observation", detail: "Batch write 47 observations to Epic Memorial Hermann", status: "success", ip: "10.0.1.50", ehrTarget: "Epic - Memorial Hermann" },
+  { id: 2, timestamp: "2026-02-22T14:28:15Z", user: "svc-cope@cope.health", action: "fhir_sync", resource: "QuestionnaireResponse", detail: "Write 12 PHQ-9 responses to Oracle Health Geisinger", status: "success", ip: "10.0.1.50", ehrTarget: "Oracle Health - Geisinger" },
+  { id: 3, timestamp: "2026-02-22T14:15:03Z", user: "svc-cope@cope.health", action: "fhir_sync", resource: "Observation", detail: "Token refresh failed - Epic Cleveland Clinic", status: "error", ip: "10.0.1.50", ehrTarget: "Epic - Cleveland Clinic" },
   { id: 4, timestamp: "2026-02-22T14:10:22Z", user: "rkim@ccf.org", action: "user_login", resource: "Session", detail: "Admin login via SSO + MFA", status: "success", ip: "172.16.4.88", ehrTarget: null },
   { id: 5, timestamp: "2026-02-22T13:55:00Z", user: "schen@memorial.org", action: "phi_access", resource: "Patient/1247", detail: "Viewed patient mood trend report (30-day)", status: "success", ip: "172.16.2.15", ehrTarget: null },
   { id: 6, timestamp: "2026-02-22T13:45:11Z", user: "schen@memorial.org", action: "user_login", resource: "Session", detail: "Clinician login via LDAP + MFA", status: "success", ip: "172.16.2.15", ehrTarget: null },
-  { id: 7, timestamp: "2026-02-22T13:30:00Z", user: "svc-mindlog@mindlog.health", action: "safety_alert", resource: "Observation/C-SSRS", detail: "Positive C-SSRS screen - Patient ID 892 - Alert sent to care team", status: "critical", ip: "10.0.1.50", ehrTarget: "Epic - Memorial Hermann" },
+  { id: 7, timestamp: "2026-02-22T13:30:00Z", user: "svc-cope@cope.health", action: "safety_alert", resource: "Observation/C-SSRS", detail: "Positive C-SSRS screen - Patient ID 892 - Alert sent to care team", status: "critical", ip: "10.0.1.50", ehrTarget: "Epic - Memorial Hermann" },
   { id: 8, timestamp: "2026-02-22T12:00:00Z", user: "rkim@ccf.org", action: "config_change", resource: "FHIR Endpoint", detail: "Updated token refresh interval for Epic Cleveland Clinic endpoint", status: "success", ip: "172.16.4.88", ehrTarget: "Epic - Cleveland Clinic" },
   { id: 9, timestamp: "2026-02-22T10:22:05Z", user: "jokafor@geisinger.edu", action: "user_login", resource: "Session", detail: "Clinician login via LDAP + MFA", status: "success", ip: "10.5.12.30", ehrTarget: null },
   { id: 10, timestamp: "2026-02-22T09:00:00Z", user: "system", action: "ldap_sync", resource: "User Directory", detail: "LDAP sync completed - 3 new users imported, 1 deactivated", status: "success", ip: "10.0.1.50", ehrTarget: null },
@@ -143,7 +143,7 @@ const MetricCard = ({ label, value, sublabel, icon, accent = "#2563EB" }) => (
 
 // ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
 
-export default function MindLogAdmin() {
+export default function COPEAdmin() {
   const [activeSection, setActiveSection] = useState("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [ldapSearchResults, setLdapSearchResults] = useState([]);
@@ -317,7 +317,7 @@ export default function MindLogAdmin() {
               { label: "EHR Platform", placeholder: "", type: "select", options: ["Epic (EpicCare)", "Oracle Health (Millennium)", "Other FHIR R4"] },
               { label: "FHIR Base URL", placeholder: "https://fhir.example.org/api/FHIR/R4", type: "text" },
               { label: "Client ID (OAuth 2.0)", placeholder: "Registered SMART on FHIR client ID", type: "text" },
-              { label: "Redirect URI", placeholder: "mindlog://auth/callback", type: "text" },
+              { label: "Redirect URI", placeholder: "cope://auth/callback", type: "text" },
               { label: "Authorization Endpoint", placeholder: "Auto-discovered from .well-known/smart-configuration", type: "text" },
               { label: "Token Endpoint", placeholder: "Auto-discovered from .well-known/smart-configuration", type: "text" },
             ].map((field) => (
@@ -468,7 +468,7 @@ export default function MindLogAdmin() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 14 }}>
           <div>
             <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 4 }}>Bind DN (Service Account)</label>
-            <input defaultValue="CN=svc-mindlog,OU=Service Accounts,DC=memorial,DC=org" style={{ width: "100%", padding: "8px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 12, fontFamily: "monospace", boxSizing: "border-box" }} />
+            <input defaultValue="CN=svc-cope,OU=Service Accounts,DC=memorial,DC=org" style={{ width: "100%", padding: "8px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 12, fontFamily: "monospace", boxSizing: "border-box" }} />
           </div>
           <div>
             <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 4 }}>Bind Password</label>
@@ -651,9 +651,9 @@ export default function MindLogAdmin() {
         <div style={{ fontSize: 14, fontWeight: 700, color: "#111827", marginBottom: 12 }}>Consent Configuration</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
           {[
-            { label: "EHR Read Consent", desc: "Patient authorizes MindLog to read clinical data (diagnoses, medications, labs) from their EHR", status: "Required before any inbound sync" },
-            { label: "EHR Write-Back Consent", desc: "Patient authorizes MindLog to write PRO data, observations, and reports to their EHR medical record", status: "Required before any outbound sync" },
-            { label: "Care Team Sharing Consent", desc: "Patient specifies which care team members can view their MindLog data", status: "Granular per-provider authorization" },
+            { label: "EHR Read Consent", desc: "Patient authorizes COPE to read clinical data (diagnoses, medications, labs) from their EHR", status: "Required before any inbound sync" },
+            { label: "EHR Write-Back Consent", desc: "Patient authorizes COPE to write PRO data, observations, and reports to their EHR medical record", status: "Required before any outbound sync" },
+            { label: "Care Team Sharing Consent", desc: "Patient specifies which care team members can view their COPE data", status: "Granular per-provider authorization" },
             { label: "Research Data Consent (Optional)", desc: "Patient may opt-in to de-identified data contribution for mental health research", status: "IRB-approved consent form required" },
           ].map((c) => (
             <div key={c.label} style={{ background: "#F9FAFB", padding: 14, borderRadius: 8, border: "1px solid #E5E7EB" }}>
@@ -727,7 +727,7 @@ export default function MindLogAdmin() {
   const renderSettings = () => (
     <div>
       <h2 style={{ margin: "0 0 4px", fontSize: 18, fontWeight: 700, color: "#111827" }}>System Configuration</h2>
-      <p style={{ margin: "0 0 18px", fontSize: 13, color: "#6B7280" }}>Application-wide settings for MindLog platform administration</p>
+      <p style={{ margin: "0 0 18px", fontSize: 13, color: "#6B7280" }}>Application-wide settings for COPE platform administration</p>
       {[
         { title: "Survey & Instrument Configuration", items: [
           { label: "PHQ-9 Administration Frequency", value: "Weekly (every 7 days)" },
@@ -809,7 +809,7 @@ export default function MindLogAdmin() {
           <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg, #3B82F6, #8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14, color: "#fff", flexShrink: 0 }}>M</div>
           {!sidebarCollapsed && (
             <div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: "#F9FAFB", lineHeight: 1.1 }}>MindLog</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "#F9FAFB", lineHeight: 1.1 }}>COPE</div>
               <div style={{ fontSize: 10, color: "#6B7280", letterSpacing: 1 }}>ADMIN CONSOLE</div>
             </div>
           )}

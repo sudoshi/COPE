@@ -6,7 +6,7 @@
 # number. Additionally verifies that crisis text line 741741 is visible in
 # the crisis note section.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

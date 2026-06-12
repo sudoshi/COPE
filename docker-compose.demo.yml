@@ -1,5 +1,5 @@
 # =============================================================================
-# MindLog — Demo Infrastructure
+# COPE — Demo Infrastructure
 # Usage: npm run demo:infra
 #
 # Services:
@@ -11,17 +11,17 @@
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: mindlog-demo-postgres
+    container_name: cope-demo-postgres
     environment:
-      POSTGRES_DB: mindlogdemo
+      POSTGRES_DB: copedemo
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: demosecret
     ports:
       - '5432:5432'
     volumes:
-      - mindlog-demo-pgdata:/var/lib/postgresql/data
+      - cope-demo-pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres -d mindlogdemo']
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d copedemo']
       interval: 5s
       timeout: 5s
       retries: 10
@@ -29,11 +29,11 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: mindlog-demo-redis
+    container_name: cope-demo-redis
     ports:
       - '6379:6379'
     volumes:
-      - mindlog-demo-redisdata:/data
+      - cope-demo-redisdata:/data
     command: redis-server --appendonly yes
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
@@ -44,14 +44,14 @@ services:
 
   mailhog:
     image: mailhog/mailhog:latest
-    container_name: mindlog-demo-mailhog
+    container_name: cope-demo-mailhog
     ports:
       - '1025:1025'   # SMTP
       - '8025:8025'   # Web UI
     restart: unless-stopped
 
 volumes:
-  mindlog-demo-pgdata:
-    name: mindlog-demo-pgdata
-  mindlog-demo-redisdata:
-    name: mindlog-demo-redisdata
+  cope-demo-pgdata:
+    name: cope-demo-pgdata
+  cope-demo-redisdata:
+    name: cope-demo-redisdata

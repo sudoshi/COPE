@@ -1,12 +1,12 @@
 # MedGemma + Ollama Integration
 
-> Local AI inference for MindLog's clinical decision support features.
+> Local AI inference for COPE's clinical decision support features.
 
 ---
 
 ## 1. Motivation
 
-MindLog's AI-powered features — weekly clinical narratives, anomaly detection, journal sentiment analysis — were built exclusively on Anthropic Claude. This created two barriers:
+COPE's AI-powered features — weekly clinical narratives, anomaly detection, journal sentiment analysis — were built exclusively on Anthropic Claude. This created two barriers:
 
 1. **BAA requirement.** Per HIPAA 45 CFR 164.314, a signed Business Associate Agreement with Anthropic is required before any PHI-adjacent data can be sent to their API, even de-identified. The `ANTHROPIC_BAA_SIGNED=true` environment flag must be set, and for demo/development environments this is never true.
 2. **Cost.** Every inference call costs ~$3/1M input tokens + ~$15/1M output tokens on Claude Sonnet. For iterative development and live demos, this adds up.
@@ -42,7 +42,7 @@ A single abstraction layer (`llmClient.ts`) dispatches to the configured provide
 
 ### Why MedGemma?
 
-[MedGemma](https://huggingface.co/google/medgemma-27b-text-it) is Google's medical-domain fine-tuned variant of Gemma 2. The 27B parameter instruction-tuned text model is purpose-built for clinical text understanding. It runs comfortably on a single machine with 32GB+ RAM via Ollama, and its medical vocabulary aligns well with MindLog's clinical prompts (PHQ-9 interpretation, mood trend analysis, crisis indicator detection).
+[MedGemma](https://huggingface.co/google/medgemma-27b-text-it) is Google's medical-domain fine-tuned variant of Gemma 2. The 27B parameter instruction-tuned text model is purpose-built for clinical text understanding. It runs comfortably on a single machine with 32GB+ RAM via Ollama, and its medical vocabulary aligns well with COPE's clinical prompts (PHQ-9 interpretation, mood trend analysis, crisis indicator detection).
 
 The Ollama community packages it as `alibayram/medgemma:27b` with Q4_K_M quantization, bringing VRAM requirements down to ~18GB for GPU inference or ~20GB RAM for CPU-only.
 
@@ -269,7 +269,7 @@ npm run dev:worker &         # BullMQ workers (in apps/api)
 npm run demo:web             # Web dashboard (port 5173)
 
 # 6. Trigger an AI insight
-#    - Log into the web dashboard as dr.kim@mindlogdemo.com / Demo@Clinic1!
+#    - Log into the web dashboard as dr.kim@copedemo.com / Demo@Clinic1!
 #    - Navigate to any patient detail page
 #    - Click "Generate Insight" in the AI Insights tab
 #    - Wait ~30-90 seconds for MedGemma to generate the narrative

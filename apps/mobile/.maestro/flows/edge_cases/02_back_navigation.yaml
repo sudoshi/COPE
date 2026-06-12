@@ -4,7 +4,7 @@
 # back button returns the user to the Today screen without crashing or
 # leaving the navigation stack in a broken state.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

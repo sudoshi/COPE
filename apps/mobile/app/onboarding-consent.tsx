@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Post-registration consent wizard
+// COPE Mobile — Post-registration consent wizard
 // Screen 1: Welcome
 // Screen 2: Required consents (ToS + Privacy Policy — already stored at register)
 // Screen 3: Optional consents (Data Research, AI Insights)
@@ -13,7 +13,7 @@ import {
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 import { apiFetch, getStoredUser } from '../services/auth';
 
 const { width: SCREEN_W } = Dimensions.get('window');
@@ -60,8 +60,8 @@ function WelcomeScreen({ firstName, clinicianName, onNext }: {
         <Text style={styles.welcomeHeading}>Welcome{firstName ? `, ${firstName}` : ''}!</Text>
         <Text style={styles.welcomeBody}>
           {clinicianName
-            ? `${clinicianName} has invited you to MindLog to help track your mental wellness between appointments.`
-            : 'Your care team has invited you to MindLog to help track your mental wellness between appointments.'}
+            ? `${clinicianName} has invited you to COPE to help track your mental wellness between appointments.`
+            : 'Your care team has invited you to COPE to help track your mental wellness between appointments.'}
         </Text>
         <Text style={styles.welcomeBody}>
           Before you start, we need a few minutes to walk through your legal consents and a brief clinical intake.
@@ -85,17 +85,17 @@ function WelcomeScreen({ firstName, clinicianName, onNext }: {
 // Screen 2 — Required Consents
 // ---------------------------------------------------------------------------
 
-const TOS_TEXT = `By using MindLog, you agree to the following terms:
+const TOS_TEXT = `By using COPE, you agree to the following terms:
 
-1. ELIGIBILITY — You must be 18 years of age or older to use MindLog.
+1. ELIGIBILITY — You must be 18 years of age or older to use COPE.
 
-2. PURPOSE — MindLog is a health tracking tool. It is not a substitute for professional medical advice, diagnosis, or treatment.
+2. PURPOSE — COPE is a health tracking tool. It is not a substitute for professional medical advice, diagnosis, or treatment.
 
 3. DATA — Your data is stored securely and shared only with clinicians on your care team.
 
 4. ACCOUNT — You are responsible for maintaining the confidentiality of your account credentials.
 
-5. CRISIS — If you are in crisis or danger, please contact emergency services or call/text 988 immediately. MindLog is not a crisis service.
+5. CRISIS — If you are in crisis or danger, please contact emergency services or call/text 988 immediately. COPE is not a crisis service.
 
 6. CHANGES — We may update these terms from time to time. Continued use constitutes acceptance.`;
 
@@ -113,7 +113,7 @@ HOW WE USE IT
 • To send you reminders you configure
 
 HIPAA COMPLIANCE
-MindLog operates as a Business Associate under HIPAA. Your Protected Health Information (PHI) is encrypted at rest and in transit and is never sold to third parties.
+COPE operates as a Business Associate under HIPAA. Your Protected Health Information (PHI) is encrypted at rest and in transit and is never sold to third parties.
 
 YOUR RIGHTS
 • Access and download your data at any time
@@ -121,7 +121,7 @@ YOUR RIGHTS
 • Revoke consent to share with your care team
 
 CONTACT
-privacy@mindlog.app`;
+privacy@cope.app`;
 
 function RequiredConsentsScreen({ onNext }: { onNext: () => void }) {
   const [tosAgreed, setTosAgreed] = useState(false);
@@ -131,7 +131,7 @@ function RequiredConsentsScreen({ onNext }: { onNext: () => void }) {
   return (
     <ScrollView contentContainerStyle={styles.screenContent}>
       <Text style={styles.screenHeading}>Legal Consents</Text>
-      <Text style={styles.screenSubtitle}>Both are required to use MindLog.</Text>
+      <Text style={styles.screenSubtitle}>Both are required to use COPE.</Text>
 
       {/* Terms of Service */}
       <View style={styles.consentCard}>

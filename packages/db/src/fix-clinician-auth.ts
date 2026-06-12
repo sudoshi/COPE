@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — Fix Clinician Auth
+// COPE — Fix Clinician Auth
 //
 // Creates Supabase auth accounts for the 7 demo clinicians and updates their
 // UUIDs in the database to match the Supabase auth IDs.
@@ -146,7 +146,7 @@ async function swapClinicianUuid(
 // ---------------------------------------------------------------------------
 
 async function main() {
-  console.log('=== MindLog — Fix Clinician Supabase Auth ===\n');
+  console.log('=== COPE — Fix Clinician Supabase Auth ===\n');
 
   // Fetch all clinicians from DB
   const clinicians = await sql<{ id: string; email: string; first_name: string; last_name: string }[]>`

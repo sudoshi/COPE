@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Auth plugin (Supabase JWT verification)
+// COPE API — Auth plugin (Supabase JWT verification)
 // Registers @fastify/jwt and decorates request with `request.user`.
 // =============================================================================
 
@@ -7,7 +7,7 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
 import fastifyJwt from '@fastify/jwt';
 import { config } from '../config.js';
-import type { UserRole } from '@mindlog/shared';
+import type { UserRole } from '@cope/shared';
 
 // Extract JWT from Authorization: Bearer header OR ?token= query param.
 // The query-param fallback is required for WebSocket upgrade requests because

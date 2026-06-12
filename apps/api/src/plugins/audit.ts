@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — HIPAA Audit Logging Plugin
+// COPE API — HIPAA Audit Logging Plugin
 //
 // Decorates Fastify with:
 //   request.auditAccess(patientId, resourceType, resourceId?)

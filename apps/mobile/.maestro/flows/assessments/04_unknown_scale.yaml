@@ -6,7 +6,7 @@
 #
 # This test uses a deep link to force navigation to a non-existent scale.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

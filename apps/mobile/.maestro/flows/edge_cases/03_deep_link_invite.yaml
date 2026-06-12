@@ -4,7 +4,7 @@
 # crashing, and that the onboarding screen renders. This is a baseline guard
 # against deep link or invite token handling crashing the app on cold start.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 
@@ -19,7 +19,7 @@ appId: com.mindlog.app
 # The app title should be visible on the onboarding / auth screen
 - extendedWaitUntil:
     visible:
-      text: "MindLog"
+      text: "COPE"
     timeout: 15000
 
 # ── Stability assertion ───────────────────────────────────────────────────

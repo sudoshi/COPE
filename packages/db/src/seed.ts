@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — Development Seed Script
+// COPE — Development Seed Script
 // Creates a test organisation, one clinician, and two patients.
 // NEVER run against production data.
 // Usage: npm run db:seed (from packages/db)
@@ -8,7 +8,7 @@
 import { sql, closeDb } from './client.js';
 
 async function seed(): Promise<void> {
-  console.log('MindLog — Development Seed');
+  console.log('COPE — Development Seed');
   console.log('==========================');
   console.log('WARNING: This script is for local development only.\n');
 
@@ -17,7 +17,7 @@ async function seed(): Promise<void> {
   // ------------------------------------------------------------------
   const [org] = await sql<{ id: string }[]>`
     INSERT INTO organisations (name, type, city, state, country, timezone, locale)
-    VALUES ('MindLog Demo Clinic', 'clinic', 'San Francisco', 'CA', 'US', 'America/Los_Angeles', 'en-US')
+    VALUES ('COPE Demo Clinic', 'clinic', 'San Francisco', 'CA', 'US', 'America/Los_Angeles', 'en-US')
     ON CONFLICT DO NOTHING
     RETURNING id
   `;
@@ -39,7 +39,7 @@ async function seed(): Promise<void> {
       organisation_id, email, first_name, last_name, title, role, npi
     ) VALUES (
       ${orgId},
-      'dr.smith@mindlogdemo.com',
+      'dr.smith@copedemo.com',
       'Sarah', 'Smith', 'Dr', 'psychiatrist',
       '1234567890'
     )
@@ -53,7 +53,7 @@ async function seed(): Promise<void> {
   }
 
   const clinicianId = clinician.id;
-  console.log(`✓ Clinician created: dr.smith@mindlogdemo.com (${clinicianId})`);
+  console.log(`✓ Clinician created: dr.smith@copedemo.com (${clinicianId})`);
 
   // ------------------------------------------------------------------
   // Patients
@@ -63,9 +63,9 @@ async function seed(): Promise<void> {
       organisation_id, mrn, email, first_name, last_name,
       date_of_birth, timezone, locale, status, risk_level
     ) VALUES
-      (${orgId}, 'MRN-001', 'alice@mindlogdemo.com', 'Alice', 'Johnson',
+      (${orgId}, 'MRN-001', 'alice@copedemo.com', 'Alice', 'Johnson',
        '1985-03-15', 'America/Los_Angeles', 'en-US', 'active', 'moderate'),
-      (${orgId}, 'MRN-002', 'bob@mindlogdemo.com', 'Bob', 'Williams',
+      (${orgId}, 'MRN-002', 'bob@copedemo.com', 'Bob', 'Williams',
        '1990-07-22', 'America/Los_Angeles', 'en-US', 'active', 'high')
     RETURNING id, first_name
   `;
@@ -95,8 +95,8 @@ async function seed(): Promise<void> {
 
   console.log('\nSeed complete. Development data is ready.');
   console.log('Credentials (no passwords set — use Supabase Auth for login):');
-  console.log('  Clinician: dr.smith@mindlogdemo.com');
-  console.log('  Patients:  alice@mindlogdemo.com, bob@mindlogdemo.com');
+  console.log('  Clinician: dr.smith@copedemo.com');
+  console.log('  Patients:  alice@copedemo.com, bob@copedemo.com');
 
   await closeDb();
 }

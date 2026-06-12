@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Global search
+// COPE API — Global search
 // GET /api/v1/search?q=:query&types=patients,notes
 //
 // - Patients: fuzzy name + MRN search via pg_trgm similarity()
@@ -9,7 +9,7 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 
 const MAX_RESULTS_PER_TYPE = 10;
 

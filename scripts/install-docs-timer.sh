@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# MindLog Docs Agent — Systemd Timer Installer
+# COPE Docs Agent — Systemd Timer Installer
 #
 # Installs a systemd USER timer that runs docs-agent.sh every hour on the hour.
 # No root / sudo required — uses ~/.config/systemd/user/.
@@ -14,7 +14,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 AGENT_SCRIPT="${REPO_ROOT}/scripts/docs-agent.sh"
 SYSTEMD_USER_DIR="${HOME}/.config/systemd/user"
-SERVICE_NAME="mindlog-docs-agent"
+SERVICE_NAME="cope-docs-agent"
 
 # ── Uninstall path ────────────────────────────────────────────────────────────
 if [[ "${1:-}" == "--uninstall" ]]; then
@@ -48,7 +48,7 @@ mkdir -p "$SYSTEMD_USER_DIR"
 
 cat > "${SYSTEMD_USER_DIR}/${SERVICE_NAME}.service" <<SERVICE
 [Unit]
-Description=MindLog Docs Agent — regenerate README.md from source
+Description=COPE Docs Agent — regenerate README.md from source
 After=network-online.target
 
 [Service]
@@ -67,7 +67,7 @@ SERVICE
 
 cat > "${SYSTEMD_USER_DIR}/${SERVICE_NAME}.timer" <<TIMER
 [Unit]
-Description=MindLog Docs Agent — run every hour on the hour
+Description=COPE Docs Agent — run every hour on the hour
 
 [Timer]
 # Fire at the start of every hour (:00)

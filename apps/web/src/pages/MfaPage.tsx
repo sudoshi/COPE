@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — MFA verification page (TOTP)
+// COPE Web — MFA verification page (TOTP)
 // Shown after successful password login when clinician has MFA enabled.
 // Reads the partial token from sessionStorage, calls /auth/mfa/verify,
 // then stores the full session and redirects to the dashboard.
@@ -7,7 +7,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 import { api, ApiError } from '../services/api.js';
 import { authActions } from '../stores/auth.js';
 import { MFA_PARTIAL_TOKEN_KEY } from './LoginPage.js';

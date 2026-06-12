@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Reusable Card component (Phase 11d)
+// COPE Mobile — Reusable Card component (Phase 11d)
 // Provides consistent card styling across screens.
 // Optional `gradient` prop adds a top accent band using expo-linear-gradient.
 // =============================================================================
@@ -7,7 +7,7 @@
 import { View, StyleSheet } from 'react-native';
 import type { ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 
 interface CardProps {
   children: React.ReactNode;

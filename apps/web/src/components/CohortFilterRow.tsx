@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — CohortFilterRow
+// COPE Web — CohortFilterRow
 // A single filter criterion row: field selector + operator + value input.
 // =============================================================================
 

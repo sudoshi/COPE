@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — Live Data Simulation Engine
+// COPE — Live Data Simulation Engine
 //
 // Runs every 8 hours to simulate realistic patient activity and clinical
 // responses, maintaining a living demo environment.
@@ -21,7 +21,7 @@ import { sql, closeDb } from './client.js';
 
 const CONFIG = {
   // Demo org name - safety check
-  DEMO_ORG_NAME: 'MindLog Demo Clinic',
+  DEMO_ORG_NAME: 'COPE Demo Clinic',
 
   // Check-in probability by risk level
   CHECKIN_RATES: {
@@ -797,7 +797,7 @@ async function runSimulation(): Promise<void> {
   const timeOfDay = getTimeOfDay();
 
   console.log('\n════════════════════════════════════════════════════════');
-  console.log(`  MindLog Live Simulation — ${timeOfDay.charAt(0).toUpperCase() + timeOfDay.slice(1)} Run`);
+  console.log(`  COPE Live Simulation — ${timeOfDay.charAt(0).toUpperCase() + timeOfDay.slice(1)} Run`);
   console.log('════════════════════════════════════════════════════════\n');
 
   if (DRY_RUN) {

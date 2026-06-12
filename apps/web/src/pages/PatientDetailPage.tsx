@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Patient Detail Page
+// COPE Web — Patient Detail Page
 // 5 tabs: Overview · Mood Trends · Journal · Notes · Alerts
 // =============================================================================
 
@@ -17,7 +17,7 @@ import {
   Legend,
 } from 'recharts';
 import { format, parseISO, differenceInYears, subDays } from 'date-fns';
-import { MEDICATION_FREQUENCY_LABELS } from '@mindlog/shared';
+import { MEDICATION_FREQUENCY_LABELS } from '@cope/shared';
 import { api } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
 import { uiActions } from '../stores/ui.js';
@@ -1905,7 +1905,7 @@ function AiInsightsTab({
         <h3 style={{ color: TEXT, margin: '0 0 8px' }}>AI Insights Not Available</h3>
         <p style={{ color: SUB, maxWidth: 440, margin: '0 auto 16px', fontSize: 14, lineHeight: 1.6 }}>
           AI-powered clinical insights require either a signed Business Associate Agreement with Anthropic
-          or a local Ollama installation, plus <code>AI_INSIGHTS_ENABLED=true</code>. Contact your MindLog
+          or a local Ollama installation, plus <code>AI_INSIGHTS_ENABLED=true</code>. Contact your COPE
           administrator to enable this feature.
         </p>
       </div>

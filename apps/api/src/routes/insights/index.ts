@@ -1,12 +1,12 @@
 // =============================================================================
-// MindLog API — Patient insights routes
+// COPE API — Patient insights routes
 // GET /api/v1/insights/me?days=30   — aggregated trends + correlations for the
 //                                     authenticated patient
 // =============================================================================
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import { aiGate } from '../../middleware/aiGate.js';
 import { aiInsightsQueue, HIPAA_PREAMBLE, buildClinicalSnapshot } from '../../workers/ai-insights-worker.js';
 import { generateChat, computeCostCents, type ChatMessage } from '../../services/llmClient.js';

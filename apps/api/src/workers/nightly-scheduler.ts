@@ -1,18 +1,18 @@
 // =============================================================================
-// MindLog API — Nightly batch scheduler
+// COPE API — Nightly batch scheduler
 // Runs every night at 02:00 America/New_York (≈ 07:00 UTC) to:
 //   1. Evaluate RULE-002 (missed check-in) for all active patients
 //   2. Generate per-clinician population_snapshots for the dashboard KPI cards
 // =============================================================================
 
 import { Worker, Queue } from 'bullmq';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import { connection, rulesQueue, type RulesJobData } from './rules-engine.js';
 import { aiInsightsQueue, type AiInsightJobData } from './ai-insights-worker.js';
 import { omopExportQueue, type OmopExportJobData } from './omop-export-worker.js';
 import { config } from '../config.js';
 
-const SCHEDULER_QUEUE_NAME = 'mindlog-nightly';
+const SCHEDULER_QUEUE_NAME = 'cope-nightly';
 
 // ---------------------------------------------------------------------------
 // Snapshot generation

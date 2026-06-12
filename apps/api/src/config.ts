@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Environment configuration
+// COPE API — Environment configuration
 // All env vars are validated at startup. Missing required vars cause a crash.
 // =============================================================================
 
@@ -61,7 +61,7 @@ export const config = {
   // Notifications — Expo Push + Resend email
   expoPushAccessToken: process.env['EXPO_PUSH_ACCESS_TOKEN'] ?? '',
   resendApiKey: process.env['RESEND_API_KEY'] ?? '',
-  emailFrom: optional('EMAIL_FROM', 'alerts@mindlog.app'),
+  emailFrom: optional('EMAIL_FROM', 'alerts@cope.app'),
   webAppUrl: optional('WEB_APP_URL', 'http://localhost:5173'),
 
   // Observability

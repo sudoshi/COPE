@@ -3,7 +3,7 @@
 # Verifies that the Continue button is disabled on the mood step when no
 # mood score has been selected. Mood is the only required field in check-in.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

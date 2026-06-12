@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — @mindlog/db barrel export
+// COPE — @cope/db barrel export
 // =============================================================================
 
 export { sql, setRlsContext, closeDb } from './client.js';

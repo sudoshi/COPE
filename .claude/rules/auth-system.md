@@ -27,7 +27,7 @@ The following authentication system is production-deployed and MUST NOT be overw
 
 ## Dual Auth Architecture
 
-MindLog supports TWO authentication paths — both MUST be preserved:
+COPE supports TWO authentication paths — both MUST be preserved:
 
 1. **Direct bcrypt auth** — For demo users and users with password_hash set in DB
    - Login checks password_hash first; if present, verifies with bcrypt directly
@@ -41,7 +41,7 @@ MindLog supports TWO authentication paths — both MUST be preserved:
 1. Visitor clicks "Create Account" on login page
 2. Enters: first name, last name, email, phone (optional)
 3. Backend generates 12-char temp password (excludes I, l, O, 0)
-4. Temp password emailed via Resend API (from: MindLog <noreply@acumenus.net>)
+4. Temp password emailed via Resend API (from: COPE <noreply@acumenus.net>)
 5. Visitor logs in with temp password (direct bcrypt path)
 6. Non-dismissable ChangePasswordModal forces permanent password (min 8 chars)
 7. After password change: must_change_password = false, full app access
@@ -64,4 +64,4 @@ MindLog supports TWO authentication paths — both MUST be preserved:
 
 ## Resend Configuration
 - API Key: RESEND_API_KEY in .env and apps/api/.env
-- From: EMAIL_FROM env var (default: MindLog <noreply@acumenus.net>)
+- From: EMAIL_FROM env var (default: COPE <noreply@acumenus.net>)

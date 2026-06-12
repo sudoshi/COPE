@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Safety routes
+// COPE API — Safety routes
 //
 // Public:
 //   GET  /safety/resources                 — static crisis resource list
@@ -16,8 +16,8 @@
 
 import type { FastifyInstance, FastifyReply } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { UuidSchema, UpsertSafetyPlanSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { UuidSchema, UpsertSafetyPlanSchema } from '@cope/shared';
 
 // Static list — extend via DB table in a future phase if clinician-configurable
 // resources are needed.  These US resources are always safe to expose.

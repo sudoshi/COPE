@@ -1,11 +1,11 @@
-# MindLog Design System v2.1
+# COPE Design System v2.1
 ## Dark Theme — Clinical Intelligence Platform
 
 ---
 
 ## Overview
 
-MindLog v2.1 uses a dark theme design system with a **dark crimson / gold / dark grey** color palette. This document describes the implemented CSS architecture, tokens, and component styles.
+COPE v2.1 uses a dark theme design system with a **dark crimson / gold / dark grey** color palette. This document describes the implemented CSS architecture, tokens, and component styles.
 
 ### Design Philosophy
 

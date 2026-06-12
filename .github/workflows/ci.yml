@@ -1,5 +1,5 @@
 # =============================================================================
-# MindLog — CI Pipeline
+# COPE — CI Pipeline
 # =============================================================================
 
 name: CI
@@ -16,7 +16,7 @@ concurrency:
 
 env:
   NODE_VERSION: "22"
-  DATABASE_URL: postgresql://mindlog_test:test_pass@localhost:5432/mindlog_test
+  DATABASE_URL: postgresql://cope_test:test_pass@localhost:5432/cope_test
   REDIS_URL: redis://localhost:6379
   JWT_SECRET: ci-test-jwt-secret-not-for-production
   NODE_ENV: test
@@ -82,13 +82,13 @@ jobs:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_USER: mindlog_test
+          POSTGRES_USER: cope_test
           POSTGRES_PASSWORD: test_pass
-          POSTGRES_DB: mindlog_test
+          POSTGRES_DB: cope_test
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U mindlog_test"
+          --health-cmd="pg_isready -U cope_test"
           --health-interval=5s
           --health-timeout=5s
           --health-retries=10
@@ -148,7 +148,7 @@ jobs:
       - run: npm run build
         env:
           NODE_ENV: production
-          VITE_API_BASE: https://placeholder.mindlog.app
+          VITE_API_BASE: https://placeholder.cope.app
       - uses: actions/upload-artifact@v4
         with:
           name: web-dist

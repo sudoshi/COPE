@@ -4,7 +4,7 @@
 # remaining steps to reach the review/submit screen. Verifies that the
 # summary correctly reflects all entered values before submission.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

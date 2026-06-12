@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Patient routes (clinician-facing)
+// COPE API — Patient routes (clinician-facing)
 // GET    /api/v1/patients              — list caseload
 // GET    /api/v1/patients/:id          — patient detail
 // PATCH  /api/v1/patients/:id          — update profile/status
@@ -14,8 +14,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { PatientFilterSchema, UpdatePatientProfileSchema, UuidSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { PatientFilterSchema, UpdatePatientProfileSchema, UuidSchema } from '@cope/shared';
 import { auditLog } from '../../middleware/audit.js';
 import { publishPatientStatusChange } from '../../plugins/websocket.js';
 import patientMeRoutes from './me.js';

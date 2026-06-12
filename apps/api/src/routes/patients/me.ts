@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Patient self-management routes (patient-role only)
+// COPE API — Patient self-management routes (patient-role only)
 // All routes prefixed at /api/v1/patients/me
 //
 // GET    /patients/me                         — own profile
@@ -17,8 +17,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { UuidSchema, IntakeSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { UuidSchema, IntakeSchema } from '@cope/shared';
 
 const PatchMeSchema = z.object({
   preferred_name: z.string().max(100).optional(),

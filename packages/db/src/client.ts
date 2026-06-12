@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — PostgreSQL client (postgres.js)
+// COPE — PostgreSQL client (postgres.js)
 // =============================================================================
 
 import postgres from 'postgres';
@@ -16,7 +16,7 @@ if (!DATABASE_URL) {
  * Max connections default: 10. Adjust via DB_POOL_MAX env var.
  *
  * Usage:
- *   import { sql } from '@mindlog/db';
+ *   import { sql } from '@cope/db';
  *   const rows = await sql`SELECT * FROM patients WHERE id = ${id}`;
  */
 export const sql = postgres(DATABASE_URL, {

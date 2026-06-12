@@ -3,7 +3,7 @@
 # Selects only the required mood score (5), then skips every remaining
 # optional step to verify the minimum viable check-in submission works.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

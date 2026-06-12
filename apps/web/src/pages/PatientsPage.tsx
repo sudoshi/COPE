@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — All Patients page (new — matches prototype patients list view)
+// COPE Web — All Patients page (new — matches prototype patients list view)
 // Filter chips + sortable table with risk badges, mood, streak, last check-in.
 // =============================================================================
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# MindLog Platform Installer v1.0
+# COPE Platform Installer v1.0
 # Provisions a fresh Ubuntu server or developer workstation in Demo or
 # Production mode. Covers: Node.js, PostgreSQL 17, Redis 7, PM2, nginx,
 # Let's Encrypt, UFW, Android SDK, JDK 17, Expo CLI.
@@ -67,7 +67,7 @@ hr() {
 show_banner() {
   echo -e "${CYAN}${BOLD}"
   echo "  ╔══════════════════════════════════════════════════════════╗"
-  echo "  ║         MindLog Platform Installer  v1.0                ║"
+  echo "  ║         COPE Platform Installer  v1.0                ║"
   echo "  ║   Clinical Mental Health Monitoring Platform            ║"
   echo "  ║                                                          ║"
   echo "  ║   Supports: Demo mode  ·  Production mode               ║"
@@ -90,7 +90,7 @@ Options:
 Examples:
   sudo bash INSTALLER.sh
   sudo bash INSTALLER.sh --mode=demo --yes
-  sudo bash INSTALLER.sh --mode=production --dir=/opt/mindlog
+  sudo bash INSTALLER.sh --mode=production --dir=/opt/cope
 
 EOF
   exit 0
@@ -105,12 +105,12 @@ INSTALL_ANDROID=false
 INSTALL_DEMO_SEED=false
 
 # Production parameters
-APP_USER="mindlog"
-APP_NAME="mindlog"
+APP_USER="cope"
+APP_NAME="cope"
 DOMAIN=""
 ADMIN_EMAIL=""
-DB_NAME="mindlog_prod"
-DB_USER="mindlog_db"
+DB_NAME="cope_prod"
+DB_USER="cope_db"
 DB_PASSWORD=""
 REDIS_PASSWORD=""
 SUPABASE_URL=""
@@ -257,7 +257,7 @@ preflight_checks() {
   mem_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
   local mem_gb=$(( mem_kb / 1024 / 1024 ))
   if (( mem_gb < 3 )); then
-    print_warn "Only ${mem_gb} GB RAM detected. MindLog recommends at least 4 GB."
+    print_warn "Only ${mem_gb} GB RAM detected. COPE recommends at least 4 GB."
     confirm "Continue anyway?" || print_error "Aborted by user."
   else
     print_ok "${mem_gb} GB RAM available"
@@ -268,15 +268,15 @@ preflight_checks() {
   local free_gb
   free_gb=$(df -BG "$check_dir" 2>/dev/null | awk 'NR==2{gsub(/G/,"",$4); print $4}' || echo 0)
   if (( free_gb < 10 )); then
-    print_warn "Only ${free_gb} GB free on ${check_dir}. MindLog recommends at least 10 GB."
+    print_warn "Only ${free_gb} GB free on ${check_dir}. COPE recommends at least 10 GB."
     confirm "Continue anyway?" || print_error "Aborted by user."
   else
     print_ok "${free_gb} GB free disk space on ${check_dir}"
   fi
 
   # ── Existing installation sentinel ──
-  if [[ -n "$INSTALL_DIR" && -f "${INSTALL_DIR}/.mindlog-installed" ]]; then
-    print_warn "An existing MindLog installation was found at ${INSTALL_DIR}."
+  if [[ -n "$INSTALL_DIR" && -f "${INSTALL_DIR}/.cope-installed" ]]; then
+    print_warn "An existing COPE installation was found at ${INSTALL_DIR}."
     confirm "Overwrite existing installation?" || print_error "Aborted by user."
   fi
 
@@ -449,13 +449,13 @@ demo_flow() {
   fi
 
   # ── 6A-2  Locate / clone repo ─────────────────────────────────────────────
-  print_step "Locating MindLog repository"
+  print_step "Locating COPE repository"
   echo
   local default_dir
-  if [[ -f "$(pwd)/package.json" ]] && grep -q '"name": "mindlog"' "$(pwd)/package.json" 2>/dev/null; then
+  if [[ -f "$(pwd)/package.json" ]] && grep -q '"name": "cope"' "$(pwd)/package.json" 2>/dev/null; then
     default_dir="$(pwd)"
   else
-    default_dir="${HOME}/MindLog"
+    default_dir="${HOME}/COPE"
   fi
 
   if [[ -z "$INSTALL_DIR" ]]; then
@@ -465,7 +465,7 @@ demo_flow() {
   # If it looks like a URL, clone it
   if [[ "$INSTALL_DIR" =~ ^https?:// || "$INSTALL_DIR" =~ ^git@ ]]; then
     local repo_url="$INSTALL_DIR"
-    INSTALL_DIR="${HOME}/MindLog"
+    INSTALL_DIR="${HOME}/COPE"
     prompt INSTALL_DIR "Clone destination" "$INSTALL_DIR"
     if [[ -d "$INSTALL_DIR" ]]; then
       print_warn "Directory ${INSTALL_DIR} already exists."
@@ -545,7 +545,7 @@ demo_flow() {
 
   print_step "Seeding demo data"
   npm run demo:seed
-  print_ok "Demo data seeded (dr.kim@mindlogdemo.com, alice@mindlogdemo.com)"
+  print_ok "Demo data seeded (dr.kim@copedemo.com, alice@copedemo.com)"
 
   # ── 6A-8  Build web dashboard ─────────────────────────────────────────────
   print_step "Building web dashboard"
@@ -564,9 +564,9 @@ production_collect_params() {
   echo
 
   echo -e "  ${BOLD}── Application ──────────────────────────────────────────${RESET}"
-  [[ -z "$INSTALL_DIR" ]] && prompt INSTALL_DIR "Install directory" "/opt/mindlog"
-  prompt APP_USER "System user to run services" "mindlog"
-  prompt APP_NAME "PM2 app name prefix"         "mindlog"
+  [[ -z "$INSTALL_DIR" ]] && prompt INSTALL_DIR "Install directory" "/opt/cope"
+  prompt APP_USER "System user to run services" "cope"
+  prompt APP_NAME "PM2 app name prefix"         "cope"
 
   echo
   echo -e "  ${BOLD}── Domain & TLS ─────────────────────────────────────────${RESET}"
@@ -575,8 +575,8 @@ production_collect_params() {
 
   echo
   echo -e "  ${BOLD}── Database ─────────────────────────────────────────────${RESET}"
-  prompt DB_NAME "PostgreSQL database name" "mindlog_prod"
-  prompt DB_USER "PostgreSQL username"      "mindlog_db"
+  prompt DB_NAME "PostgreSQL database name" "cope_prod"
+  prompt DB_USER "PostgreSQL username"      "cope_db"
   local auto_db_pass
   auto_db_pass=$(generate_secret 24)
   echo -e "  ${DIM}(Enter a password or press Enter to use auto-generated)${RESET}"
@@ -611,7 +611,7 @@ production_collect_params() {
   echo -e "  ${BOLD}── Email — Resend API (optional) ────────────────────────${RESET}"
   echo -e "  ${DIM}Required for patient invite emails and welcome emails.${RESET}"
   prompt_secret RESEND_API_KEY "Resend API key (← hidden, Enter to skip)"
-  prompt EMAIL_FROM "Email from address" "MindLog <noreply@${DOMAIN}>"
+  prompt EMAIL_FROM "Email from address" "COPE <noreply@${DOMAIN}>"
 
   echo
   echo -e "  ${BOLD}── AI Insights — Anthropic (optional) ──────────────────${RESET}"
@@ -803,7 +803,7 @@ https://packages.redis.io/deb $(lsb_release -cs) main" \
   fi
 
   sudo tee "${INSTALL_DIR}/.env" >/dev/null <<ENV
-# MindLog Production Configuration
+# COPE Production Configuration
 # Generated by INSTALLER.sh on $(date -u)
 # ─────────────────────────────────────────────────────────────
 # SECURITY: This file contains secrets. chmod 600 is enforced.
@@ -856,7 +856,7 @@ CRISIS_TEXT_NUMBER=${CRISIS_TEXT_NUMBER}
 CRISIS_TEXT_NAME=${CRISIS_TEXT_NAME}
 
 # File Storage
-STORAGE_BUCKET_REPORTS=mindlog-reports
+STORAGE_BUCKET_REPORTS=cope-reports
 
 # Compliance flags
 ANTHROPIC_BAA_SIGNED=${ANTHROPIC_BAA_SIGNED}
@@ -969,7 +969,7 @@ ECOSYS
 
   # Write virtual host (HTTP-only first; certbot will add SSL blocks)
   sudo tee "/etc/nginx/sites-available/${APP_NAME}" >/dev/null <<NGINX
-# MindLog nginx configuration
+# COPE nginx configuration
 # Generated by INSTALLER.sh on $(date -u)
 # Certbot will add/modify SSL blocks below.
 
@@ -1105,7 +1105,7 @@ LOGROTATE
   print_step "Writing install summary"
   local summary_file="${INSTALL_DIR}/.install-summary"
   sudo tee "$summary_file" >/dev/null <<SUMMARY
-MindLog Production Installation Summary
+COPE Production Installation Summary
 Generated: $(date -u)
 ══════════════════════════════════════════════════════════════
 
@@ -1162,7 +1162,7 @@ SUMMARY
   print_ok "Install summary written to ${summary_file} (chmod 600)"
 
   # Mark installation complete
-  sudo -u "$APP_USER" touch "${INSTALL_DIR}/.mindlog-installed"
+  sudo -u "$APP_USER" touch "${INSTALL_DIR}/.cope-installed"
 }
 
 # =============================================================================
@@ -1236,7 +1236,7 @@ https://packages.adoptium.net/artifactory/deb ${codename} main" \
   local profile="${real_home}/.profile"
 
   local env_block="
-# ── Android SDK (added by MindLog INSTALLER.sh) ──────────
+# ── Android SDK (added by COPE INSTALLER.sh) ──────────
 export ANDROID_HOME=\"${android_home}\"
 export JAVA_HOME=\$(dirname \$(dirname \$(readlink -f \$(which java))))
 export PATH=\"\$PATH:\$ANDROID_HOME/emulator:\$ANDROID_HOME/platform-tools:\$ANDROID_HOME/cmdline-tools/latest/bin\"
@@ -1266,15 +1266,15 @@ export PATH=\"\$PATH:\$ANDROID_HOME/emulator:\$ANDROID_HOME/platform-tools:\$AND
 
   # ── Optional AVD creation ─────────────────────────────────────────────────
   echo
-  if confirm "Create a default Android Virtual Device (MindLog_API35 emulator)?" "Y"; then
+  if confirm "Create a default Android Virtual Device (COPE_API35 emulator)?" "Y"; then
     local avdmgr="${android_home}/cmdline-tools/latest/bin/avdmanager"
     if sudo -u "$real_user" "$avdmgr" create avd \
-      --name "MindLog_API35" \
+      --name "COPE_API35" \
       --package "system-images;android-35;google_apis;x86_64" \
       --device "pixel_6" \
       --force 2>/dev/null; then
-      print_ok "AVD 'MindLog_API35' created (Pixel 6, Android 35, Google APIs)"
-      print_info "  Start it with: emulator -avd MindLog_API35"
+      print_ok "AVD 'COPE_API35' created (Pixel 6, Android 35, Google APIs)"
+      print_info "  Start it with: emulator -avd COPE_API35"
     else
       print_warn "AVD creation failed — you can create one manually with Android Studio."
     fi
@@ -1289,7 +1289,7 @@ print_final_summary() {
   echo
   echo -e "${GREEN}${BOLD}"
   echo "  ╔══════════════════════════════════════════════════════════╗"
-  echo "  ║          MindLog Installation Complete!                 ║"
+  echo "  ║          COPE Installation Complete!                 ║"
   echo "  ╚══════════════════════════════════════════════════════════╝"
   echo -e "${RESET}"
 
@@ -1311,8 +1311,8 @@ print_final_summary() {
     MailHog:    http://localhost:8025
 
   ${BOLD}Demo credentials:${RESET}
-    Clinician:  dr.kim@mindlogdemo.com  /  Demo@Clinic1!
-    Patient:    alice@mindlogdemo.com   /  Demo@Patient1!
+    Clinician:  dr.kim@copedemo.com  /  Demo@Clinic1!
+    Patient:    alice@copedemo.com   /  Demo@Patient1!
 
   ${BOLD}Stop infrastructure:${RESET}
     npm run demo:infra:stop
@@ -1347,7 +1347,7 @@ PROD_SUMMARY
   ${BOLD}Android SDK:${RESET}
     ANDROID_HOME=${real_home}/Android/Sdk
     Activate PATH:     source ~/.bashrc
-    Start emulator:    emulator -avd MindLog_API35
+    Start emulator:    emulator -avd COPE_API35
     Run mobile app:    cd ${INSTALL_DIR}/apps/mobile
                        EXPO_PUBLIC_API_BASE=http://10.0.2.2:3000 npx expo start --android
 

@@ -1,7 +1,7 @@
 // =============================================================================
-// MindLog API — OMOP CDM v5.4 Concept Mappings
+// COPE API — OMOP CDM v5.4 Concept Mappings
 //
-// Static concept_id mappings for transforming MindLog clinical data into
+// Static concept_id mappings for transforming COPE clinical data into
 // OMOP CDM format. All IDs sourced from Athena (OHDSI) vocabulary.
 //
 // Pure data — no I/O, no side effects. Version-controlled and testable.

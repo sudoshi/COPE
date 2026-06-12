@@ -1,7 +1,7 @@
 // =============================================================================
-// MindLog Web — AppShell layout
+// COPE Web — AppShell layout
 // 220px sidebar + 56px topbar + scrollable content area.
-// Matches prototype: COPEApp-Prototype/mindlog-clinician.html
+// Matches prototype: COPEApp-Prototype/cope-clinician.html
 // =============================================================================
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -11,7 +11,7 @@ import { useAlertSocket } from '../hooks/useAlertSocket.js';
 import { useAuthStore, authActions } from '../stores/auth.js';
 import { useUiStore } from '../stores/ui.js';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
-import { API_PREFIX } from '@mindlog/shared';
+import { API_PREFIX } from '@cope/shared';
 import { InvitePatientModal } from './InvitePatientModal.js';
 import { GlobalSearch } from './GlobalSearch.js';
 import { QuickNotePanel } from './QuickNotePanel.js';
@@ -210,7 +210,7 @@ export function AppShell() {
   const isPatientDetail = location.pathname.startsWith('/patients/') && location.pathname !== '/patients';
   const currentTopbar = isPatientDetail
     ? { title: patientName ?? 'Patient Detail', subtitle: patientName ? 'Clinical overview and entries' : 'Loading…' }
-    : (topbarConfig[location.pathname] ?? { title: 'MindLog Clinical', subtitle: '' });
+    : (topbarConfig[location.pathname] ?? { title: 'COPE Clinical', subtitle: '' });
 
   // Search handler
   const handleSearchKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -229,7 +229,7 @@ export function AppShell() {
       <aside className="sidebar" data-testid="sidebar">
         {/* Brand */}
         <div className="sidebar-brand">
-          <div className="brand-name">Mind<em>Log</em> Clinical</div>
+          <div className="brand-name">CO<em>PE</em> Clinical</div>
           <div className="brand-role">Population Health Dashboard</div>
         </div>
 

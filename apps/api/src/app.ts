@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Fastify application factory
+// COPE API — Fastify application factory
 // Separated from server.ts to enable testing without starting a server.
 // =============================================================================
 

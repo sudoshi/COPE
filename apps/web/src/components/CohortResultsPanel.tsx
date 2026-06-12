@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — CohortResultsPanel
+// COPE Web — CohortResultsPanel
 // Results table + analytics charts + export for Cohort Builder v2.
 // =============================================================================
 
@@ -9,7 +9,7 @@ import {
   ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
 } from 'recharts';
-import type { CohortFilterGroup } from '@mindlog/shared';
+import type { CohortFilterGroup } from '@cope/shared';
 import { api, ApiError } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
 

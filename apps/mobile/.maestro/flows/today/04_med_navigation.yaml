@@ -5,7 +5,7 @@
 # appears if the patient has active prescriptions, so all assertions after
 # scrolling use optional: true.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

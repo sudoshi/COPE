@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Auth routes
+// COPE API — Auth routes
 // POST /api/v1/auth/login           — clinician OR patient login (bcrypt + Supabase)
 // POST /api/v1/auth/register-demo   — public demo clinician registration
 // POST /api/v1/auth/change-password — authenticated password change
@@ -12,8 +12,8 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
-import { sql } from '@mindlog/db';
-import { LoginSchema, RefreshTokenSchema, RegisterSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { LoginSchema, RefreshTokenSchema, RegisterSchema } from '@cope/shared';
 import { config } from '../config.js';
 import { auditLog } from '../middleware/audit.js';
 import { sendWelcomeEmail, sendCredentialsEmail } from '../services/messaging.js';
@@ -42,20 +42,20 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
     if (config.isDev && body.email === 'admin' && body.password === 'admin') {
       // Check for existing dev admin clinician, or create one on-the-fly
       let [devOrg] = await sql<{ id: string }[]>`
-        SELECT id FROM organisations WHERE name = 'MindLog Dev' LIMIT 1
+        SELECT id FROM organisations WHERE name = 'COPE Dev' LIMIT 1
       `;
 
       if (!devOrg) {
         [devOrg] = await sql<{ id: string }[]>`
           INSERT INTO organisations (name, type, timezone, locale)
-          VALUES ('MindLog Dev', 'clinic', 'America/New_York', 'en-US')
+          VALUES ('COPE Dev', 'clinic', 'America/New_York', 'en-US')
           RETURNING id
         `;
       }
 
       let [devAdmin] = await sql<{ id: string; organisation_id: string }[]>`
         SELECT id, organisation_id FROM clinicians
-        WHERE email = 'admin@mindlog.dev' AND is_active = TRUE
+        WHERE email = 'admin@cope.dev' AND is_active = TRUE
         LIMIT 1
       `;
 
@@ -64,7 +64,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
           INSERT INTO clinicians (
             organisation_id, email, first_name, last_name, title, role, mfa_enabled
           ) VALUES (
-            ${devOrg!.id}::UUID, 'admin@mindlog.dev', 'System', 'Administrator', 'Dr', 'admin', FALSE
+            ${devOrg!.id}::UUID, 'admin@cope.dev', 'System', 'Administrator', 'Dr', 'admin', FALSE
           )
           RETURNING id, organisation_id
         `;
@@ -74,7 +74,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
 
       const payload: JwtPayload = {
         sub: devAdmin.id,
-        email: 'admin@mindlog.dev',
+        email: 'admin@cope.dev',
         role: 'admin',
         org_id: devAdmin.organisation_id,
       };
@@ -101,7 +101,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
           clinician_id: devAdmin.id,
           org_id: devAdmin.organisation_id,
           role: 'admin',  // Special admin role for frontend routing
-          user: { id: devAdmin.id, email: 'admin@mindlog.dev', role: 'admin', org_id: devAdmin.organisation_id },
+          user: { id: devAdmin.id, email: 'admin@cope.dev', role: 'admin', org_id: devAdmin.organisation_id },
         },
       });
     }
@@ -413,7 +413,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
     // Hash with bcrypt (12 rounds)
     const passwordHash = await bcrypt.hash(tempPassword, 12);
 
-    // Demo org: MindLog Demo Clinic
+    // Demo org: COPE Demo Clinic
     const DEMO_ORG_ID = 'f46cc7e7-163a-4291-acc3-148044a5b232';
 
     // Insert clinician with 'researcher' role (safe default within CHECK constraint)

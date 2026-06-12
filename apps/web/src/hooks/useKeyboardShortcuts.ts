@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — useKeyboardShortcuts hook
+// COPE Web — useKeyboardShortcuts hook
 // Registers global keyboard shortcuts for the clinician dashboard.
 //
 // Shortcuts (only fire when not typing in an input):

@@ -1,4 +1,4 @@
-# MindLog Mobile App — Setup
+# COPE Mobile App — Setup
 
 ## Moving COPE-new into the monorepo
 
@@ -28,7 +28,7 @@ these are replaced by the versions in `apps/mobile/`.
 npm install
 
 # Verify TypeScript
-npm run typecheck --filter=@mindlog/mobile
+npm run typecheck --filter=@cope/mobile
 
 # Start in development
 cd apps/mobile && npx expo start
@@ -52,13 +52,13 @@ npx expo run:android
 
 ## Key changes from COPE-new
 
-| Setting | COPE-new | MindLog |
+| Setting | COPE-new | COPE |
 |---|---|---|
-| App name | `COPE-new` | `MindLog` |
-| Slug | `COPE-new` | `mindlog` |
-| Bundle ID (iOS) | `com.anonymous.COPE-new` | `com.mindlog.app` |
-| Android package | — | `com.mindlog.app` |
-| URL scheme | `myapp` | `mindlog` |
+| App name | `COPE-new` | `COPE` |
+| Slug | `COPE-new` | `cope` |
+| Bundle ID (iOS) | `com.anonymous.COPE-new` | `com.cope.app` |
+| Android package | — | `com.cope.app` |
+| URL scheme | `myapp` | `cope` |
 | Splash background | `#ffffff` | `#0c0f18` |
 | New dependencies | — | WatermelonDB, expo-secure-store, expo-local-authentication |
 

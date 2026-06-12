@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Report generation worker
+// COPE API — Report generation worker
 // BullMQ Worker: fetches patient data → renders HTML → Puppeteer PDF
 //               → uploads to Supabase Storage → notifies clinician.
 //
@@ -12,7 +12,7 @@
 // =============================================================================
 
 import { Worker, Queue, type Job } from 'bullmq';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import { config } from '../config.js';
 import { connection } from './rules-engine.js';
 
@@ -20,7 +20,7 @@ import { connection } from './rules-engine.js';
 // Queue
 // ---------------------------------------------------------------------------
 
-export const REPORT_QUEUE_NAME = 'mindlog-reports';
+export const REPORT_QUEUE_NAME = 'cope-reports';
 export const reportQueue = new Queue(REPORT_QUEUE_NAME, { connection });
 
 // ---------------------------------------------------------------------------
@@ -420,7 +420,7 @@ function renderHtml(job: ReportJobDataWithPatient, data: Awaited<ReturnType<type
   <!-- Header -->
   <div class="header">
     <div>
-      <div class="brand">MindLog</div>
+      <div class="brand">COPE</div>
       <div style="font-size:11px;color:#888;margin-top:2px">Clinical Documentation Platform</div>
     </div>
     <div class="report-meta">
@@ -529,7 +529,7 @@ function renderHtml(job: ReportJobDataWithPatient, data: Awaited<ReturnType<type
       <thead><tr><th>Date</th><th>Title</th><th>Mood</th></tr></thead>
       <tbody>${journalRows}</tbody>
     </table>
-    <div style="font-size:10px;color:#aaa;margin-top:6px">Journal entry bodies are not included in this report. View full entries in the MindLog clinician dashboard.</div>
+    <div style="font-size:10px;color:#aaa;margin-top:6px">Journal entry bodies are not included in this report. View full entries in the COPE clinician dashboard.</div>
   </div>` : ''}
 
   <!-- Clinician notes -->
@@ -552,7 +552,7 @@ function renderHtml(job: ReportJobDataWithPatient, data: Awaited<ReturnType<type
   <!-- Footer -->
   <div class="footer">
     <div>
-      MindLog Clinical Documentation &nbsp;·&nbsp; Confidential — Not for distribution outside care team
+      COPE Clinical Documentation &nbsp;·&nbsp; Confidential — Not for distribution outside care team
     </div>
     <div>
       Report ID: ${job.reportId.slice(0, 8).toUpperCase()}
@@ -639,11 +639,11 @@ async function notifyClinicianReportReady(
         Download PDF
       </a>
       <p style="color:#aaa;font-size:11px;margin-top:16px">
-        This link expires in 7 days. Re-generate from the MindLog dashboard if needed.
+        This link expires in 7 days. Re-generate from the COPE dashboard if needed.
       </p>
       <hr style="margin-top:24px;border:none;border-top:1px solid #eee"/>
       <p style="font-size:11px;color:#aaa">
-        MindLog &nbsp;·&nbsp; 988 Suicide &amp; Crisis Lifeline: Call or text 988 &nbsp;·&nbsp;
+        COPE &nbsp;·&nbsp; 988 Suicide &amp; Crisis Lifeline: Call or text 988 &nbsp;·&nbsp;
         Crisis Text Line: Text HOME to 741741
       </p>
     </div>`;

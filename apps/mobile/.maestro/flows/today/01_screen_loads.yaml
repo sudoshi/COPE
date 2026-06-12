@@ -3,7 +3,7 @@
 # Verifies that the Today screen renders its core elements after login:
 # greeting, daily check-in card, stat cards, and safety card with crisis info.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

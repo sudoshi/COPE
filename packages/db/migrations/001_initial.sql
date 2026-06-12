@@ -1,5 +1,5 @@
 -- =============================================================================
--- MindLog — Migration 001: Initial Schema
+-- COPE — Migration 001: Initial Schema
 -- PostgreSQL 15+
 -- Run via: npm run db:migrate (from packages/db)
 -- =============================================================================

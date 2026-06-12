@@ -1,5 +1,5 @@
 -- =============================================================================
--- MindLog — Migration 003: Medications adherence log refactor
+-- COPE — Migration 003: Medications adherence log refactor
 -- Decouples medication_adherence_logs from daily_entries so patients can log
 -- adherence independently (not just during check-in).
 -- =============================================================================

@@ -5,7 +5,7 @@
 # readers can announce actionable controls to visually impaired users.
 # FDA SaMD — WCAG 2.1 AA compliance checkpoint.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

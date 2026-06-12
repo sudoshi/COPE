@@ -4,7 +4,7 @@
 # respective sub-screen and that the user can return to the Profile screen.
 # Tests: Notifications, Privacy & Consent.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

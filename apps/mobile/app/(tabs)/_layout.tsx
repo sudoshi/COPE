@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 

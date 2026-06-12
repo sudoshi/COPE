@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Auth store
+// COPE Web — Auth store
 // In-memory auth state with optional localStorage/sessionStorage persistence.
 // Remember Me = true  → localStorage  (survives tab/browser close)
 // Remember Me = false → sessionStorage (survives refresh, cleared on tab close)
@@ -23,13 +23,13 @@ interface AuthState {
 // ---------------------------------------------------------------------------
 
 const KEYS = {
-  accessToken:        'ml_access_token',
-  refreshToken:       'ml_refresh_token',
-  tokenExpiresAt:     'ml_token_expires_at',
-  clinicianId:        'ml_clinician_id',
-  orgId:              'ml_org_id',
-  role:               'ml_role',
-  mustChangePassword: 'ml_must_change_password',
+  accessToken:        'cope_access_token',
+  refreshToken:       'cope_refresh_token',
+  tokenExpiresAt:     'cope_token_expires_at',
+  clinicianId:        'cope_clinician_id',
+  orgId:              'cope_org_id',
+  role:               'cope_role',
+  mustChangePassword: 'cope_must_change_password',
 } as const;
 
 // ---------------------------------------------------------------------------

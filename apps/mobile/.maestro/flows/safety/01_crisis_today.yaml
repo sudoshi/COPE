@@ -5,7 +5,7 @@
 # crisis contact numbers: 988 (Suicide & Crisis Lifeline) and 741741 (Crisis
 # Text Line). These MUST be visible to every authenticated patient.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

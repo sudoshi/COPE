@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# MindLog Auto-Deploy Daemon
+# COPE Auto-Deploy Daemon
 # Deploys when a new commit lands on the checked-out branch (local HEAD moves).
 # Uncommitted working-tree edits do NOT trigger deploys — production only runs
 # committed code. For an emergency working-tree deploy without a commit:
-#   touch /tmp/.mindlog-force-deploy
+#   touch /tmp/.cope-force-deploy
 #
-# Usage: runs as systemd service (mindlog-auto-deploy.service)
+# Usage: runs as systemd service (cope-auto-deploy.service)
 
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-LAST_DEPLOYED_FILE="/tmp/.mindlog-last-deploy-commit"
-FORCE_FILE="/tmp/.mindlog-force-deploy"
-LOCK_FILE="/tmp/.mindlog-deploy.lock"
+LAST_DEPLOYED_FILE="/tmp/.cope-last-deploy-commit"
+FORCE_FILE="/tmp/.cope-force-deploy"
+LOCK_FILE="/tmp/.cope-deploy.lock"
 INTERVAL=60
 
 cd "$REPO_ROOT"
@@ -39,11 +39,11 @@ deploy() {
     log "Rebuilding at commit ${head:0:7}..."
     if sudo -u smudoshi npm run build --silent 2>&1; then
         log "Build succeeded. Restarting services..."
-        /usr/bin/systemctl restart mindlog-api mindlog-worker
+        /usr/bin/systemctl restart cope-api cope-worker
         sleep 2
 
-        API_STATUS=$(systemctl is-active mindlog-api 2>/dev/null || true)
-        WORKER_STATUS=$(systemctl is-active mindlog-worker 2>/dev/null || true)
+        API_STATUS=$(systemctl is-active cope-api 2>/dev/null || true)
+        WORKER_STATUS=$(systemctl is-active cope-worker 2>/dev/null || true)
 
         if [ "$API_STATUS" = "active" ] && [ "$WORKER_STATUS" = "active" ]; then
             echo "$head" > "$LAST_DEPLOYED_FILE"

@@ -4,7 +4,7 @@
 # screen. Checks for the screen title, the "+" Add button, and either
 # medication cards (demo patient) or the "No medications yet" empty state.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

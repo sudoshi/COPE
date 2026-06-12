@@ -1,6 +1,6 @@
-# MindLog — Demo Setup Guide
+# COPE — Demo Setup Guide
 
-Get the full MindLog suite running locally in about 5 minutes.
+Get the full COPE suite running locally in about 5 minutes.
 
 ---
 
@@ -76,7 +76,7 @@ docker ps  # all three should show (healthy)
 
 ```bash
 npm install
-npx turbo run build --filter=@mindlog/shared --filter=@mindlog/db
+npx turbo run build --filter=@cope/shared --filter=@cope/db
 ```
 
 ---
@@ -149,18 +149,18 @@ Login with any clinician account:
 
 | Email | Role | Patients |
 |-------|------|----------|
-| `dr.kim@mindlogdemo.com` | Psychiatrist | 22 |
-| `dr.torres@mindlogdemo.com` | Psychiatrist | 22 |
-| `dr.walsh@mindlogdemo.com` | Psychiatrist | 20 |
-| `dr.okafor@mindlogdemo.com` | Psychologist | 20 |
-| `dr.patel@mindlogdemo.com` | Psychologist | 20 |
-| `dr.johnson@mindlogdemo.com` | Care Coordinator | 20 |
-| `np.zhang@mindlogdemo.com` | Psychiatric NP | 22 |
+| `dr.kim@copedemo.com` | Psychiatrist | 22 |
+| `dr.torres@copedemo.com` | Psychiatrist | 22 |
+| `dr.walsh@copedemo.com` | Psychiatrist | 20 |
+| `dr.okafor@copedemo.com` | Psychologist | 20 |
+| `dr.patel@copedemo.com` | Psychologist | 20 |
+| `dr.johnson@copedemo.com` | Care Coordinator | 20 |
+| `np.zhang@copedemo.com` | Psychiatric NP | 22 |
 
 **Password for all clinicians:** `Demo@Clinic1!`
 
 **Suggested demo flow:**
-1. Login as `dr.kim@mindlogdemo.com`
+1. Login as `dr.kim@copedemo.com`
 2. Dashboard → KPI overview (caseload, active alerts, mood averages)
 3. Click into **Bob Williams** → Mood trend, active alerts, medications tab
 4. Open **Alerts** page → filter by critical/unacknowledged
@@ -194,10 +194,10 @@ Login with any clinician account:
 
 | Email | Password | Story |
 |-------|----------|-------|
-| `alice@mindlogdemo.com` | `Demo@Patient1!` | Recovering — 58/60 day streak, improving mood (5→8) |
-| `bob@mindlogdemo.com` | `Demo@Patient1!` | Volatile — mood swings 2–7, active alerts |
-| `carol@mindlogdemo.com` | `Demo@Patient1!` | Stable — perfect 60-day streak, consistently high |
-| `david@mindlogdemo.com` | `Demo@Patient1!` | Crisis — declining mood, critical alerts pending |
+| `alice@copedemo.com` | `Demo@Patient1!` | Recovering — 58/60 day streak, improving mood (5→8) |
+| `bob@copedemo.com` | `Demo@Patient1!` | Volatile — mood swings 2–7, active alerts |
+| `carol@copedemo.com` | `Demo@Patient1!` | Stable — perfect 60-day streak, consistently high |
+| `david@copedemo.com` | `Demo@Patient1!` | Crisis — declining mood, critical alerts pending |
 
 **All other patients** also use password: `Demo@Patient1!`
 
@@ -267,7 +267,7 @@ docker compose -f docker-compose.demo.yml logs
 ### Database migration errors
 Ensure PostgreSQL is healthy before migrating:
 ```bash
-docker exec mindlog-demo-postgres pg_isready -U postgres -d mindlogdemo
+docker exec cope-demo-postgres pg_isready -U postgres -d copedemo
 ```
 
 ---

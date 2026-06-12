@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — MFA verification screen
+// COPE Mobile — MFA verification screen
 // Shown after successful password auth when the clinician account has TOTP enabled.
 // Reads the partial token from SecureStore, calls /auth/mfa/verify, then
 // stores the full session and navigates to the main app.
@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS, CRISIS_CONTACTS } from '@mindlog/shared';
+import { DESIGN_TOKENS, CRISIS_CONTACTS } from '@cope/shared';
 import {
   getMfaPartialToken, clearMfaPartialToken, storeSession, clearSession, apiFetch,
 } from '../services/auth';

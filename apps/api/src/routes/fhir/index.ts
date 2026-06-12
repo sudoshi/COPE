@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — FHIR R4 Routes
+// COPE API — FHIR R4 Routes
 //
 // All responses use Content-Type: application/fhir+json; fhirVersion=4.0
 // All endpoints require clinician or admin JWT (except GET /fhir/metadata).
@@ -21,8 +21,8 @@
 
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { UuidSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { UuidSchema } from '@cope/shared';
 import {
   mapPatient,
   mapDailyEntryObservations,
@@ -354,7 +354,7 @@ export default async function fhirRoutes(fastify: FastifyInstance): Promise<void
 
       // questionnaire param may be a LOINC URL or our internal scale code
       const scaleCode = questionnaire
-        ? questionnaire.replace(/^urn:mindlog:assessment:/, '').toUpperCase()
+        ? questionnaire.replace(/^urn:cope:assessment:/, '').toUpperCase()
         : null;
 
       const rows = await sql<AssessmentRow[]>`
@@ -492,7 +492,7 @@ export default async function fhirRoutes(fastify: FastifyInstance): Promise<void
             display: 'Assessment and Plan of Treatment',
           }],
         }],
-        title: 'MindLog Care Plan',
+        title: 'COPE Care Plan',
         subject: { reference: `${base}/Patient/${pid}` },
         ...(safetyPlan && {
           activity: [

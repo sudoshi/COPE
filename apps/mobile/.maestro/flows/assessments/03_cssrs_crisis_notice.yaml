@@ -8,7 +8,7 @@
 # Note: This flow depends on the demo patient having a pending C-SSRS assessment.
 # If no banner is available, the flow gracefully skips with optional: true.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

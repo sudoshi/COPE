@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Journal entry routes
+// COPE API — Journal entry routes
 // POST  /api/v1/journal              — create entry (linked to daily entry)
 // GET   /api/v1/journal              — list patient's entries (paginated)
 // GET   /api/v1/journal/:id          — get single entry
@@ -10,8 +10,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { CreateJournalEntrySchema, UpdateJournalEntrySchema, PaginationSchema, UuidSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { CreateJournalEntrySchema, UpdateJournalEntrySchema, PaginationSchema, UuidSchema } from '@cope/shared';
 import { auditLog } from '../../middleware/audit.js';
 
 export default async function journalRoutes(fastify: FastifyInstance): Promise<void> {

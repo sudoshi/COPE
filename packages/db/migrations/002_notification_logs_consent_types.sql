@@ -1,5 +1,5 @@
 -- =============================================================================
--- MindLog Migration 002 — notification_logs + consent_type expansion
+-- COPE Migration 002 — notification_logs + consent_type expansion
 -- Run after 001_initial.sql
 -- =============================================================================
 

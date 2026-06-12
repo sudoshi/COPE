@@ -3,7 +3,7 @@
 # Verifies that tapping sign-in without entering any credentials
 # triggers a client-side validation error.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 
@@ -17,7 +17,7 @@ appId: com.mindlog.app
 # Verify onboarding screen loaded
 - extendedWaitUntil:
     visible:
-      text: "MindLog"
+      text: "COPE"
     timeout: 10000
 
 # Switch to the Sign In tab

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# MindLog Live Simulation - Cron Setup Script
+# COPE Live Simulation - Cron Setup Script
 #
 # This script adds the live data simulation to your crontab,
 # running every 8 hours (6am, 2pm, 10pm) to maintain realistic demo data.
@@ -18,8 +18,8 @@ set -e
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-LOG_FILE="${LOG_FILE:-/tmp/mindlog-simulation.log}"
-CRON_MARKER="# MindLog Live Simulation"
+LOG_FILE="${LOG_FILE:-/tmp/cope-simulation.log}"
+CRON_MARKER="# COPE Live Simulation"
 
 # Colors for output
 RED='\033[0;31m'
@@ -94,7 +94,7 @@ generate_cron_command() {
 # Check current status
 check_status() {
     if crontab -l 2>/dev/null | grep -q "$CRON_MARKER"; then
-        print_success "MindLog simulation cron job is INSTALLED"
+        print_success "COPE simulation cron job is INSTALLED"
         echo ""
         echo "Current cron entry:"
         crontab -l | grep "$CRON_MARKER"
@@ -103,7 +103,7 @@ check_status() {
         echo "Log file: $LOG_FILE"
         return 0
     else
-        print_warning "MindLog simulation cron job is NOT installed"
+        print_warning "COPE simulation cron job is NOT installed"
         return 1
     fi
 }
@@ -146,7 +146,7 @@ remove_cron_job() {
     local quiet=$2
 
     if ! crontab -l 2>/dev/null | grep -q "$CRON_MARKER"; then
-        [[ "$quiet" != "quiet" ]] && print_warning "No MindLog simulation cron job found"
+        [[ "$quiet" != "quiet" ]] && print_warning "No COPE simulation cron job found"
         return 0
     fi
 
@@ -171,7 +171,7 @@ run_once() {
 main() {
     echo ""
     echo "════════════════════════════════════════════════════════"
-    echo "  MindLog Live Simulation - Cron Setup"
+    echo "  COPE Live Simulation - Cron Setup"
     echo "════════════════════════════════════════════════════════"
     echo ""
 
@@ -209,7 +209,7 @@ main() {
                 echo ""
                 echo "Environment:"
                 echo "  DATABASE_URL   PostgreSQL connection string (required)"
-                echo "  LOG_FILE       Log file path (default: /tmp/mindlog-simulation.log)"
+                echo "  LOG_FILE       Log file path (default: /tmp/cope-simulation.log)"
                 echo ""
                 exit 0
                 ;;

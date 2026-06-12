@@ -1,4 +1,4 @@
-# MindLog Web Application — Broken Links & Non-functional Features Worklist
+# COPE Web Application — Broken Links & Non-functional Features Worklist
 
 **Generated:** 2026-02-23
 **Status:** Active

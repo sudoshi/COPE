@@ -1,11 +1,11 @@
 // =============================================================================
-// MindLog Mobile — Journal tab
+// COPE Mobile — Journal tab
 // =============================================================================
 
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 import { COLOR, FONTS } from '../../constants/DesignTokens';
 import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';

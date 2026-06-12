@@ -5,7 +5,7 @@
 # conditional — they only appear when a weekly check-in is due, so all
 # assertions use optional: true.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

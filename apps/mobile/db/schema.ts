@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — WatermelonDB schema
+// COPE Mobile — WatermelonDB schema
 // Mirrors the server-side PostgreSQL schema for offline-first sync.
 // Only tables relevant to patient self-service are included.
 // =============================================================================

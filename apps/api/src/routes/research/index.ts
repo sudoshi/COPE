@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Research Export Routes
+// COPE API — Research Export Routes
 //
 // IRB-approved de-identified data exports for clinical research.
 // All data is de-identified via HIPAA Safe Harbour method before export.
@@ -24,13 +24,13 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import {
   UuidSchema, PaginationSchema, CreateResearchExportSchema, CreateCohortSchema,
   CohortQuerySchema, CohortCountSchema, CreateCohortSchemaV2, UpdateCohortSchemaV2,
   TriggerOmopExportSchema,
   type CohortFilterGroup,
-} from '@mindlog/shared';
+} from '@cope/shared';
 import { omopExportQueue, type OmopExportJobData } from '../../workers/omop-export-worker.js';
 import { queryCohort, countCohort, captureCohortSnapshot } from '../../services/cohortQueryEngine.js';
 import { connection } from '../../workers/rules-engine.js';
@@ -40,7 +40,7 @@ import { Queue } from 'bullmq';
 // Research export queue (separate from report queue for isolation)
 // ---------------------------------------------------------------------------
 
-const RESEARCH_QUEUE_NAME = 'mindlog-research-exports';
+const RESEARCH_QUEUE_NAME = 'cope-research-exports';
 export const researchQueue = new Queue(RESEARCH_QUEUE_NAME, { connection });
 
 export interface ResearchExportJobData {

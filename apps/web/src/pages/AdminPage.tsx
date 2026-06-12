@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Admin Panel
+// COPE Web — Admin Panel
 // HIPAA-compliant administration console with FHIR endpoints, user management,
 // LDAP import, RBAC, audit log, consent management, security & system config.
 // =============================================================================
@@ -1819,7 +1819,7 @@ function OmopSection() {
         <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border1)' }}>
           <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Concept Mapping Browser</h3>
           <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--ink-mid)' }}>
-            OMOP CDM v5.4 concept mappings for MindLog clinical data
+            OMOP CDM v5.4 concept mappings for COPE clinical data
           </p>
         </div>
 
@@ -1972,7 +1972,7 @@ export function AdminPage() {
             M
           </div>
           <div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>MindLog Admin Console</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>COPE Admin Console</div>
             <div style={{ fontSize: 12, color: 'var(--ink-mid)' }}>HIPAA-Compliant Administration</div>
           </div>
         </div>

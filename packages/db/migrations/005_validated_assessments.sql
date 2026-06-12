@@ -1,5 +1,5 @@
 -- =============================================================================
--- MindLog — Migration 005: Validated clinical scale assessments
+-- COPE — Migration 005: Validated clinical scale assessments
 -- Stores full responses and total scores for periodic standardised instruments:
 --   PHQ-9 (weekly), GAD-7 (weekly), ASRM (weekly), ISI (biweekly),
 --   C-SSRS (weekly), WHODAS 2.0 (monthly), QIDS-SR (biweekly).

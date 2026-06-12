@@ -1,7 +1,7 @@
 // =============================================================================
-// MindLog API — OMOP CDM Export Worker
+// COPE API — OMOP CDM Export Worker
 //
-// BullMQ worker that performs incremental ETL from MindLog source tables
+// BullMQ worker that performs incremental ETL from COPE source tables
 // to OMOP CDM v5.4 TSV files. Uploads to Supabase Storage for download.
 //
 // Flow:
@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Worker, Queue, type Job } from 'bullmq';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import { connection } from './rules-engine.js';
 import { config } from '../config.js';
 import {
@@ -49,7 +49,7 @@ import {
 // Queue setup
 // ---------------------------------------------------------------------------
 
-const OMOP_QUEUE_NAME = 'mindlog-omop-exports';
+const OMOP_QUEUE_NAME = 'cope-omop-exports';
 export const omopExportQueue = new Queue(OMOP_QUEUE_NAME, { connection });
 
 export interface OmopExportJobData {

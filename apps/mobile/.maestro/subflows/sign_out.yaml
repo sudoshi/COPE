@@ -2,7 +2,7 @@
 # Subflow: Sign out from any screen
 # Navigates to Profile tab and confirms sign out
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 
@@ -26,5 +26,5 @@ appId: com.mindlog.app
 # Verify we're back on onboarding
 - extendedWaitUntil:
     visible:
-      text: "MindLog"
+      text: "COPE"
     timeout: 10000

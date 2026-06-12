@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Biometric lock settings screen
+// COPE Mobile — Biometric lock settings screen
 // Uses expo-local-authentication to enrol / unenrol biometric app lock.
 // The lock status (enabled/disabled) is stored in SecureStore.
 // When enabled, the root layout (Phase 3) will challenge on app foreground.
@@ -13,9 +13,9 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 
-const BIOMETRIC_KEY = 'ml_biometric_enabled';
+const BIOMETRIC_KEY = 'cope_biometric_enabled';
 
 export default function BiometricScreen() {
   const [supported, setSupported] = useState(false);
@@ -100,7 +100,7 @@ export default function BiometricScreen() {
               <View style={styles.row}>
                 <View style={styles.rowTextGroup}>
                   <Text style={styles.rowLabel}>Require {biometricTypeLabel()}</Text>
-                  <Text style={styles.rowSub}>Lock MindLog when you leave the app</Text>
+                  <Text style={styles.rowSub}>Lock COPE when you leave the app</Text>
                 </View>
                 <Switch
                   value={enabled}
@@ -115,7 +115,7 @@ export default function BiometricScreen() {
             <View style={styles.infoCard}>
               <Text style={styles.infoTitle}>About biometric lock</Text>
               <Text style={styles.infoText}>
-                When enabled, MindLog will require your biometric credential each time you open the
+                When enabled, COPE will require your biometric credential each time you open the
                 app or return from the background. Your health data is always encrypted at rest
                 by your device's secure enclave.
               </Text>

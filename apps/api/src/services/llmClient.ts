@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Provider-agnostic LLM client
+// COPE API — Provider-agnostic LLM client
 //
 // Dispatches to Anthropic (cloud) or Ollama (local) based on AI_PROVIDER env.
 // Ollama uses the OpenAI-compatible API at /v1, enabling local models like

@@ -1,11 +1,11 @@
 // =============================================================================
-// MindLog Web — CohortFilterBuilder
+// COPE Web — CohortFilterBuilder
 // Recursive AND/OR filter group component for Cohort Builder v2.
 // Supports nested groups (max depth 2) with categorized field selection.
 // =============================================================================
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import type { CohortFilterRule, CohortFilterGroup, FilterOp } from '@mindlog/shared';
+import type { CohortFilterRule, CohortFilterGroup, FilterOp } from '@cope/shared';
 import { api } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
 

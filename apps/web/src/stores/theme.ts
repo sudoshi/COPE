@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Theme store
+// COPE Web — Theme store
 // Persists palette selection to localStorage and applies CSS overrides.
 // Follows the same minimal pub/sub pattern as auth.ts and ui.ts.
 // =============================================================================
@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react';
 import { applyPalette } from '../styles/palettes.js';
 
-const STORAGE_KEY = 'ml_palette';
+const STORAGE_KEY = 'cope_palette';
 const DEFAULT_PALETTE = 'crimson-gold';
 
 interface ThemeState {

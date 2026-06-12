@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Medications screen
+// COPE Mobile — Medications screen
 // Shows today's medications with adherence toggle, allows adding new medications,
 // and displays a 7-day adherence mini-history per medication.
 //
@@ -19,7 +19,7 @@ import {
 import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
-import { DESIGN_TOKENS, MEDICATION_FREQUENCY_LABELS, type MedicationFrequency } from '@mindlog/shared';
+import { DESIGN_TOKENS, MEDICATION_FREQUENCY_LABELS, type MedicationFrequency } from '@cope/shared';
 import { apiFetch } from '../services/auth';
 
 // ---------------------------------------------------------------------------

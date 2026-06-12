@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — WatermelonDB database initialisation
+// COPE Mobile — WatermelonDB database initialisation
 // =============================================================================
 
 import { Database } from '@nozbe/watermelondb';
@@ -16,7 +16,7 @@ import WellnessStrategy from './models/WellnessStrategy';
 
 const adapter = new SQLiteAdapter({
   schema,
-  dbName: 'mindlog',
+  dbName: 'cope',
   jsi: true, // use JSI for better performance on new arch
   onSetUpError: (error) => {
     console.error('[WatermelonDB] Setup error', error);

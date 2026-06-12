@@ -1,4 +1,4 @@
-# MindLog v1.1 — User Manual & Administrator Guide
+# COPE v1.1 — User Manual & Administrator Guide
 
 > **Version**: 1.1a | **Last updated**: 2026-02-24 | **Audience**: Patients, Clinicians, System Administrators
 
@@ -7,7 +7,7 @@
 ## Table of Contents
 
 - [Part I — Introduction & Getting Started](#part-i--introduction--getting-started)
-  - [1. About MindLog](#1-about-mindlog)
+  - [1. About COPE](#1-about-cope)
   - [2. System Requirements](#2-system-requirements)
 - [Part II — Patient Mobile App](#part-ii--patient-mobile-app)
   - [3. Account Setup & Onboarding](#3-account-setup--onboarding)
@@ -60,23 +60,23 @@
 
 # Part I — Introduction & Getting Started
 
-## 1. About MindLog
+## 1. About COPE
 
-### 1.1 What is MindLog
+### 1.1 What is COPE
 
-MindLog is a digital mental wellness tracking platform designed for use in clinical settings. It enables patients to record daily mood, sleep, exercise, symptoms, triggers, coping strategies, and journal entries from a mobile app, while clinicians monitor population health, manage alerts, and generate clinical reports from a web dashboard. The platform supports validated clinical assessment scales (PHQ-9, GAD-7, ASRM, C-SSRS, ISI, WHODAS), AI-powered clinical intelligence, FHIR R4 interoperability for EHR integration, and research data export with HIPAA-compliant de-identification.
+COPE is a digital mental wellness tracking platform designed for use in clinical settings. It enables patients to record daily mood, sleep, exercise, symptoms, triggers, coping strategies, and journal entries from a mobile app, while clinicians monitor population health, manage alerts, and generate clinical reports from a web dashboard. The platform supports validated clinical assessment scales (PHQ-9, GAD-7, ASRM, C-SSRS, ISI, WHODAS), AI-powered clinical intelligence, FHIR R4 interoperability for EHR integration, and research data export with HIPAA-compliant de-identification.
 
-### 1.2 Who MindLog is For
+### 1.2 Who COPE is For
 
-MindLog serves three distinct audiences:
+COPE serves three distinct audiences:
 
 - **Patients (18+)**: Adults enrolled in outpatient behavioural health programs who use the mobile app to track daily wellness, complete assessments, and communicate with their care team.
 - **Clinicians**: Psychiatrists, psychologists, nurses, and care coordinators who use the web dashboard to monitor patient caseloads, triage alerts, review trends, and generate clinical reports.
-- **System administrators**: Technical staff responsible for deploying, configuring, and maintaining the MindLog platform infrastructure.
+- **System administrators**: Technical staff responsible for deploying, configuring, and maintaining the COPE platform infrastructure.
 
 ### 1.3 Platform Overview
 
-MindLog consists of three application surfaces:
+COPE consists of three application surfaces:
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
@@ -152,17 +152,17 @@ All three connect to a shared PostgreSQL database with Row-Level Security (RLS) 
 
 ### 3.1 Receiving an Invite
 
-MindLog uses an invite-only registration model. Your clinician sends an email invitation containing:
+COPE uses an invite-only registration model. Your clinician sends an email invitation containing:
 
 - A personalised message from your clinician (optional)
 - An invite code for account creation
-- A deep link (`mindlog://invite?token=...`) that opens the MindLog app directly
+- A deep link (`cope://invite?token=...`) that opens the COPE app directly
 
 Invites expire after **7 days**. If your invite has expired, ask your clinician to resend it (they can resend up to 3 times). After 3 resends, a new invite must be created.
 
 ### 3.2 Creating Your Account
 
-1. Open the MindLog app and tap **Create Account**.
+1. Open the COPE app and tap **Create Account**.
 2. Enter your **invite code** in the field provided. The app validates the code and displays:
    - A green checkmark with "Invited by [Clinician Name] at [Organisation Name]"
    - Your email address is pre-filled from the invite
@@ -178,7 +178,7 @@ Invites expire after **7 days**. If your invite has expired, ask your clinician 
 
 ### 3.3 Signing In
 
-1. Open the MindLog app and tap **Sign In**.
+1. Open the COPE app and tap **Sign In**.
 2. Enter your **email address** and **password**.
 3. Tap **Sign In**.
 4. If your organisation has enabled MFA, enter the **6-digit code** from your authenticator app.
@@ -191,7 +191,7 @@ After creating your account, a three-screen consent wizard guides you through da
 
 **Step 1 — Welcome**
 - A personalised greeting: "Welcome, [First Name]!"
-- Introduction to what MindLog does and how your data is protected
+- Introduction to what COPE does and how your data is protected
 - Privacy note: "Your data is encrypted and only visible to you and clinicians on your care team."
 
 **Step 2 — Required Consents**
@@ -211,7 +211,7 @@ After creating your account, a three-screen consent wizard guides you through da
 After consents, a clinical intake wizard collects baseline information. Steps marked *(skippable)* can be bypassed by tapping **Skip**.
 
 **Step 1 — Primary Concern** *(required)*
-- "What brings you to MindLog?"
+- "What brings you to COPE?"
 - Single-select from: Depression, Anxiety, Bipolar disorder, PTSD, Substance use, Other
 
 **Step 2 — Current Medications** *(skippable)*
@@ -247,13 +247,13 @@ After onboarding, you can enable biometric authentication in Settings > Biometri
 - **iOS**: Face ID or Touch ID
 - **Android**: Fingerprint sensor
 
-When enabled, MindLog locks after **5 minutes** in the background and requires biometric verification to reopen. This protects your health data if someone else accesses your device.
+When enabled, COPE locks after **5 minutes** in the background and requires biometric verification to reopen. This protects your health data if someone else accesses your device.
 
 ---
 
 ## 4. Today Screen (Home)
 
-The Today screen is the first thing you see when opening MindLog. It provides a snapshot of your current wellness status and quick access to all daily activities.
+The Today screen is the first thing you see when opening COPE. It provides a snapshot of your current wellness status and quick access to all daily activities.
 
 ### 4.1 Overview and Layout
 
@@ -529,7 +529,7 @@ If AI is not available, a locked state displays with an explanation. If you have
 
 ### 8.1 What Are Validated Assessments
 
-Validated assessments are standardised clinical questionnaires widely used in mental health care. MindLog supports six scales that your care team may request you to complete at regular intervals.
+Validated assessments are standardised clinical questionnaires widely used in mental health care. COPE supports six scales that your care team may request you to complete at regular intervals.
 
 ### 8.2 PHQ-9 (Patient Health Questionnaire — Depression)
 
@@ -767,7 +767,7 @@ The Profile tab includes a crisis resources card:
 
 Tap **Sign Out** at the bottom of the Profile tab. A confirmation alert appears before clearing your session. After signing out, you are returned to the login screen.
 
-The app version is displayed at the bottom: "MindLog v1.1a · US edition."
+The app version is displayed at the bottom: "COPE v1.1a · US edition."
 
 ---
 
@@ -784,11 +784,11 @@ The app version is displayed at the bottom: "MindLog v1.1a · US edition."
 
 When you tap "Connect Health Data" on the Today screen or during onboarding:
 
-1. A system permission dialog appears listing the data types MindLog requests
+1. A system permission dialog appears listing the data types COPE requests
 2. You can grant or deny individual data types
-3. MindLog only requests **read** permissions — it never writes to your health data
+3. COPE only requests **read** permissions — it never writes to your health data
 
-If you deny permissions, MindLog will prompt again after **30 days**. You can also grant permissions at any time through your device's Settings app.
+If you deny permissions, COPE will prompt again after **30 days**. You can also grant permissions at any time through your device's Settings app.
 
 ### 11.3 Data Collected
 
@@ -808,16 +808,16 @@ If you deny permissions, MindLog will prompt again after **30 days**. You can al
 - Data is uploaded to `POST /health-data/sync` as a batch
 - Each snapshot is deduplicated by (patient, date, source)
 - Syncs happen silently in the background — errors are not surfaced to you
-- Your health data is protected by the same Row-Level Security as all other MindLog data
+- Your health data is protected by the same Row-Level Security as all other COPE data
 
 ### 11.5 Revoking Health Data Access
 
-To stop sharing health data with MindLog:
+To stop sharing health data with COPE:
 
-- **iOS**: Settings > Health > MindLog > revoke individual data types
-- **Android**: Settings > Health Connect > MindLog > revoke permissions
+- **iOS**: Settings > Health > COPE > revoke individual data types
+- **Android**: Settings > Health Connect > COPE > revoke permissions
 
-MindLog will no longer collect new data but previously synced data remains in your account.
+COPE will no longer collect new data but previously synced data remains in your account.
 
 ---
 
@@ -825,7 +825,7 @@ MindLog will no longer collect new data but previously synced data remains in yo
 
 ### 12.1 How Offline Mode Works
 
-MindLog is designed to work even when you don't have an internet connection. Data is stored locally on your device using WatermelonDB, a high-performance local database. The Today screen displays "Offline" in red when no connection is detected.
+COPE is designed to work even when you don't have an internet connection. Data is stored locally on your device using WatermelonDB, a high-performance local database. The Today screen displays "Offline" in red when no connection is detected.
 
 ### 12.2 What Works Offline
 
@@ -862,7 +862,7 @@ If the same daily entry is modified both locally (offline) and on the server:
 
 ### 13.1 Logging In
 
-1. Navigate to your organisation's MindLog web dashboard URL (e.g., `https://dashboard.mindlog.app`)
+1. Navigate to your organisation's COPE web dashboard URL (e.g., `https://dashboard.cope.app`)
 2. Enter your **email address** and **password**
 3. Click **Sign In**
 
@@ -1489,7 +1489,7 @@ Results are grouped by type (Patients, Notes) with category headers. Use:
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host:5432/mindlog` |
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host:5432/cope` |
 | `SUPABASE_URL` | Supabase project URL | `https://xyz.supabase.co` |
 | `SUPABASE_ANON_KEY` | Supabase anonymous key | `eyJ...` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key | `eyJ...` |
@@ -1535,7 +1535,7 @@ Results are grouped by type (Patients, Notes) with category headers. Use:
 | Variable | Description |
 |----------|-------------|
 | `RESEND_API_KEY` | Resend API key for email delivery |
-| `EMAIL_FROM` | Sender address (e.g., `MindLog <alerts@yourdomain.com>`) |
+| `EMAIL_FROM` | Sender address (e.g., `COPE <alerts@yourdomain.com>`) |
 
 **SMS** (optional):
 
@@ -1595,8 +1595,8 @@ npm run dev:worker
 ```
 
 **Demo credentials**:
-- Patient: `alice@mindlogdemo.com` / `Demo@Patient1!`
-- Clinician: `dr.kim@mindlogdemo.com` / `Demo@Clinic1!`
+- Patient: `alice@copedemo.com` / `Demo@Patient1!`
+- Clinician: `dr.kim@copedemo.com` / `Demo@Clinic1!`
 
 ### 23.4 Production Deployment
 
@@ -1685,7 +1685,7 @@ PGPASSWORD=<password> psql -h localhost -p 5432 -U <user> -d <db> \
 ```
 
 This adds:
-- Admin privileges for `np.zhang@mindlogdemo.com`
+- Admin privileges for `np.zhang@copedemo.com`
 - 16 clinical fields backfilled on all daily entries
 - 1,224 validated assessments (PHQ-9, GAD-7, ASRM)
 - 218 patient diagnoses, 415 appointments
@@ -1828,7 +1828,7 @@ Discharged → Active (re-admission)
 
 The rules engine processes patient data on two triggers:
 
-1. **Real-time**: When a patient submits a daily entry, a BullMQ job is enqueued on the `mindlog-rules` queue
+1. **Real-time**: When a patient submits a daily entry, a BullMQ job is enqueued on the `cope-rules` queue
 2. **Nightly batch**: A scheduled job runs at **02:00 ET** daily to catch missed check-ins and delayed patterns
 
 ### 26.2 Built-In Rules
@@ -1891,7 +1891,7 @@ SMS notifications are reserved for **critical alerts only** to avoid alert fatig
 
 ### 27.1 Composite Risk Score (0–100)
 
-MindLog computes a deterministic, rule-based composite risk score for each patient. The score is:
+COPE computes a deterministic, rule-based composite risk score for each patient. The score is:
 - **Not AI-dependent** — uses only structured clinical data
 - **Fully auditable** — factor weights, graduation logic, and literature references are transparent
 - **Updated nightly** by the scheduled worker and on daily entry submission
@@ -1899,7 +1899,7 @@ MindLog computes a deterministic, rule-based composite risk score for each patie
 
 ### 27.2 Graduated Scoring Architecture
 
-Unlike simple binary scoring (triggered/not), MindLog uses **graduated contributions** — each rule contributes a score between 0 and its maximum weight based on severity, recency, and trend. The theoretical maximum raw score is **132**, deliberately over-allocated and capped at **100**.
+Unlike simple binary scoring (triggered/not), COPE uses **graduated contributions** — each rule contributes a score between 0 and its maximum weight based on severity, recency, and trend. The theoretical maximum raw score is **132**, deliberately over-allocated and capped at **100**.
 
 **Why over-allocation?** Psychiatric risk is often characterised by moderate elevation across multiple domains simultaneously. If the maximum exactly equals 100, a patient must score extreme values in specific rules to reach the critical band. Over-allocation ensures patients with widespread moderate-severity factors are appropriately flagged.
 
@@ -2078,7 +2078,7 @@ Returns a FHIR CapabilityStatement resource describing all supported interaction
 
 ### 29.2 Supported FHIR Resources
 
-| FHIR Resource | MindLog Source | Endpoint |
+| FHIR Resource | COPE Source | Endpoint |
 |---------------|---------------|----------|
 | Patient | `patients` table | `GET /fhir/Patient/:id` |
 | Observation | `daily_entries`, `passive_health_snapshots` | `GET /fhir/Observation?patient=:id` |
@@ -2181,7 +2181,7 @@ The `medical_codes` table (seeded via migration 006) provides lookup for:
 
 ### 30.4 Research Export Worker
 
-Research exports run as background jobs on the `mindlog-research-exports` BullMQ queue:
+Research exports run as background jobs on the `cope-research-exports` BullMQ queue:
 
 1. Admin requests export via the Cohort Builder (or API)
 2. Job is queued with cohort filters and export format
@@ -2197,7 +2197,7 @@ Research exports run as background jobs on the `mindlog-research-exports` BullMQ
 
 ### 31.1 Push Notifications (Mobile)
 
-MindLog sends push notifications via the **Expo Push Service**, which routes to:
+COPE sends push notifications via the **Expo Push Service**, which routes to:
 - **APNs** (Apple Push Notification service) for iOS
 - **FCM** (Firebase Cloud Messaging) for Android
 
@@ -2297,7 +2297,7 @@ Only whitelisted origins can make API requests from a browser.
 
 ### 32.6 Logging and PHI Redaction (Pino)
 
-MindLog uses **Pino** for structured logging:
+COPE uses **Pino** for structured logging:
 
 - **Development**: Pretty-printed, colourised output
 - **Production**: JSON format for log aggregation
@@ -2349,7 +2349,7 @@ Each record includes: patient ID, consent type, granted (boolean), granted_at ti
 
 ### 32.9 Crisis Resources
 
-MindLog displays crisis contact information prominently throughout the application:
+COPE displays crisis contact information prominently throughout the application:
 
 | Resource | Contact | Available |
 |----------|---------|-----------|
@@ -2365,13 +2365,13 @@ MindLog displays crisis contact information prominently throughout the applicati
 
 ### 33.1 Worker Architecture
 
-MindLog uses **BullMQ** (backed by Redis) for reliable background job processing. All workers run in a separate Node.js process from the API server.
+COPE uses **BullMQ** (backed by Redis) for reliable background job processing. All workers run in a separate Node.js process from the API server.
 
 ### 33.2 Rules Engine Worker
 
 | Property | Value |
 |----------|-------|
-| **Queue** | `mindlog-rules` |
+| **Queue** | `cope-rules` |
 | **Triggers** | Daily entry submission (real-time) + nightly batch (02:00 ET) |
 | **Processing** | Evaluates all 8 alert rules against the patient's recent data |
 | **Output** | Creates/updates `clinical_alerts` records |
@@ -2381,7 +2381,7 @@ MindLog uses **BullMQ** (backed by Redis) for reliable background job processing
 
 | Property | Value |
 |----------|-------|
-| **Queue** | `mindlog-ai-insights` |
+| **Queue** | `cope-ai-insights` |
 | **Job types** | `weekly_summary`, `trend_narrative`, `anomaly_detection`, `risk_stratification` |
 | **Gating** | Verifies AI feature flags + patient consent before processing |
 | **Output** | Creates `patient_ai_insights` records + logs token usage |
@@ -2391,7 +2391,7 @@ MindLog uses **BullMQ** (backed by Redis) for reliable background job processing
 
 | Property | Value |
 |----------|-------|
-| **Queue** | `mindlog-reports` |
+| **Queue** | `cope-reports` |
 | **Report types** | `weekly_summary`, `monthly_summary`, `clinical_export`, `cda_handover` |
 | **Processing** | Renders reports using Puppeteer (PDF) or XML builder (CDA) |
 | **Output** | Uploads file to storage, updates `reports` record with presigned URL |
@@ -2401,7 +2401,7 @@ MindLog uses **BullMQ** (backed by Redis) for reliable background job processing
 
 | Property | Value |
 |----------|-------|
-| **Queue** | `mindlog-research-exports` |
+| **Queue** | `cope-research-exports` |
 | **Processing** | Retrieves cohort data, applies Safe Harbour de-identification, generates output file |
 | **Formats** | NDJSON, CSV, FHIR Bundle |
 | **Output** | Uploads to storage with 48-hour presigned URL |
@@ -2479,7 +2479,7 @@ The API tracks connected WebSocket clients and sends periodic `ping` frames. If 
 
 Redis-backed job queues can be monitored using tools like:
 - **Bull Board** (web UI for BullMQ queues)
-- **Redis CLI**: `redis-cli LLEN bull:mindlog-rules:wait` to check queue depth
+- **Redis CLI**: `redis-cli LLEN bull:cope-rules:wait` to check queue depth
 - Custom monitoring via the BullMQ API
 
 ---
@@ -2844,7 +2844,7 @@ The complete database schema (48 tables, all columns, types, and constraints) is
 
 ## F. FHIR Resource Mapping Reference
 
-| MindLog Table | FHIR R4 Resource | Key Mappings |
+| COPE Table | FHIR R4 Resource | Key Mappings |
 |--------------|-----------------|-------------|
 | `patients` | Patient | name, birthDate, identifier (MRN), active |
 | `daily_entries` | Observation | code (LOINC), valueQuantity (mood, sleep, exercise), effectiveDateTime |
@@ -2894,7 +2894,7 @@ The complete database schema (48 tables, all columns, types, and constraints) is
 | `TWILIO_AUTH_TOKEN` | No | SMS | — |
 | `TWILIO_FROM_NUMBER` | No | SMS | — |
 | `EXPO_PUSH_ACCESS_TOKEN` | No | Push | — |
-| `STORAGE_BUCKET_REPORTS` | No | Storage | `mindlog-reports` |
+| `STORAGE_BUCKET_REPORTS` | No | Storage | `cope-reports` |
 | `SENTRY_DSN` | No | Monitoring | — |
 | `WEB_APP_URL` | No | Config | `http://localhost:5173` |
 | `HIPAA_ASSESSMENT_COMPLETE` | No | Compliance | `false` |
@@ -2929,7 +2929,7 @@ The complete database schema (48 tables, all columns, types, and constraints) is
 
 | Symptom | Cause | Resolution |
 |---------|-------|------------|
-| No health data card on Today screen | Permissions not granted | Go to device Settings > HealthKit/Health Connect > MindLog and enable |
+| No health data card on Today screen | Permissions not granted | Go to device Settings > HealthKit/Health Connect > COPE and enable |
 | Health data shows "—" for all fields | No data recorded by device | Ensure health device/watch is syncing to your phone |
 | Data appears stale | Sync failed silently | Force-close and reopen the app |
 
@@ -2962,7 +2962,7 @@ The complete database schema (48 tables, all columns, types, and constraints) is
 |---------|-------|------------|
 | Reports stuck in "Queued" | Worker process not running | Start workers: `npm run dev:worker` |
 | AI insights failing | LLM provider unreachable | Check API key, provider URL, and network connectivity |
-| "Redis connection refused" | Redis not running | Start Redis: `docker start mindlog-redis` or `npm run demo:infra` |
+| "Redis connection refused" | Redis not running | Start Redis: `docker start cope-redis` or `npm run demo:infra` |
 
 ---
 
@@ -3014,4 +3014,4 @@ The complete database schema (48 tables, all columns, types, and constraints) is
 
 ---
 
-*This document was generated for MindLog v1.1a. For the latest version, check the project repository.*
+*This document was generated for COPE v1.1a. For the latest version, check the project repository.*

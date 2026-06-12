@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — QuickNotePanel
+// COPE Web — QuickNotePanel
 // Slide-in panel from the right edge for rapid clinical note creation.
 // Pre-filled with the last-viewed patient (from UI store).
 // Triggered by 'N' keyboard shortcut or quick-actions button.

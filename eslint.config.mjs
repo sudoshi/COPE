@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — ESLint flat config (shared by all workspaces)
+// COPE — ESLint flat config (shared by all workspaces)
 // Workspace lint scripts run `eslint <dir>`; ESLint 9 resolves this config by
 // walking up from the linted files.
 // =============================================================================

@@ -4,7 +4,7 @@
 # correlation analysis card with Sleep and Exercise factors (when enough
 # check-in data exists).
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

@@ -1,6 +1,6 @@
-# MindLog — Comprehensive Development Log
+# COPE — Comprehensive Development Log
 
-**Project:** MindLog — Mental Wellness Tracking Platform
+**Project:** COPE — Mental Wellness Tracking Platform
 **Period:** February 2026 (v0.1a → v1.1a)
 **Stack:** TypeScript monorepo — Expo SDK 52, React 19 + Vite, Fastify 5, PostgreSQL + Supabase, BullMQ, Anthropic/Ollama/MedGemma
 **Status:** All 6 development phases complete; Deep AI Insights & Evidence-Based Risk Scoring shipped
@@ -42,7 +42,7 @@
 
 ### Market & Regulatory Context
 
-MindLog targets the **US market** under **FDA (SaMD, likely Class II)** and **HIPAA** compliance requirements. This was a critical early correction — the initial scope assumed Australian regulations (TGA/Privacy Act), which would have led to different architectural choices.
+COPE targets the **US market** under **FDA (SaMD, likely Class II)** and **HIPAA** compliance requirements. This was a critical early correction — the initial scope assumed Australian regulations (TGA/Privacy Act), which would have led to different architectural choices.
 
 Key constraints:
 - **Patient age:** 18+ only (v1.0) — US state consent laws for minors are complex
@@ -80,7 +80,7 @@ Infrastructure:      Docker (PostgreSQL, Redis, MailHog), GitHub Actions CI/CD, 
 ### Monorepo Structure
 
 ```
-mindlog/
+cope/
 ├── apps/
 │   ├── api/           # Fastify backend (Node 22)
 │   ├── web/           # Clinician dashboard (React 19 + Vite)
@@ -121,7 +121,7 @@ This ensures data isolation at the database level, not just the application leve
 
 ### Key Architecture Pattern: API Validation
 
-All endpoints validate with Zod schemas from `@mindlog/shared`:
+All endpoints validate with Zod schemas from `@cope/shared`:
 
 ```typescript
 const input = CreatePatientSchema.parse(req.body);
@@ -166,8 +166,8 @@ A complete demo environment and authentication system:
 
 | Role | Email | Password |
 |------|-------|----------|
-| Patient | `alice@mindlogdemo.com` | `Demo@Patient1!` |
-| Clinician | `dr.kim@mindlogdemo.com` | `Demo@Clinic1!` |
+| Patient | `alice@copedemo.com` | `Demo@Patient1!` |
+| Clinician | `dr.kim@copedemo.com` | `Demo@Clinic1!` |
 
 ### Android Emulator Gotcha
 
@@ -269,7 +269,7 @@ The complete patient registration and onboarding flow (V1.1 Phase 1):
 - **Migration 007 (`invite_system`):** `invites` table with clinician-generated invite codes, expiry, deep link support. Added `supabase_uid`, `invite_id`, `primary_concern`, `emergency_contact_*` columns to `patients`.
 - **Migration 008 (`onboarding`):** `patient_intake` table for multi-step onboarding data. Indexes on invite codes and patient lookup.
 - **Invite System:** Clinician creates invite → email sent via Resend → patient opens deep link → Supabase Auth signup → intake wizard → care team auto-assignment.
-- **Schemas:** `CreateInviteSchema`, `RegisterSchema`, `IntakeSchema` added to `@mindlog/shared`.
+- **Schemas:** `CreateInviteSchema`, `RegisterSchema`, `IntakeSchema` added to `@cope/shared`.
 - **Messaging:** `sendInviteEmail()` and `sendWelcomeEmail()` via Resend service.
 - **Mobile Onboarding:** Multi-step intake wizard collecting demographics, primary concern, emergency contact, medication list, consent acknowledgment.
 
@@ -278,7 +278,7 @@ The complete patient registration and onboarding flow (V1.1 Phase 1):
 ```
 Clinician creates invite
   → API generates invite code + sends email via Resend
-    → Patient clicks link: mindlog://invite/{code}
+    → Patient clicks link: cope://invite/{code}
       → Expo deep link handler opens registration screen
         → Supabase Auth creates account
           → API creates patient record (linked via invite_id)
@@ -356,7 +356,7 @@ The simulation generates correlated data to ensure clinical realism:
 
 ```bash
 # Cron setup
-0 6,14,22 * * * cd /path/to/MindLog && npm run db:simulate
+0 6,14,22 * * * cd /path/to/COPE && npm run db:simulate
 ```
 
 ---
@@ -426,7 +426,7 @@ This was the largest single release, shipping V1.1 Phases 2–6 simultaneously. 
 ### Phase 4: EHR Interoperability & FHIR R4
 
 **FHIR R4 Mappers:**
-`apps/api/src/services/fhir/mappers.ts` — Pure functions mapping MindLog entities to FHIR R4 resources:
+`apps/api/src/services/fhir/mappers.ts` — Pure functions mapping COPE entities to FHIR R4 resources:
 - Patient, Observation, MedicationRequest, QuestionnaireResponse, Condition, Consent, Bundle, CapabilityStatement
 
 **FHIR Validator:**
@@ -491,8 +491,8 @@ TypeScript `paths` in `apps/api/tsconfig.json` must point to `dist/*.d.ts`, NOT 
 ```json
 {
   "paths": {
-    "@mindlog/shared": ["../../packages/shared/dist/index.d.ts"],
-    "@mindlog/db": ["../../packages/db/dist/index.d.ts"]
+    "@cope/shared": ["../../packages/shared/dist/index.d.ts"],
+    "@cope/db": ["../../packages/db/dist/index.d.ts"]
   }
 }
 ```
@@ -771,12 +771,12 @@ Chat is NOT queued via BullMQ — it's synchronous request/response. Rationale:
 `packages/db/seeds/009_demo_enrichment.sql` — run AFTER `npm run db:seed-demo`:
 
 ```bash
-PGPASSWORD=acumenus psql -h localhost -p 5432 -U smudoshi -d mindlogdemo \
+PGPASSWORD=acumenus psql -h localhost -p 5432 -U smudoshi -d copedemo \
   < packages/db/seeds/009_demo_enrichment.sql
 ```
 
 Creates:
-- Admin role for `np.zhang@mindlogdemo.com` + adds to all 146 care teams
+- Admin role for `np.zhang@copedemo.com` + adds to all 146 care teams
 - Backfills 16 clinical fields in all `daily_entries`
 - 1,224 validated assessments (PHQ-9 ×584, GAD-7 ×584, ASRM ×56)
 - 218 patient diagnoses, 415 appointments
@@ -1495,7 +1495,7 @@ const data = await fetch(API_PREFIX + '/patients/me');
 
 10. **Android emulator:** Cannot reach `localhost`. Must use `10.0.2.2` in `.env.local`.
 
-11. **Metro monorepo config:** Requires `watchFolders: [monorepoRoot]` and `nodeModulesPaths` for npm workspaces. Also needs `.js → .ts` fallback resolver for `@mindlog/shared`.
+11. **Metro monorepo config:** Requires `watchFolders: [monorepoRoot]` and `nodeModulesPaths` for npm workspaces. Also needs `.js → .ts` fallback resolver for `@cope/shared`.
 
 12. **Expo icon cache:** `.expo/web/cache/production/images/` is keyed by source PNG SHA256 hash. Replacing a PNG with a new file of the same name does NOT invalidate the cache. Must `rm -rf` the cache directory and re-run `npx expo prebuild --platform android --clean`.
 

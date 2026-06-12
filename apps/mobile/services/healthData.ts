@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Health Data Service
+// COPE Mobile — Health Data Service
 // Wraps HealthKit (iOS) and Google Health Connect (Android) to:
 //  1. Request platform-appropriate permissions
 //  2. Fetch yesterday's and today's passive health data
@@ -19,8 +19,8 @@ import { apiFetch } from './auth';
 // Constants
 // ---------------------------------------------------------------------------
 
-const PERM_GRANTED_KEY  = 'ml_health_perm_granted';
-const PERM_DECLINED_KEY = 'ml_health_perm_declined_at';
+const PERM_GRANTED_KEY  = 'cope_health_perm_granted';
+const PERM_DECLINED_KEY = 'cope_health_perm_declined_at';
 const PERM_RETRY_DAYS   = 30;
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Onboarding screen
+// COPE Mobile — Onboarding screen
 // Two tabs: Sign In (existing) | Create Account (invite-only registration)
 // =============================================================================
 
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS, LoginSchema, CRISIS_CONTACTS } from '@mindlog/shared';
+import { DESIGN_TOKENS, LoginSchema, CRISIS_CONTACTS } from '@cope/shared';
 import { storeSession, setMfaPartialToken, apiFetch } from '../services/auth';
 import { backgroundSync } from '../db/sync';
 
@@ -139,13 +139,13 @@ function SignInForm() {
         <View style={styles.demoRow}>
           <TouchableOpacity
             style={styles.demoBtn}
-            onPress={() => { setEmail('alice@mindlogdemo.com'); setPassword('Demo@Patient1!'); }}
+            onPress={() => { setEmail('alice@copedemo.com'); setPassword('Demo@Patient1!'); }}
           >
             <Text style={styles.demoBtnText}>Patient</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.demoBtn}
-            onPress={() => { setEmail('dr.kim@mindlogdemo.com'); setPassword('Demo@Clinic1!'); }}
+            onPress={() => { setEmail('dr.kim@copedemo.com'); setPassword('Demo@Clinic1!'); }}
           >
             <Text style={styles.demoBtnText}>Clinician</Text>
           </TouchableOpacity>
@@ -420,7 +420,7 @@ export default function OnboardingScreen() {
           source={require('../assets/images/icon.png')}
           style={styles.brandIcon}
         />
-        <Text style={styles.brand}>MindLog</Text>
+        <Text style={styles.brand}>COPE</Text>
         <Text style={styles.tagline}>Your mental wellness companion</Text>
 
         {/* Tab toggle */}

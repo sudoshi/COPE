@@ -1,5 +1,5 @@
 # =============================================================================
-# MindLog — Deploy Pipeline
+# COPE — Deploy Pipeline
 # Runs after CI passes on the main branch.
 #
 # Stages:
@@ -9,9 +9,9 @@
 #
 # Required GitHub secrets:
 #   DEPLOY_HOST          — SSH hostname / IP of the production server
-#   DEPLOY_USER          — SSH user (e.g. mindlog)
+#   DEPLOY_USER          — SSH user (e.g. cope)
 #   DEPLOY_SSH_KEY        — Private SSH key (PEM format) — add public key to server
-#   DEPLOY_DIR           — Absolute path on server (e.g. /opt/mindlog)
+#   DEPLOY_DIR           — Absolute path on server (e.g. /opt/cope)
 #   EXPO_TOKEN            — Expo personal access token (for EAS)
 #   SENTRY_AUTH_TOKEN     — Sentry release upload token
 #   SENTRY_ORG            — Sentry organisation slug

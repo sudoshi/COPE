@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Global error handler plugin
+// COPE API — Global error handler plugin
 // =============================================================================
 
 import type { FastifyInstance, FastifyError } from 'fastify';

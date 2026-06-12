@@ -4,7 +4,7 @@
 # state placeholder or existing journal entry cards (demo patient may have
 # seeded entries).
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

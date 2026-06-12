@@ -66,8 +66,8 @@ export class AdminPage {
     this.returnToDashboardBtn = page.locator('button:has-text("Return to Dashboard")');
 
     // Header
-    this.header = page.locator('text=MindLog Admin Console');
-    this.title = page.locator('text=MindLog Admin Console');
+    this.header = page.locator('text=COPE Admin Console');
+    this.title = page.locator('text=COPE Admin Console');
 
     // Navigation tabs
     this.navTabs = page.locator('[style*="display: flex"][style*="gap: 8px"]').filter({ hasText: 'Dashboard' });

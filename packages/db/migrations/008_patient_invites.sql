@@ -1,5 +1,5 @@
 -- =============================================================================
--- MindLog — Migration 008: Patient invite system + clinical intake fields
+-- COPE — Migration 008: Patient invite system + clinical intake fields
 -- Creates patient_invites table (invite-only registration) and extends patients
 -- with intake tracking columns (primary concern, emergency contact, intake flag).
 -- =============================================================================

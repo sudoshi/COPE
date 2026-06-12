@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Clinical intake wizard (7 steps)
+// COPE Mobile — Clinical intake wizard (7 steps)
 // Step 1: Primary concern          (required, no skip)
 // Step 2: Current medications      (skippable)
 // Step 3: Symptoms                 (skippable)
@@ -19,7 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Notifications from 'expo-notifications';
 import * as Haptics from 'expo-haptics';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 import { apiFetch, setIntakeComplete } from '../services/auth';
 
 const TOTAL_STEPS = 7;
@@ -451,7 +451,7 @@ function Step6Reminders({ hasMeds, onNext }: { hasMeds: boolean; onNext: () => v
         if (status !== 'granted') {
           Alert.alert(
             'Notifications blocked',
-            'You can enable them later in your device Settings → Notifications → MindLog.',
+            'You can enable them later in your device Settings → Notifications → COPE.',
           );
           onNext();
           return;

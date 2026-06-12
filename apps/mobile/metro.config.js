@@ -1,7 +1,7 @@
 // =============================================================================
-// MindLog Mobile — Metro bundler configuration
+// COPE Mobile — Metro bundler configuration
 // Configures Metro for npm workspaces monorepo so packages under /packages/*
-// (e.g. @mindlog/shared) are watched and resolved correctly.
+// (e.g. @cope/shared) are watched and resolved correctly.
 // =============================================================================
 
 const { getDefaultConfig } = require('expo/metro-config');

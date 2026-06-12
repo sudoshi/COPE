@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Push notification service
+// COPE Mobile — Push notification service
 // Handles: permission request, Expo push token registration, local notification
 // scheduling for daily check-in reminders, and incoming notification routing.
 // =============================================================================
@@ -44,7 +44,7 @@ export async function registerForPushNotifications(): Promise<string | null> {
   // Android requires a notification channel
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('default', {
-      name: 'MindLog',
+      name: 'COPE',
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#2a9d8f',

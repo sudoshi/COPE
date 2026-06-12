@@ -1,10 +1,10 @@
 # =============================================================================
 # ONBOARDING-03: Invite Code Validation — Invalid Code
 # Verifies that entering a bogus invite code triggers a validation error
-# indicating the code is invalid or expired. MindLog uses invite-only
+# indicating the code is invalid or expired. COPE uses invite-only
 # registration, so every patient must have a valid clinician-issued code.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 
@@ -18,7 +18,7 @@ appId: com.mindlog.app
 # Wait for onboarding screen
 - extendedWaitUntil:
     visible:
-      text: "MindLog"
+      text: "COPE"
     timeout: 10000
 
 # Switch to the Register tab

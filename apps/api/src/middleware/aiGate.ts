@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — AI Gate Middleware
+// COPE API — AI Gate Middleware
 //
 // Fastify preHandler that blocks AI endpoints unless:
 //   1. AI_INSIGHTS_ENABLED=true  in environment

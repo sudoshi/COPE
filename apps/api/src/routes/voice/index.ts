@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Voice transcription route
+// COPE API — Voice transcription route
 // POST /api/v1/voice/transcribe
 //
 // Accepts a multipart audio file (m4a, mp3, wav; max 25 MB).
@@ -14,7 +14,7 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
 import OpenAI from 'openai';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import '@fastify/multipart'; // trigger module augmentation for request.file / request.isMultipart
 
 // @fastify/redis is registered in app.ts; declare the decoration here so TS knows.

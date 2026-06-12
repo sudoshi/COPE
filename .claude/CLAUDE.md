@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MindLog is a mental wellness tracking platform with:
+COPE is a mental wellness tracking platform with:
 - **Patient mobile app** (React Native + Expo SDK 52)
 - **Clinician web dashboard** (React 19 + Vite)
 - **Backend API** (Node.js 22 + Fastify 5)
@@ -75,7 +75,7 @@ packages/
 └── shared/        # Shared types, Zod schemas, constants
 ```
 
-### Shared Package (`@mindlog/shared`)
+### Shared Package (`@cope/shared`)
 Single source of truth for API contracts:
 - **Types**: `Patient`, `Clinician`, `Alert`, `DailyEntry`, `JournalEntry`, etc.
 - **Schemas**: Zod validation for all API request/response bodies
@@ -83,10 +83,10 @@ Single source of truth for API contracts:
 
 Import pattern:
 ```typescript
-import { Patient, LoginSchema, MOOD_COLORS, ALERT_THRESHOLDS } from '@mindlog/shared';
+import { Patient, LoginSchema, MOOD_COLORS, ALERT_THRESHOLDS } from '@cope/shared';
 ```
 
-### Database (`@mindlog/db`)
+### Database (`@cope/db`)
 - **postgres.js** client (raw SQL templates, no ORM)
 - **RLS enforcement**: Each request sets `app.current_user_id` and `app.current_user_role`
 - **Migrations**: Numbered SQL files in `packages/db/migrations/` (001-008)
@@ -118,7 +118,7 @@ All other routes under `/api/v1/`:
 ## Key Patterns
 
 ### API Validation
-All endpoints use Zod schemas from `@mindlog/shared`:
+All endpoints use Zod schemas from `@cope/shared`:
 ```typescript
 const input = CreatePatientSchema.parse(req.body);
 ```

@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Root layout
+// COPE Mobile — Root layout
 // Bootstraps: auth state, WatermelonDB, push notifications, biometric lock.
 // =============================================================================
 
@@ -37,7 +37,7 @@ SplashScreen.preventAutoHideAsync();
 // How long (ms) the app can be in the background before requiring re-auth
 const BIOMETRIC_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 
-// Parse a mindlog://invite?token=xxx deep link and return the token
+// Parse a cope://invite?token=xxx deep link and return the token
 function extractInviteToken(url: string): string | null {
   try {
     const parsed = new URL(url);
@@ -46,7 +46,7 @@ function extractInviteToken(url: string): string | null {
     }
   } catch {
     // URL() constructor may not handle custom schemes on all RN versions
-    const match = url.match(/mindlog:\/\/invite\?.*token=([^&]+)/);
+    const match = url.match(/cope:\/\/invite\?.*token=([^&]+)/);
     if (match?.[1]) return decodeURIComponent(match[1]);
   }
   return null;
@@ -80,7 +80,7 @@ export default function RootLayout() {
     const biometricEnabled = await (async () => {
       try {
         const SecureStore = await import('expo-secure-store');
-        const val = await SecureStore.getItemAsync('ml_biometric_enabled');
+        const val = await SecureStore.getItemAsync('cope_biometric_enabled');
         return val === 'true';
       } catch {
         return false;
@@ -93,7 +93,7 @@ export default function RootLayout() {
     if (!supported || !enrolled) return;
 
     const result = await LocalAuthentication.authenticateAsync({
-      promptMessage: 'Unlock MindLog',
+      promptMessage: 'Unlock COPE',
       fallbackLabel: 'Use Passcode',
       cancelLabel: 'Cancel',
     });
@@ -166,7 +166,7 @@ export default function RootLayout() {
   }, []);
 
   // --------------------------------------------------------------------------
-  // Deep link handler — mindlog://invite?token=xxx
+  // Deep link handler — cope://invite?token=xxx
   // --------------------------------------------------------------------------
   useEffect(() => {
     const handleUrl = (url: string) => {

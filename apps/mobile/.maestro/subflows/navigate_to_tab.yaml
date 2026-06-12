@@ -2,7 +2,7 @@
 # Subflow: Navigate to a specific tab
 # Usage: runFlow with env TAB_NAME set to tab label
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

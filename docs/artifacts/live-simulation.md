@@ -1,4 +1,4 @@
-# MindLog Live Data Simulation System
+# COPE Live Data Simulation System
 
 ## Table of Contents
 
@@ -22,7 +22,7 @@
 
 ### Purpose
 
-The MindLog Live Data Simulation System maintains a realistic, continuously-updated demo environment for mental health professionals. It simulates authentic patient behavior and clinical workflows, creating a "living" demonstration that showcases the platform's capabilities without requiring manual data entry.
+The COPE Live Data Simulation System maintains a realistic, continuously-updated demo environment for mental health professionals. It simulates authentic patient behavior and clinical workflows, creating a "living" demonstration that showcases the platform's capabilities without requiring manual data entry.
 
 ### Key Features
 
@@ -110,7 +110,7 @@ docs/
 
 ### Dependencies
 
-- **postgres** (via `@mindlog/db`): Database connectivity
+- **postgres** (via `@cope/db`): Database connectivity
 - **Node.js 18+**: Runtime environment
 - **tsx**: TypeScript execution without compilation
 
@@ -360,7 +360,7 @@ const templates = {
 npm run db:seed-demo
 
 # 2. Set database connection
-export DATABASE_URL="postgresql://user:password@localhost:5432/mindlogdemo"
+export DATABASE_URL="postgresql://user:password@localhost:5432/copedemo"
 
 # 3. Test simulation
 npm run db:simulate -- --dry-run --verbose
@@ -378,18 +378,18 @@ chmod +x packages/db/scripts/setup-simulation-cron.sh
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `DATABASE_URL` | Yes | - | PostgreSQL connection string |
-| `LOG_FILE` | No | `/tmp/mindlog-simulation.log` | Output log path |
+| `LOG_FILE` | No | `/tmp/cope-simulation.log` | Output log path |
 
 ### Using .env Files
 
 The simulation will automatically source `.env` files:
 
-1. Project root: `/path/to/MindLog/.env`
-2. Package directory: `/path/to/MindLog/packages/db/.env`
+1. Project root: `/path/to/COPE/.env`
+2. Package directory: `/path/to/COPE/packages/db/.env`
 
 ```env
 # .env
-DATABASE_URL=postgresql://username:password@localhost:5432/mindlogdemo
+DATABASE_URL=postgresql://username:password@localhost:5432/copedemo
 ```
 
 ---
@@ -482,10 +482,10 @@ npm run db:simulate -- --dry-run --verbose
 
 ```
 ════════════════════════════════════════════════════════
-  MindLog Live Simulation — Evening Run
+  COPE Live Simulation — Evening Run
 ════════════════════════════════════════════════════════
 
-[2026-02-23 04:19:59] ✓ Running on organization: MindLog Demo Clinic
+[2026-02-23 04:19:59] ✓ Running on organization: COPE Demo Clinic
 [2026-02-23 04:19:59] ✓ Found 146 active patients
 [2026-02-23 04:19:59] ✓ Found 7 clinicians
 [2026-02-23 04:19:59] ✓ Simulating patient activity...
@@ -546,8 +546,8 @@ crontab -e
 Add:
 
 ```cron
-# MindLog Live Simulation - runs at 6am, 2pm, 10pm
-0 6,14,22 * * * cd /path/to/MindLog && DATABASE_URL="postgresql://..." npm run db:simulate >> /tmp/mindlog-simulation.log 2>&1
+# COPE Live Simulation - runs at 6am, 2pm, 10pm
+0 6,14,22 * * * cd /path/to/COPE && DATABASE_URL="postgresql://..." npm run db:simulate >> /tmp/cope-simulation.log 2>&1
 ```
 
 ### Schedule Explanation
@@ -563,9 +563,9 @@ Add:
 #### systemd Timer (Linux)
 
 ```ini
-# /etc/systemd/system/mindlog-simulation.timer
+# /etc/systemd/system/cope-simulation.timer
 [Unit]
-Description=MindLog Simulation Timer
+Description=COPE Simulation Timer
 
 [Timer]
 OnCalendar=*-*-* 06,14,22:00:00
@@ -579,7 +579,7 @@ WantedBy=timers.target
 
 Create a scheduled task running:
 ```cmd
-cmd /c "cd C:\path\to\MindLog && npm run db:simulate"
+cmd /c "cd C:\path\to\COPE && npm run db:simulate"
 ```
 
 #### Docker/Kubernetes
@@ -589,7 +589,7 @@ cmd /c "cd C:\path\to\MindLog && npm run db:simulate"
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: mindlog-simulation
+  name: cope-simulation
 spec:
   schedule: "0 6,14,22 * * *"
   jobTemplate:
@@ -598,7 +598,7 @@ spec:
         spec:
           containers:
           - name: simulation
-            image: mindlog/api:latest
+            image: cope/api:latest
             command: ["npm", "run", "db:simulate"]
             env:
             - name: DATABASE_URL
@@ -614,32 +614,32 @@ spec:
 
 ### Log File Location
 
-Default: `/tmp/mindlog-simulation.log`
+Default: `/tmp/cope-simulation.log`
 
-Override with: `LOG_FILE=/var/log/mindlog-sim.log ./setup-simulation-cron.sh`
+Override with: `LOG_FILE=/var/log/cope-sim.log ./setup-simulation-cron.sh`
 
 ### Viewing Logs
 
 ```bash
 # Follow in real-time
-tail -f /tmp/mindlog-simulation.log
+tail -f /tmp/cope-simulation.log
 
 # Last 100 lines
-tail -100 /tmp/mindlog-simulation.log
+tail -100 /tmp/cope-simulation.log
 
 # Search for errors
-grep -i error /tmp/mindlog-simulation.log
+grep -i error /tmp/cope-simulation.log
 
 # Today's runs
-grep "$(date +%Y-%m-%d)" /tmp/mindlog-simulation.log
+grep "$(date +%Y-%m-%d)" /tmp/cope-simulation.log
 ```
 
 ### Log Rotation
 
-Add to `/etc/logrotate.d/mindlog-simulation`:
+Add to `/etc/logrotate.d/cope-simulation`:
 
 ```
-/tmp/mindlog-simulation.log {
+/tmp/cope-simulation.log {
     daily
     rotate 7
     compress
@@ -693,15 +693,15 @@ Example Prometheus alert rule:
 
 ```yaml
 groups:
-- name: mindlog-simulation
+- name: cope-simulation
   rules:
   - alert: SimulationNotRunning
-    expr: time() - mindlog_simulation_last_run_timestamp > 32400  # 9 hours
+    expr: time() - cope_simulation_last_run_timestamp > 32400  # 9 hours
     for: 5m
     labels:
       severity: warning
     annotations:
-      summary: "MindLog simulation hasn't run in 9+ hours"
+      summary: "COPE simulation hasn't run in 9+ hours"
 ```
 
 ---
@@ -763,7 +763,7 @@ TRUNCATE daily_entries, sleep_logs, exercise_logs,
 
 **Solution**:
 ```bash
-export DATABASE_URL="postgresql://user:pass@localhost:5432/mindlogdemo"
+export DATABASE_URL="postgresql://user:pass@localhost:5432/copedemo"
 # or create .env file
 ```
 
@@ -798,7 +798,7 @@ SELECT COUNT(*) FROM daily_entries WHERE entry_date = CURRENT_DATE;
 systemctl status cron
 
 # Check if job is installed
-crontab -l | grep mindlog
+crontab -l | grep cope
 
 # Check cron logs
 grep CRON /var/log/syslog | tail -20

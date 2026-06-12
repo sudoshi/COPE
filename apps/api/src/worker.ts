@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Worker entrypoint
+// COPE API — Worker entrypoint
 // Run separately from the HTTP server:
 //   tsx src/worker.ts
 //
@@ -14,10 +14,10 @@ import { startReportWorker, reportQueue } from './workers/report-generator.js';
 import { startAiInsightsWorker, aiInsightsQueue } from './workers/ai-insights-worker.js';
 import { startResearchExportWorker, researchQueue } from './routes/research/index.js';
 import { startOmopExportWorker, omopExportQueue } from './workers/omop-export-worker.js';
-import { closeDb } from '@mindlog/db';
+import { closeDb } from '@cope/db';
 import { config } from './config.js';
 
-console.info('[worker] Starting MindLog worker process…');
+console.info('[worker] Starting COPE worker process…');
 console.info(`[worker] Redis: ${config.redisUrl}`);
 console.info(
   `[worker] AI insights: ${config.aiInsightsEnabled ? `ENABLED (${config.aiProvider}/${config.aiProvider === 'ollama' ? config.ollamaModel : config.anthropicModel})` : 'disabled'}`,

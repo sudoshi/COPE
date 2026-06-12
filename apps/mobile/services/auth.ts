@@ -1,10 +1,10 @@
 // =============================================================================
-// MindLog Mobile — SecureStore auth token service
+// COPE Mobile — SecureStore auth token service
 // Phase 2: persists access token + refresh token + user info securely.
 // =============================================================================
 
 import * as SecureStore from 'expo-secure-store';
-import { API_PREFIX } from '@mindlog/shared';
+import { API_PREFIX } from '@cope/shared';
 
 // Support EXPO_PUBLIC_API_BASE for local demo (e.g. http://192.168.x.x:3000)
 // Falls back to API_PREFIX alone (empty base = relative URL for production)
@@ -12,14 +12,14 @@ const API_BASE = process.env['EXPO_PUBLIC_API_BASE'] ?? '';
 const API_URL = API_BASE ? `${API_BASE}${API_PREFIX}` : API_PREFIX;
 
 const KEYS = {
-  ACCESS_TOKEN: 'ml_access_token',
-  REFRESH_TOKEN: 'ml_refresh_token',
-  USER_ID: 'ml_user_id',
-  USER_EMAIL: 'ml_user_email',
-  USER_ROLE: 'ml_user_role',
-  ORG_ID: 'ml_org_id',
-  MFA_PARTIAL_TOKEN: 'ml_mfa_partial_token',
-  INTAKE_COMPLETE: 'ml_intake_complete',
+  ACCESS_TOKEN: 'cope_access_token',
+  REFRESH_TOKEN: 'cope_refresh_token',
+  USER_ID: 'cope_user_id',
+  USER_EMAIL: 'cope_user_email',
+  USER_ROLE: 'cope_user_role',
+  ORG_ID: 'cope_org_id',
+  MFA_PARTIAL_TOKEN: 'cope_mfa_partial_token',
+  INTAKE_COMPLETE: 'cope_intake_complete',
 } as const;
 
 export interface StoredUser {

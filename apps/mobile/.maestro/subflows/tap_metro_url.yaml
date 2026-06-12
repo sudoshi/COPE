@@ -2,7 +2,7 @@
 # Subflow: Tap the Metro dev server URL
 # Used when Expo Dev Client launcher appears (after clearState).
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 
@@ -12,5 +12,5 @@ appId: com.mindlog.app
 # Wait for bundle to load
 - extendedWaitUntil:
     visible:
-      text: "MindLog"
+      text: "COPE"
     timeout: 30000

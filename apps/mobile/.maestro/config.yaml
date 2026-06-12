@@ -1,14 +1,14 @@
 # =============================================================================
-# Maestro E2E Configuration — MindLog Mobile
+# Maestro E2E Configuration — COPE Mobile
 # =============================================================================
 
-appId: com.mindlog.app
+appId: com.cope.app
 
 # Demo environment credentials
 env:
-  PATIENT_EMAIL: "alice@mindlogdemo.com"
+  PATIENT_EMAIL: "alice@copedemo.com"
   PATIENT_PASSWORD: "Demo@Patient1!"
-  CLINICIAN_EMAIL: "dr.kim@mindlogdemo.com"
+  CLINICIAN_EMAIL: "dr.kim@copedemo.com"
   CLINICIAN_PASSWORD: "Demo@Clinic1!"
   API_BASE: "http://10.0.2.2:3000"
 

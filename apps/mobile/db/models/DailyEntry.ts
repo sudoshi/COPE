@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — WatermelonDB DailyEntry model
+// COPE Mobile — WatermelonDB DailyEntry model
 // =============================================================================
 
 import { Model } from '@nozbe/watermelondb';

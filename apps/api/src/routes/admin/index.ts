@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Admin routes
+// COPE API — Admin routes
 // GET    /api/v1/admin/users              — list all clinicians (admin only)
 // GET    /api/v1/admin/users/:id          — get single clinician details
 // POST   /api/v1/admin/users              — create new clinician
@@ -11,8 +11,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { UuidSchema, PaginationSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { UuidSchema, PaginationSchema } from '@cope/shared';
 import { auditLog } from '../../middleware/audit.js';
 
 // ---------------------------------------------------------------------------

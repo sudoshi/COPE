@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 /**
- * Extended environment variables for MindLog web application.
+ * Extended environment variables for COPE web application.
  * These are compile-time constants injected by Vite.
  */
 interface ImportMetaEnv {

@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Clinical Alerts page (redesigned to match prototype)
+// COPE Web — Clinical Alerts page (redesigned to match prototype)
 // Filter chips (not dropdowns) + prototype alert item layout + no page header.
 // =============================================================================
 

@@ -1,4 +1,4 @@
-# MindLog Live Data Simulation System
+# COPE Live Data Simulation System
 
 ## Project Plan
 
@@ -286,7 +286,7 @@ Each run logs:
 ### 7.2 Log Output
 
 ```
-[2024-02-22 14:00:00] MindLog Live Simulation - Afternoon Run
+[2024-02-22 14:00:00] COPE Live Simulation - Afternoon Run
 [2024-02-22 14:00:01] Processing 146 active patients...
 [2024-02-22 14:00:15] ✓ Created 89 daily entries
 [2024-02-22 14:00:16] ✓ Generated 34 sleep logs
@@ -303,8 +303,8 @@ Each run logs:
 ### 8.1 Crontab Entry
 
 ```bash
-# MindLog Live Data Simulation - runs at 6am, 2pm, 10pm
-0 6,14,22 * * * cd /path/to/MindLog && npm run db:simulate >> /var/log/mindlog-sim.log 2>&1
+# COPE Live Data Simulation - runs at 6am, 2pm, 10pm
+0 6,14,22 * * * cd /path/to/COPE && npm run db:simulate >> /var/log/cope-sim.log 2>&1
 ```
 
 ### 8.2 npm Script
@@ -323,7 +323,7 @@ Each run logs:
 
 ### 9.1 Demo Environment Only
 
-- Script checks for `MINDLOG_ENV=demo` or specific org name
+- Script checks for `COPE_ENV=demo` or specific org name
 - Refuses to run on production databases
 - Clearly marked demo data
 

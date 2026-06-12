@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — GlobalSearch (command palette)
+// COPE Web — GlobalSearch (command palette)
 // Triggered by / or CMD+K. Shows grouped results: patients + notes.
 // Arrow key navigation + Enter to navigate.
 // =============================================================================

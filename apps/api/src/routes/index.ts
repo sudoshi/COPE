@@ -1,9 +1,9 @@
 // =============================================================================
-// MindLog API — Route registry
+// COPE API — Route registry
 // =============================================================================
 
 import type { FastifyInstance } from 'fastify';
-import { API_PREFIX } from '@mindlog/shared';
+import { API_PREFIX } from '@cope/shared';
 import healthRoutes from './health.js';
 import authRoutes from './auth.js';
 import patientRoutes from './patients/index.js';

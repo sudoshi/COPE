@@ -1,7 +1,7 @@
 // =============================================================================
-// MindLog API — FHIR R4 Mappers
+// COPE API — FHIR R4 Mappers
 //
-// Pure functions: MindLog DB rows → FHIR R4 resources.
+// Pure functions: COPE DB rows → FHIR R4 resources.
 // No I/O.  All IDs use full FHIR resource references.
 //
 // FHIR base URL is injected via FHIR_BASE_URL env var (default: API base URL)
@@ -134,7 +134,7 @@ export interface ConsentRow {
 // ---------------------------------------------------------------------------
 
 const SYSTEM = {
-  MRN:       'urn:mindlog:mrn',
+  MRN:       'urn:cope:mrn',
   NPI:       'http://hl7.org/fhir/sid/us-npi',
   RXNORM:    'http://www.nlm.nih.gov/research/umls/rxnorm',
   SNOMED:    'http://snomed.info/sct',
@@ -146,7 +146,7 @@ const SYSTEM = {
   CONSENT_SCOPE:    'http://terminology.hl7.org/CodeSystem/consentscope',
   CONSENT_CATEGORY: 'http://loinc.org',
   CARE_PLAN_CATEGORY: 'http://terminology.hl7.org/CodeSystem/care-plan-category',
-  MINDLOG:   'urn:mindlog:codes',
+  COPE:   'urn:cope:codes',
 } as const;
 
 // LOINC codes for daily check-in observations
@@ -268,7 +268,7 @@ export function mapPatient(row: PatientRow, baseUrl: string): object {
     },
     extension: [
       {
-        url: 'urn:mindlog:patient-status',
+        url: 'urn:cope:patient-status',
         valueCode: row.status,
       },
     ],
@@ -373,7 +373,7 @@ export function mapMedicationRequest(row: MedicationRow, baseUrl: string): objec
         ...(row.rxnorm_code
           ? [{ system: SYSTEM.RXNORM, code: row.rxnorm_code, display: row.generic_name ?? row.medication_name }]
           : []),
-        { system: SYSTEM.MINDLOG, code: row.medication_name },
+        { system: SYSTEM.COPE, code: row.medication_name },
       ],
       text: row.medication_name,
     },
@@ -439,7 +439,7 @@ export function mapQuestionnaireResponse(row: AssessmentRow, baseUrl: string): o
     id: row.id,
     questionnaire: loinc
       ? `http://loinc.org/q/${loinc.code}`
-      : `urn:mindlog:assessment:${row.scale_code.toLowerCase()}`,
+      : `urn:cope:assessment:${row.scale_code.toLowerCase()}`,
     status: 'completed',
     subject: { reference: fhirRef('Patient', row.patient_id, baseUrl) },
     authored: row.assessed_at,
@@ -462,11 +462,11 @@ export function mapQuestionnaireResponse(row: AssessmentRow, baseUrl: string): o
     ],
     extension: [
       {
-        url: 'urn:mindlog:scale-code',
+        url: 'urn:cope:scale-code',
         valueCode: row.scale_code,
       },
       ...(loinc ? [{
-        url: 'urn:mindlog:loinc-code',
+        url: 'urn:cope:loinc-code',
         valueCode: loinc.code,
       }] : []),
     ],
@@ -519,7 +519,7 @@ export function mapCondition(row: DiagnosisRow, baseUrl: string): object {
 }
 
 // ---------------------------------------------------------------------------
-// FHIR Consent (MindLog consent records → FHIR Consent)
+// FHIR Consent (COPE consent records → FHIR Consent)
 // ---------------------------------------------------------------------------
 
 const CONSENT_TYPE_MAP: Record<string, { scope: string; category: string; categoryDisplay: string }> = {
@@ -557,8 +557,8 @@ export function mapConsent(row: ConsentRow, baseUrl: string): object {
       type: row.granted ? 'permit' : 'deny',
     },
     extension: [
-      { url: 'urn:mindlog:consent-type', valueCode: row.consent_type },
-      ...(row.revoked_at ? [{ url: 'urn:mindlog:revoked-at', valueDateTime: row.revoked_at }] : []),
+      { url: 'urn:cope:consent-type', valueCode: row.consent_type },
+      ...(row.revoked_at ? [{ url: 'urn:cope:revoked-at', valueDateTime: row.revoked_at }] : []),
     ],
   };
 }
@@ -605,15 +605,15 @@ export function mapBundle(
 export function buildCapabilityStatement(baseUrl: string): object {
   return {
     resourceType: 'CapabilityStatement',
-    id: 'mindlog-capabilities',
+    id: 'cope-capabilities',
     url: `${baseUrl}/fhir/metadata`,
     version: '4.0.1',
-    name: 'MindLogFHIRCapabilities',
-    title: 'MindLog FHIR R4 Capability Statement',
+    name: 'COPEFHIRCapabilities',
+    title: 'COPE FHIR R4 Capability Statement',
     status: 'active',
     date: '2026-02-01',
-    publisher: 'MindLog Health',
-    description: 'FHIR R4 capability statement for the MindLog clinical monitoring platform. Supports read-only access to patient data for EHR integration.',
+    publisher: 'COPE Health',
+    description: 'FHIR R4 capability statement for the COPE clinical monitoring platform. Supports read-only access to patient data for EHR integration.',
     kind: 'instance',
     fhirVersion: '4.0.1',
     format: ['application/fhir+json'],

@@ -1,5 +1,5 @@
 /**
- * MindLog Theme Loader
+ * COPE Theme Loader
  *
  * Loads the modular dark theme system (burgundy/forest/gold).
  * The new theme is now the default.
@@ -16,7 +16,7 @@ const USE_LEGACY_THEME = import.meta.env.VITE_USE_LEGACY_THEME === 'true';
 
 if (USE_LEGACY_THEME) {
   // Legacy glassmorphism theme (for rollback/debugging only)
-  console.warn('[MindLog] Loading legacy theme - for debugging only');
+  console.warn('[COPE] Loading legacy theme - for debugging only');
   import('./theme-legacy-backup.css');
 } else {
   // New modular dark theme system (default)

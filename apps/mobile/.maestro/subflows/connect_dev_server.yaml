@@ -5,7 +5,7 @@
 #   2. Dev Client launcher (after clearState) → tap Metro URL
 # Uses conditional runFlow (when: visible:) to handle either case.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

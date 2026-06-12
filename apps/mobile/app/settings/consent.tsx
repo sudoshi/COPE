@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Privacy & Consent settings screen
+// COPE Mobile — Privacy & Consent settings screen
 // Displays the patient's active consent records and allows withdrawal.
 // HIPAA §164.508 — right to revoke authorization.
 // =============================================================================
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 import { apiFetch } from '../../services/auth';
 
 interface ConsentRecord {
@@ -53,7 +53,7 @@ export default function ConsentScreen() {
     if (record.consent_type === 'HIPAA_AUTHORIZATION') {
       Alert.alert(
         'Cannot withdraw HIPAA Authorization',
-        'HIPAA Authorization is required to use MindLog. Contact your care team to request record deletion.',
+        'HIPAA Authorization is required to use COPE. Contact your care team to request record deletion.',
       );
       return;
     }
@@ -141,7 +141,7 @@ export default function ConsentScreen() {
           <Text style={styles.infoTitle}>Your rights under HIPAA</Text>
           <Text style={styles.infoText}>
             You have the right to access, amend, and request an accounting of disclosures of your
-            protected health information. Contact privacy@mindlog.app to exercise these rights.
+            protected health information. Contact privacy@cope.app to exercise these rights.
           </Text>
         </View>
       </ScrollView>

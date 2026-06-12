@@ -251,7 +251,7 @@ export class AppShellComponent {
   async expectAppShell() {
     await expect(this.sidebar).toBeVisible();
     await expect(this.topbar).toBeVisible();
-    await expect(this.brandName).toContainText('MindLog');
+    await expect(this.brandName).toContainText('COPE');
     await expect(this.clinicianBadge).toBeVisible();
   }
 }

@@ -1,12 +1,12 @@
 // =============================================================================
-// MindLog Mobile — Journal entry detail screen
+// COPE Mobile — Journal entry detail screen
 // =============================================================================
 
 import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Switch } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 import { apiFetch } from '../../services/auth';
 
 interface JournalEntry {

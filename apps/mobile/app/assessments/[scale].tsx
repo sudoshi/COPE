@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Validated assessment questionnaire screen
+// COPE Mobile — Validated assessment questionnaire screen
 // Phase 9c: PHQ-9, GAD-7, ASRM, ISI, C-SSRS full questionnaire rendering.
 // Accessible via Today screen banner when a scale is due.
 // Route: /assessments/[scale]
@@ -12,7 +12,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 import { apiFetch } from '../../services/auth';
 
 // ---------------------------------------------------------------------------

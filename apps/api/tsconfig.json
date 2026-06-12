@@ -7,8 +7,8 @@
     "declarationMap": false,
     "sourceMap": true,
     "paths": {
-      "@mindlog/shared": ["../../packages/shared/dist/index.d.ts"],
-      "@mindlog/db": ["../../packages/db/dist/index.d.ts"]
+      "@cope/shared": ["../../packages/shared/dist/index.d.ts"],
+      "@cope/db": ["../../packages/db/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*"],

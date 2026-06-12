@@ -1,4 +1,4 @@
-# MindLog — Phase 0 Architecture Decisions
+# COPE — Phase 0 Architecture Decisions
 
 **Date:** February 2026
 **Status:** Resolved
@@ -8,7 +8,7 @@
 
 ## Market Correction (Critical)
 
-> **The SRS v1.0 incorrectly targets the Australian market. MindLog targets the United States.**
+> **The SRS v1.0 incorrectly targets the Australian market. COPE targets the United States.**
 
 The following SRS references must be updated in v1.1:
 
@@ -25,10 +25,10 @@ The following SRS references must be updated in v1.1:
 | Locale default | en-AU | en-US |
 | Currency | AUD | USD |
 
-**Regulatory implication:** MindLog likely constitutes a **Software as a Medical Device (SaMD)** under the FDA's Digital Health Center of Excellence framework. Classification is likely **Class II** (De Novo or 510(k) pathway) given it captures suicidal ideation and generates alerts influencing clinical decision-making. A formal regulatory assessment by a US-qualified regulatory affairs consultant is required before any clinical pilot.
+**Regulatory implication:** COPE likely constitutes a **Software as a Medical Device (SaMD)** under the FDA's Digital Health Center of Excellence framework. Classification is likely **Class II** (De Novo or 510(k) pathway) given it captures suicidal ideation and generates alerts influencing clinical decision-making. A formal regulatory assessment by a US-qualified regulatory affairs consultant is required before any clinical pilot.
 
 **HIPAA implications:**
-- MindLog is a **Business Associate** when deployed within a covered entity (hospital, clinic, health plan).
+- COPE is a **Business Associate** when deployed within a covered entity (hospital, clinic, health plan).
 - A **Business Associate Agreement (BAA)** must be executed with every vendor receiving PHI: Supabase, Resend, Twilio, Anthropic, Expo.
 - All PHI must remain within US data regions.
 - A formal **HIPAA Security Risk Assessment** is required before pilot deployment.
@@ -124,7 +124,7 @@ The following SRS references must be updated in v1.1:
 ## Monorepo Structure
 
 ```
-mindlog/
+cope/
 ├── apps/
 │   ├── api/          # Fastify REST API + WebSocket server
 │   ├── web/          # React + Vite clinician dashboard

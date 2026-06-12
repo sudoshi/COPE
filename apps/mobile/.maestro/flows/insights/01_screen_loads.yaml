@@ -3,7 +3,7 @@
 # Verifies that the Insights tab loads successfully with the title, period
 # subtitle, and refresh button visible after data finishes loading.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

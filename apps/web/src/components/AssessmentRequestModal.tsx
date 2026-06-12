@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — AssessmentRequestModal
+// COPE Web — AssessmentRequestModal
 // Clinician selects a scale and sends a push notification to the patient.
 // =============================================================================
 

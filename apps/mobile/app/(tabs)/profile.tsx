@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Profile tab
+// COPE Mobile — Profile tab
 // Phase 4: real account info from GET /patients/me, dynamic version
 // =============================================================================
 
@@ -8,7 +8,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, ActivityIn
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Constants from 'expo-constants';
-import { DESIGN_TOKENS, CRISIS_CONTACTS } from '@mindlog/shared';
+import { DESIGN_TOKENS, CRISIS_CONTACTS } from '@cope/shared';
 import { clearSession, apiFetch } from '../../services/auth';
 
 interface PatientProfile {
@@ -150,7 +150,7 @@ export default function ProfileScreen() {
           <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>
 
-        <Text style={styles.version}>MindLog v{version} · US edition</Text>
+        <Text style={styles.version}>COPE v{version} · US edition</Text>
       </ScrollView>
     </SafeAreaView>
   );

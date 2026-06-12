@@ -7,7 +7,7 @@
 # Note: This flow depends on the demo patient having a pending PHQ-9 assessment.
 # If no assessment banner is visible, the flow gracefully skips with optional: true.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Notifications settings screen
+// COPE Mobile — Notifications settings screen
 // =============================================================================
 
 import { useState, useEffect } from 'react';
@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 import { apiFetch } from '../../services/auth';
 import {
   scheduleDailyCheckinReminder,

@@ -1,7 +1,7 @@
 // =============================================================================
-// MindLog Mobile — Design Tokens
+// COPE Mobile — Design Tokens
 // Single source of truth for all visual constants on the patient-facing app.
-// Based on the MindLog wireframe spec (COPEApp-Prototype/mindlog-wireframes.html)
+// Based on the COPE wireframe spec (COPEApp-Prototype/cope-wireframes.html)
 // and reconciled with the dark-themed implementation palette.
 //
 // Font registration names correspond to the useFonts() map in _layout.tsx:

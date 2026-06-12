@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — WatermelonDB ↔ API sync engine
+// COPE Mobile — WatermelonDB ↔ API sync engine
 // Uses Watermelon's synchronize() helper with a custom pull/push protocol
 // that maps to the /api/v1/sync endpoint on the Fastify server.
 //

@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Medications routes
+// COPE API — Medications routes
 //
 // GET    /medications                — list medications (patient: own; clinician: ?patient_id=)
 // POST   /medications                — add a medication (patient or clinician)
@@ -11,14 +11,14 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import {
   CreatePatientMedicationSchema,
   LogAdherenceSchema,
   DiscontinueMedicationSchema,
   UuidSchema,
   PaginationSchema,
-} from '@mindlog/shared';
+} from '@cope/shared';
 
 // ---------------------------------------------------------------------------
 // Local helpers

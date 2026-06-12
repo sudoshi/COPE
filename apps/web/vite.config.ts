@@ -7,7 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
-      '@mindlog/shared': resolve(__dirname, '../../packages/shared/src/index.ts'),
+      '@cope/shared': resolve(__dirname, '../../packages/shared/src/index.ts'),
     },
   },
   server: {

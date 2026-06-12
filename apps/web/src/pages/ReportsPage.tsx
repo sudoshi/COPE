@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Reports page
+// COPE Web — Reports page
 // Prototype layout: 3 report-type cards + request form + reports list.
 // Glassmorphic design with frosted glass cards.
 // =============================================================================

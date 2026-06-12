@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Color Palette Definitions
+// COPE Web — Color Palette Definitions
 // Curated dark-mode palettes applied via CSS custom property overrides.
 // Semantic colors (critical, warning, success, info) are NEVER overridden
 // to preserve clinical safety meaning across all palettes.

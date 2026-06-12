@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Report routes
+// COPE API — Report routes
 // POST /api/v1/reports       — request report generation (enqueues BullMQ job)
 // GET  /api/v1/reports       — list reports for clinician (paginated)
 // GET  /api/v1/reports/:id   — get report status / signed download URL
@@ -7,8 +7,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { CreateReportSchema, UuidSchema, PaginationSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { CreateReportSchema, UuidSchema, PaginationSchema } from '@cope/shared';
 import { reportQueue, type ReportJobData } from '../../workers/report-generator.js';
 
 // Helper to check if current user is an admin

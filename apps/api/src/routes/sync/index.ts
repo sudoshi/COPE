@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — /sync routes
+// COPE API — /sync routes
 // Supports the WatermelonDB offline-first sync protocol.
 //
 // GET  /sync/pull  — return all server changes since lastPulledAt (per patient)
@@ -11,7 +11,7 @@
 
 import type { FastifyInstance } from 'fastify';
 import fp from 'fastify-plugin';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import { auditLog } from '../../middleware/audit.js';
 import type { JwtPayload } from '../../plugins/auth.js';
 

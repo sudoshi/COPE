@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Passive health data sync route
+// COPE API — Passive health data sync route
 // POST /api/v1/health-data/sync   — batch upsert passive health snapshots
 // GET  /api/v1/health-data/me     — last 30 days of snapshots for calling patient
 //
@@ -9,7 +9,7 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 
 // ---------------------------------------------------------------------------
 // Validation schemas

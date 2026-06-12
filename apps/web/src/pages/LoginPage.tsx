@@ -6,7 +6,7 @@ import { FernIcon } from '../components/FernIcon.js';
 import '../styles/pages/login.css';
 
 // Partial token is stored in sessionStorage between login and MFA steps
-export const MFA_PARTIAL_TOKEN_KEY = 'ml_mfa_partial_token';
+export const MFA_PARTIAL_TOKEN_KEY = 'cope_mfa_partial_token';
 
 interface LoginResponseData {
   access_token?: string;
@@ -166,7 +166,7 @@ export function LoginPage() {
             <FernIcon size={140} glow />
           </div>
           <h1 className="login-hero-brand">
-            Mind<span>Log</span>
+            CO<span>PE</span>
           </h1>
           <p className="login-hero-tagline">
             Clinical intelligence for behavioral health teams.
@@ -195,7 +195,7 @@ export function LoginPage() {
         <div className="login-card">
           <div className="login-header">
             {/* Brand shown only on mobile (hero is hidden) */}
-            <h1 className="login-mobile-brand">Mind<span>Log</span></h1>
+            <h1 className="login-mobile-brand">CO<span>PE</span></h1>
             <h2 className="login-title">Welcome back</h2>
             <p className="login-subtitle">
               Sign in to the clinician dashboard
@@ -340,7 +340,7 @@ export function LoginPage() {
                 type="button"
                 className="login-demo-btn"
                 onClick={() => {
-                  setEmail('dr.kim@mindlogdemo.com');
+                  setEmail('dr.kim@copedemo.com');
                   setPassword('Demo@Clinic1!');
                 }}
               >

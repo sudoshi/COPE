@@ -1,4 +1,4 @@
-# MindLog Live Data Simulation
+# COPE Live Data Simulation
 
 > **Full Documentation**: See [docs/live-simulation.md](/docs/live-simulation.md) for comprehensive documentation including architecture, algorithms, configuration, and extension guides.
 
@@ -35,7 +35,7 @@ npm run db:simulate -- --dry-run
 chmod +x packages/db/scripts/setup-simulation-cron.sh
 
 # Set your database connection (or use .env file)
-export DATABASE_URL="postgresql://user:password@localhost:5432/mindlogdemo"
+export DATABASE_URL="postgresql://user:password@localhost:5432/copedemo"
 
 # Install the cron job
 ./packages/db/scripts/setup-simulation-cron.sh
@@ -52,7 +52,7 @@ export DATABASE_URL="postgresql://user:password@localhost:5432/mindlogdemo"
 ### Prerequisites
 
 1. **Node.js 18+** and npm installed
-2. **PostgreSQL** database with MindLog schema
+2. **PostgreSQL** database with COPE schema
 3. **Demo data** seeded (run `npm run db:seed-demo` first)
 
 ### Step-by-Step Setup
@@ -61,7 +61,7 @@ export DATABASE_URL="postgresql://user:password@localhost:5432/mindlogdemo"
 
 ```bash
 git clone <repository-url>
-cd MindLog
+cd COPE
 npm install
 ```
 
@@ -70,13 +70,13 @@ npm install
 Create a `.env` file in the project root or `packages/db/`:
 
 ```env
-DATABASE_URL=postgresql://username:password@localhost:5432/mindlogdemo
+DATABASE_URL=postgresql://username:password@localhost:5432/copedemo
 ```
 
 Or export directly:
 
 ```bash
-export DATABASE_URL="postgresql://username:password@localhost:5432/mindlogdemo"
+export DATABASE_URL="postgresql://username:password@localhost:5432/copedemo"
 ```
 
 #### 3. Verify Database Has Demo Data
@@ -116,7 +116,7 @@ If you prefer to set up the cron job manually:
 crontab -e
 
 # Add this line (adjust paths as needed):
-0 6,14,22 * * * cd /path/to/MindLog && DATABASE_URL="postgresql://user:pass@localhost:5432/mindlogdemo" npm run db:simulate >> /tmp/mindlog-simulation.log 2>&1
+0 6,14,22 * * * cd /path/to/COPE && DATABASE_URL="postgresql://user:pass@localhost:5432/copedemo" npm run db:simulate >> /tmp/cope-simulation.log 2>&1
 ```
 
 ## How It Works
@@ -159,7 +159,7 @@ crontab -e
 | Variable       | Description                          | Default                         |
 |----------------|--------------------------------------|---------------------------------|
 | `DATABASE_URL` | PostgreSQL connection string         | Required                        |
-| `LOG_FILE`     | Simulation log file path             | `/tmp/mindlog-simulation.log`   |
+| `LOG_FILE`     | Simulation log file path             | `/tmp/cope-simulation.log`   |
 
 ### Command Line Options
 
@@ -174,10 +174,10 @@ crontab -e
 
 ```bash
 # Follow log in real-time
-tail -f /tmp/mindlog-simulation.log
+tail -f /tmp/cope-simulation.log
 
 # View recent runs
-tail -100 /tmp/mindlog-simulation.log
+tail -100 /tmp/cope-simulation.log
 ```
 
 ### Check Cron Status
@@ -236,12 +236,12 @@ LIMIT 7;
 
 2. **Verify cron job is installed**
    ```bash
-   crontab -l | grep mindlog
+   crontab -l | grep cope
    ```
 
 3. **Check log file for errors**
    ```bash
-   tail -50 /tmp/mindlog-simulation.log
+   tail -50 /tmp/cope-simulation.log
    ```
 
 ### Data Looks Unrealistic
@@ -251,7 +251,7 @@ LIMIT 7;
 
 ## Safety
 
-- The simulation **only runs on the demo organization** ("MindLog Demo Clinic")
+- The simulation **only runs on the demo organization** ("COPE Demo Clinic")
 - It refuses to run if no demo organization is found
 - Uses `ON CONFLICT DO NOTHING` to avoid duplicates
 - All timestamps are clearly from the simulation system

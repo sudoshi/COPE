@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "MindLog",
-    "slug": "mindlog",
+    "name": "COPE",
+    "slug": "cope",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mindlog",
+    "scheme": "cope",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
@@ -16,18 +16,18 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.mindlog.app",
+      "bundleIdentifier": "com.cope.app",
       "buildNumber": "1",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "MindLog uses Face ID to protect your mental health data.",
-        "NSHealthShareUsageDescription": "MindLog can read sleep and activity data to help you track your wellness.",
-        "NSHealthUpdateUsageDescription": "MindLog can write wellness data to Apple Health.",
-        "NSUserNotificationUsageDescription": "MindLog sends daily check-in reminders and important notifications from your care team.",
+        "NSFaceIDUsageDescription": "COPE uses Face ID to protect your mental health data.",
+        "NSHealthShareUsageDescription": "COPE can read sleep and activity data to help you track your wellness.",
+        "NSHealthUpdateUsageDescription": "COPE can write wellness data to Apple Health.",
+        "NSUserNotificationUsageDescription": "COPE sends daily check-in reminders and important notifications from your care team.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.mindlog.app",
+      "package": "com.cope.app",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -46,7 +46,7 @@
           "action": "VIEW",
           "autoVerify": true,
           "data": [
-            { "scheme": "mindlog" }
+            { "scheme": "cope" }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
         },
@@ -56,7 +56,7 @@
           "data": [
             {
               "scheme": "https",
-              "host": "*.mindlog.app",
+              "host": "*.cope.app",
               "pathPrefix": "/invite"
             }
           ],

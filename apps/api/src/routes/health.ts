@@ -1,11 +1,11 @@
 // =============================================================================
-// MindLog API — Health check route
+// COPE API — Health check route
 // GET /health  →  200 { status: 'ok', ... }
 // =============================================================================
 
 import { createRequire } from 'node:module';
 import type { FastifyInstance } from 'fastify';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 
 // Resolves to apps/api/package.json from both src/ and dist/ layouts;
 // createRequire keeps the JSON file outside the tsc rootDir.

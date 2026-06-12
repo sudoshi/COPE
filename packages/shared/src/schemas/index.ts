@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — Zod Validation Schemas
+// COPE — Zod Validation Schemas
 // Used for API request/response validation in apps/api and client-side forms.
 // =============================================================================
 

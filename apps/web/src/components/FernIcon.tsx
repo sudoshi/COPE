@@ -9,7 +9,7 @@ interface FernIconProps {
 }
 
 /**
- * MindLog fern frond brand mark — inline SVG, no external deps.
+ * COPE fern frond brand mark — inline SVG, no external deps.
  * Matches the mobile app icon: teal gradient, curved stem, 9 paired pinnae.
  */
 export function FernIcon({ size = 48, className, glow = false }: FernIconProps) {

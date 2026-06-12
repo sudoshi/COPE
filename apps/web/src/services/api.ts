@@ -1,9 +1,9 @@
 // =============================================================================
-// MindLog Web — API client
+// COPE Web — API client
 // Thin wrapper around fetch. All requests go through the Vite proxy → API server.
 // =============================================================================
 
-import { API_PREFIX } from '@mindlog/shared';
+import { API_PREFIX } from '@cope/shared';
 
 class ApiError extends Error {
   constructor(

@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Insights tab
+// COPE Mobile — Insights tab
 // Phase 3: uses /insights/me API for real server-side correlations,
 //          top triggers, top strategies, mood trend.
 // =============================================================================
@@ -8,7 +8,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, router } from 'expo-router';
-import { DESIGN_TOKENS, MOOD_COLORS } from '@mindlog/shared';
+import { DESIGN_TOKENS, MOOD_COLORS } from '@cope/shared';
 import { apiFetch } from '../../services/auth';
 
 interface AiInsight {

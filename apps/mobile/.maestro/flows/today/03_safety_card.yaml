@@ -3,7 +3,7 @@
 # Verifies that the always-visible safety card at the bottom of Today screen
 # displays crisis contact information: 988 Lifeline and Crisis Text Line 741741.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

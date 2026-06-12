@@ -47,7 +47,7 @@ test.describe('Theme Component Verification', () => {
 
       const brandName = page.locator('.brand-name');
       await expect(brandName).toBeVisible();
-      await expect(brandName).toContainText('MindLog');
+      await expect(brandName).toContainText('COPE');
 
       // Clinician badge
       const clinicianBadge = page.locator('.clinician-badge');

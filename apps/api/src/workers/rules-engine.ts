@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Rules Engine (BullMQ)
+// COPE API — Rules Engine (BullMQ)
 // Implements RULE-001 through RULE-008.
 //
 // ⚠  CLINICAL ADVISORY: All numeric thresholds here are provisional defaults.
@@ -12,8 +12,8 @@
 // =============================================================================
 
 import { Worker, Queue } from 'bullmq';
-import { ALERT_RULE_KEYS, ALERT_THRESHOLDS, type AlertRuleKey } from '@mindlog/shared';
-import { sql } from '@mindlog/db';
+import { ALERT_RULE_KEYS, ALERT_THRESHOLDS, type AlertRuleKey } from '@cope/shared';
+import { sql } from '@cope/db';
 import { config } from '../config.js';
 import { publishAlert } from '../plugins/websocket.js';
 import { generateCompletion } from '../services/llmClient.js';
@@ -22,7 +22,7 @@ import { generateCompletion } from '../services/llmClient.js';
 // Queue — exported so API routes can enqueue jobs
 // ---------------------------------------------------------------------------
 
-export const RULES_QUEUE_NAME = 'mindlog-rules';
+export const RULES_QUEUE_NAME = 'cope-rules';
 
 export const connection = {
   host: new URL(config.redisUrl).hostname,

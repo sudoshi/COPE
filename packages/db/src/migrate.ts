@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — Migration Runner
+// COPE — Migration Runner
 // Usage: npm run db:migrate (from packages/db)
 // =============================================================================
 
@@ -50,7 +50,7 @@ async function applyMigration(filename: string, sqlContent: string): Promise<voi
 }
 
 async function migrate(): Promise<void> {
-  console.log('MindLog — Database Migration Runner');
+  console.log('COPE — Database Migration Runner');
   console.log('====================================');
 
   await ensureMigrationsTable();

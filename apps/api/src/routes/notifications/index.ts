@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Notification preference routes (patient-facing + clinician)
+// COPE API — Notification preference routes (patient-facing + clinician)
 // GET  /api/v1/notifications/prefs                  — read patient notification preferences
 // PUT  /api/v1/notifications/prefs                  — update preferences + register push token
 // POST /api/v1/notifications/send-assessment-request — clinician → patient push
@@ -7,9 +7,9 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 import { config } from '../../config.js';
-import { UuidSchema } from '@mindlog/shared';
+import { UuidSchema } from '@cope/shared';
 
 const EXPO_PUSH_URL = 'https://exp.host/--/api/v2/push/send';
 
@@ -178,7 +178,7 @@ export default async function notificationRoutes(fastify: FastifyInstance): Prom
       : 'Your clinician';
 
     const pushTitle = `Assessment Requested: ${body.scale}`;
-    const pushBody = body.message ?? `${clinicianName} has requested a ${body.scale} assessment. Please open MindLog to complete it.`;
+    const pushBody = body.message ?? `${clinicianName} has requested a ${body.scale} assessment. Please open COPE to complete it.`;
 
     await sendPatientPush(pushToken, pushTitle, pushBody, {
       type: 'assessment_request',

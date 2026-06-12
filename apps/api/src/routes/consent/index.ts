@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Patient consent routes
+// COPE API — Patient consent routes
 // GET    /api/v1/consent         — list patient's active consent records
 // POST   /api/v1/consent         — grant or record consent
 // DELETE /api/v1/consent/:type   — revoke a consent type (insert revocation row)
@@ -7,8 +7,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { UpdateConsentSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { UpdateConsentSchema } from '@cope/shared';
 
 const CONSENT_VERSION = '1.0.0';
 

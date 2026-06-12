@@ -7,7 +7,7 @@
 # The today-med-card tap is optional because the demo patient may not have
 # medications configured, but 988 assertion is MANDATORY if the screen loads.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Validated assessment routes
+// COPE API — Validated assessment routes
 // POST /api/v1/assessments              — submit a completed scale (PHQ-9, GAD-7 …)
 // GET  /api/v1/assessments              — patient's history (latest per scale)
 // GET  /api/v1/assessments/pending      — which scales are due for this patient
@@ -8,8 +8,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { SCALE_LOINC_MAP } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { SCALE_LOINC_MAP } from '@cope/shared';
 
 // ---------------------------------------------------------------------------
 // Validation schemas
@@ -55,11 +55,11 @@ function toFhirQuestionnaireResponse(assessment: {
     status: 'completed',
     questionnaire: loincCode
       ? `http://loinc.org/vs/${loincCode}`
-      : `urn:mindlog:scale:${assessment.scale}`,
+      : `urn:cope:scale:${assessment.scale}`,
     authored: assessment.completed_at,
     extension: [
       {
-        url: 'http://mindlog.app/fhir/StructureDefinition/totalScore',
+        url: 'http://cope.app/fhir/StructureDefinition/totalScore',
         valueInteger: assessment.score,
       },
     ],

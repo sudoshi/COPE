@@ -4,7 +4,7 @@
 # the app or leave it in an inconsistent state. After 8 rapid taps the app
 # must still render the Today screen greeting normally.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

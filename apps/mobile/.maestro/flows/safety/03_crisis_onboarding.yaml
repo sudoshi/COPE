@@ -5,7 +5,7 @@
 # in. A person in crisis who has not yet created an account must still be able
 # to find the 988 Suicide & Crisis Lifeline number on the onboarding screen.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 
@@ -19,7 +19,7 @@ appId: com.mindlog.app
 # ── Onboarding screen must load ───────────────────────────────────────────
 - extendedWaitUntil:
     visible:
-      text: "MindLog"
+      text: "COPE"
     timeout: 15000
 
 # Scroll down on the onboarding screen to reveal crisis information

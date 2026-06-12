@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — useTodayEntry hook
+// COPE Mobile — useTodayEntry hook
 // Phase 2: reads from local WatermelonDB, falls back to API if empty.
 // =============================================================================
 

@@ -1,12 +1,12 @@
 // =============================================================================
-// MindLog API — Catalogue routes (patient-facing)
+// COPE API — Catalogue routes (patient-facing)
 // GET /api/v1/catalogues/triggers    — patient's active trigger list (+ system fallback)
 // GET /api/v1/catalogues/symptoms    — patient's active symptom list (+ system fallback)
 // GET /api/v1/catalogues/strategies  — patient's active wellness strategies (+ system fallback)
 // =============================================================================
 
 import type { FastifyInstance } from 'fastify';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 
 export default async function catalogueRoutes(fastify: FastifyInstance): Promise<void> {
   const patientOnly = { preHandler: [fastify.requireRole(['patient'])] };

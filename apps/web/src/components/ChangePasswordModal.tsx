@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Change Password Modal
+// COPE Web — Change Password Modal
 // Non-dismissable overlay shown when must_change_password is true.
 // =============================================================================
 

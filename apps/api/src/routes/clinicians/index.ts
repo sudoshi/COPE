@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Clinician routes
+// COPE API — Clinician routes
 // GET  /api/v1/clinicians/caseload      — today's full caseload view
 // GET  /api/v1/clinicians/snapshot      — population snapshot (dashboard KPIs)
 // POST /api/v1/clinicians/notes/:patientId      — create note on patient
@@ -9,8 +9,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { CreateClinicianNoteSchema, UuidSchema, PaginationSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { CreateClinicianNoteSchema, UuidSchema, PaginationSchema } from '@cope/shared';
 import { auditLog } from '../../middleware/audit.js';
 import { getPublisher } from '../../plugins/websocket.js';
 

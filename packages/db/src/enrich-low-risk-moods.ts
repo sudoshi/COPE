@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — Low-Risk Patient Mood Enrichment
+// COPE — Low-Risk Patient Mood Enrichment
 //
 // Creates clinically plausible mood trajectories for low-risk patients:
 //   • Stable, high baseline moods (7-9 range)
@@ -208,7 +208,7 @@ function calculateMood(
 // ---------------------------------------------------------------------------
 
 async function enrichLowRiskMoods(): Promise<void> {
-  console.log('\nMindLog — Low-Risk Patient Mood Enrichment');
+  console.log('\nCOPE — Low-Risk Patient Mood Enrichment');
   console.log('=============================================\n');
 
   // Get all low-risk patients
@@ -221,7 +221,7 @@ async function enrichLowRiskMoods(): Promise<void> {
     FROM patients
     WHERE risk_level = 'low'
       AND status = 'active'
-      AND organisation_id = (SELECT id FROM organisations WHERE name = 'MindLog Demo Clinic' LIMIT 1)
+      AND organisation_id = (SELECT id FROM organisations WHERE name = 'COPE Demo Clinic' LIMIT 1)
     ORDER BY last_name, first_name
   `;
 
@@ -353,7 +353,7 @@ async function enrichLowRiskSleep(): Promise<void> {
   const patients = await sql<{ id: string }[]>`
     SELECT id FROM patients
     WHERE risk_level = 'low' AND status = 'active'
-      AND organisation_id = (SELECT id FROM organisations WHERE name = 'MindLog Demo Clinic' LIMIT 1)
+      AND organisation_id = (SELECT id FROM organisations WHERE name = 'COPE Demo Clinic' LIMIT 1)
   `;
 
   let sleepLogsUpdated = 0;
@@ -401,7 +401,7 @@ async function enrichLowRiskExercise(): Promise<void> {
   const patients = await sql<{ id: string }[]>`
     SELECT id FROM patients
     WHERE risk_level = 'low' AND status = 'active'
-      AND organisation_id = (SELECT id FROM organisations WHERE name = 'MindLog Demo Clinic' LIMIT 1)
+      AND organisation_id = (SELECT id FROM organisations WHERE name = 'COPE Demo Clinic' LIMIT 1)
   `;
 
   let exerciseLogsCreated = 0;

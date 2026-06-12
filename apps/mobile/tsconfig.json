@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": false,
     "paths": {
-      "@mindlog/shared": [
+      "@cope/shared": [
         "../../packages/shared/src/index.ts"
       ],
       "@/*": [

@@ -1,5 +1,5 @@
 -- =============================================================================
--- MindLog — Demo Enrichment Script
+-- COPE — Demo Enrichment Script
 -- Run AFTER npm run db:seed-demo to fill in the data that makes every
 -- chart, graph, and clinical metric in the web dashboard come alive.
 --
@@ -14,7 +14,7 @@
 --   8. Appointments — 2 historical (attended/dna) + 1 upcoming per patient
 --
 -- Apply:
---   PGPASSWORD=acumenus psql -h localhost -p 5432 -U smudoshi -d mindlogdemo \
+--   PGPASSWORD=acumenus psql -h localhost -p 5432 -U smudoshi -d copedemo \
 --     < packages/db/seeds/009_demo_enrichment.sql
 --
 -- Idempotent: safe to re-run (ON CONFLICT DO NOTHING / WHERE ... IS NULL guards).
@@ -25,7 +25,7 @@ BEGIN;
 -- Safety check
 DO $$
 BEGIN
-  PERFORM 1 FROM organisations WHERE name = 'MindLog Demo Clinic';
+  PERFORM 1 FROM organisations WHERE name = 'COPE Demo Clinic';
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Demo org not found — run: npm run db:seed-demo first';
   END IF;
@@ -33,7 +33,7 @@ END $$;
 
 -- Convenience variable used in several queries
 CREATE TEMP TABLE _org AS
-  SELECT id FROM organisations WHERE name = 'MindLog Demo Clinic';
+  SELECT id FROM organisations WHERE name = 'COPE Demo Clinic';
 
 -- =============================================================================
 -- 1. NP Zhang → admin + care team access to all 146 patients
@@ -41,7 +41,7 @@ CREATE TEMP TABLE _org AS
 
 UPDATE clinicians
 SET    role = 'admin'
-WHERE  email = 'np.zhang@mindlogdemo.com';
+WHERE  email = 'np.zhang@copedemo.com';
 
 -- Zhang's admin role bypass now provides org-wide access; no need for
 -- care_team_members rows on every patient.  Original ~22 primary patients
@@ -249,7 +249,7 @@ SELECT p.id,
        ctm.clinician_id,
        CASE p.risk_level
          WHEN 'low'      THEN 'Mild presentation. Good treatment response. Continued outpatient monitoring.'
-         WHEN 'moderate' THEN 'Moderate severity. Active treatment plan. Progress tracked via MindLog.'
+         WHEN 'moderate' THEN 'Moderate severity. Active treatment plan. Progress tracked via COPE.'
          WHEN 'high'     THEN 'Significant functional impairment. Intensive monitoring. Weekly check-ins.'
          WHEN 'critical' THEN 'Severe presentation. Crisis protocol active. Medication review pending.'
          ELSE NULL
@@ -481,7 +481,7 @@ SELECT
   (SELECT COUNT(*) FROM population_snapshots WHERE avg_phq9_score IS NOT NULL) AS snapshots_with_phq9,
   (SELECT COUNT(*) FROM patient_triggers)                         AS patient_trigger_links,
   (SELECT COUNT(*) FROM patient_symptoms)                         AS patient_symptom_links,
-  (SELECT role FROM clinicians WHERE email = 'np.zhang@mindlogdemo.com') AS zhang_role,
+  (SELECT role FROM clinicians WHERE email = 'np.zhang@copedemo.com') AS zhang_role,
   (SELECT COUNT(*) FROM care_team_members ctm
    JOIN clinicians c ON c.id = ctm.clinician_id
-   WHERE c.email = 'np.zhang@mindlogdemo.com')                   AS zhang_patient_count;
+   WHERE c.email = 'np.zhang@copedemo.com')                   AS zhang_patient_count;

@@ -1,4 +1,4 @@
-# MindLog Mobile — Phased Development Plan
+# COPE Mobile — Phased Development Plan
 **Target:** Expo (React Native) patient-facing app
 **Audience:** Patients with depression, anxiety, and bipolar disorder
 **Basis:** HTML wireframes in `COPEApp-Prototype/`, `MobileAppCoreDesignPrinciples.md`, existing API
@@ -18,13 +18,13 @@ The mobile app is a **daily self-monitoring tool** for patients, complementing t
 | Concern | Choice | Rationale |
 |---|---|---|
 | Framework | **Expo SDK 52** (managed workflow) | OTA updates, EAS Build/Submit, hardware APIs without ejecting |
-| Language | **TypeScript** (strict) | Already the repo language; share `@mindlog/shared` types |
+| Language | **TypeScript** (strict) | Already the repo language; share `@cope/shared` types |
 | Navigation | **React Navigation 6** (bottom tabs + stack) | Industry standard; supports deep linking |
 | State | **Zustand** (same pattern as web) | Already used in web app; lightweight, no boilerplate |
 | Server state | **TanStack Query v5** | Same as web; automatic caching, background refetch, offline queue |
 | Offline | **WatermelonDB** | Sync protocol already implemented at `GET/POST /sync` |
 | Charts | **Victory Native XL** | Recharts is web-only; Victory Native is performant on RN |
-| Forms | **React Hook Form + Zod** | Reuses `@mindlog/shared` schemas for validation |
+| Forms | **React Hook Form + Zod** | Reuses `@cope/shared` schemas for validation |
 | Styling | **StyleSheet + design tokens** | Native performance; no Tailwind on RN |
 | Secure storage | **Expo SecureStore** | JWT tokens, biometric flag |
 | Push notifications | **Expo Notifications** | Managed workflow; unified APNs/FCM |
@@ -36,7 +36,7 @@ The mobile app is a **daily self-monitoring tool** for patients, complementing t
 ### Monorepo Integration
 
 ```
-MindLog/
+COPE/
 ├── apps/
 │   ├── api/          ← existing Fastify API
 │   ├── web/          ← existing React + Vite clinician app
@@ -47,7 +47,7 @@ MindLog/
 └── turbo.json        ← add mobile workspace tasks
 ```
 
-`apps/mobile/package.json` imports `@mindlog/shared` (`*`) for types and Zod schemas — the same API contract shapes the web app, so validation is consistent across all clients.
+`apps/mobile/package.json` imports `@cope/shared` (`*`) for types and Zod schemas — the same API contract shapes the web app, so validation is consistent across all clients.
 
 ### Design Token Mapping (Prototype → React Native)
 
@@ -105,7 +105,7 @@ All other required endpoints (`/daily-entries`, `/journal`, `/medications`, `/ca
           │   online         │   sync pull/push
           ▼                  ▼
 ┌──────────────────────────────────────────────────────┐
-│              MindLog API  :3000                       │
+│              COPE API  :3000                       │
 │  /auth  /daily-entries  /journal  /medications        │
 │  /catalogues  /notifications  /sync  /patients        │
 └──────────────────────────────────────────────────────┘
@@ -123,7 +123,7 @@ All other required endpoints (`/daily-entries`, `/journal`, `/medications`, `/ca
 - Design token file (`theme.ts`) mapping all prototype colours/fonts
 - `AuthContext` + `api.ts` client (reusing same fetch wrapper pattern as web)
 - JWT stored in `SecureStore`; auto-refresh on 401
-- `@mindlog/shared` imported and Zod schemas validated at build time
+- `@cope/shared` imported and Zod schemas validated at build time
 - EAS `eas.json` configured (development / preview / production profiles)
 - `app.json` with bundle IDs, splash screen, icon assets
 

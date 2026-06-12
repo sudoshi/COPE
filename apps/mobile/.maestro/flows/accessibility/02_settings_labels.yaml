@@ -5,7 +5,7 @@
 # sign-out button. Each row must be identifiable by assistive technology.
 # FDA SaMD — WCAG 2.1 AA compliance checkpoint.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

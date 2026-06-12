@@ -3,7 +3,7 @@
 # Verifies that tapping a quick-mood emoji button (score 8 / smiley face)
 # submits a mood entry and the mood pip row updates to reflect the selection.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

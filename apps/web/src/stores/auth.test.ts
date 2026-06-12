@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Auth store tests
+// COPE Web — Auth store tests
 // Covers the storage-layer contract: Remember Me → localStorage, otherwise
 // sessionStorage, expired sessions discarded on init, forced-password-change
 // flag round-trips. Runs in node with an in-memory Storage stand-in.
@@ -52,24 +52,24 @@ describe('auth store', () => {
   it('persists to sessionStorage only when Remember Me is off', () => {
     authActions.login(TOKEN, CLINICIAN_ID, ORG_ID, 'refresh-token', 900, false);
 
-    expect(sessionStorage.getItem('ml_access_token')).toBe(TOKEN);
-    expect(localStorage.getItem('ml_access_token')).toBeNull();
+    expect(sessionStorage.getItem('cope_access_token')).toBe(TOKEN);
+    expect(localStorage.getItem('cope_access_token')).toBeNull();
     expect(getAuthState().isAuthenticated).toBe(true);
   });
 
   it('persists to localStorage only when Remember Me is on', () => {
     authActions.login(TOKEN, CLINICIAN_ID, ORG_ID, 'refresh-token', 900, true);
 
-    expect(localStorage.getItem('ml_access_token')).toBe(TOKEN);
-    expect(sessionStorage.getItem('ml_access_token')).toBeNull();
+    expect(localStorage.getItem('cope_access_token')).toBe(TOKEN);
+    expect(sessionStorage.getItem('cope_access_token')).toBeNull();
   });
 
   it('logout clears both storages and resets state', () => {
     authActions.login(TOKEN, CLINICIAN_ID, ORG_ID, 'refresh-token', 900, true);
     authActions.logout();
 
-    expect(localStorage.getItem('ml_access_token')).toBeNull();
-    expect(sessionStorage.getItem('ml_access_token')).toBeNull();
+    expect(localStorage.getItem('cope_access_token')).toBeNull();
+    expect(sessionStorage.getItem('cope_access_token')).toBeNull();
     const state = getAuthState();
     expect(state.isAuthenticated).toBe(false);
     expect(state.accessToken).toBeNull();
@@ -77,23 +77,23 @@ describe('auth store', () => {
 
   it('discards expired sessions on initFromStorage instead of restoring them', () => {
     // Simulate app restart: no in-memory state, only an expired persisted session
-    sessionStorage.setItem('ml_access_token', TOKEN);
-    sessionStorage.setItem('ml_token_expires_at', String(Math.floor(Date.now() / 1000) - 10));
-    sessionStorage.setItem('ml_clinician_id', CLINICIAN_ID);
-    sessionStorage.setItem('ml_org_id', ORG_ID);
+    sessionStorage.setItem('cope_access_token', TOKEN);
+    sessionStorage.setItem('cope_token_expires_at', String(Math.floor(Date.now() / 1000) - 10));
+    sessionStorage.setItem('cope_clinician_id', CLINICIAN_ID);
+    sessionStorage.setItem('cope_org_id', ORG_ID);
 
     authActions.initFromStorage();
 
     expect(getAuthState().isAuthenticated).toBe(false);
-    expect(sessionStorage.getItem('ml_access_token')).toBeNull();
+    expect(sessionStorage.getItem('cope_access_token')).toBeNull();
   });
 
   it('restores a valid persisted session on initFromStorage', () => {
-    sessionStorage.setItem('ml_access_token', TOKEN);
-    sessionStorage.setItem('ml_token_expires_at', String(Math.floor(Date.now() / 1000) + 600));
-    sessionStorage.setItem('ml_clinician_id', CLINICIAN_ID);
-    sessionStorage.setItem('ml_org_id', ORG_ID);
-    sessionStorage.setItem('ml_role', 'admin');
+    sessionStorage.setItem('cope_access_token', TOKEN);
+    sessionStorage.setItem('cope_token_expires_at', String(Math.floor(Date.now() / 1000) + 600));
+    sessionStorage.setItem('cope_clinician_id', CLINICIAN_ID);
+    sessionStorage.setItem('cope_org_id', ORG_ID);
+    sessionStorage.setItem('cope_role', 'admin');
 
     authActions.initFromStorage();
 
@@ -109,6 +109,6 @@ describe('auth store', () => {
 
     authActions.clearMustChangePassword();
     expect(getAuthState().mustChangePassword).toBe(false);
-    expect(sessionStorage.getItem('ml_must_change_password')).toBe('false');
+    expect(sessionStorage.getItem('cope_must_change_password')).toBe('false');
   });
 });

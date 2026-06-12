@@ -18,9 +18,9 @@ test.describe('Authentication', () => {
       await loginPage.expectLoginPage();
     });
 
-    test('should show MindLog branding', async ({ page }) => {
+    test('should show COPE branding', async ({ page }) => {
       await loginPage.goto();
-      await expect(page.locator('h1')).toContainText('MindLog');
+      await expect(page.locator('h1')).toContainText('COPE');
       await expect(page.locator('text=Clinician Dashboard')).toBeVisible();
     });
 
@@ -74,7 +74,7 @@ test.describe('Authentication', () => {
       }
 
       // Verify tokens are stored in localStorage (requires rememberMe=true)
-      const token = await page.evaluate(() => localStorage.getItem('ml_access_token'));
+      const token = await page.evaluate(() => localStorage.getItem('cope_access_token'));
       expect(token).toBeTruthy();
     });
   });
@@ -125,7 +125,7 @@ test.describe('Authentication', () => {
       }
 
       // Check that refresh token is stored
-      const refreshToken = await page.evaluate(() => localStorage.getItem('ml_refresh_token'));
+      const refreshToken = await page.evaluate(() => localStorage.getItem('cope_refresh_token'));
       expect(refreshToken).toBeTruthy();
     });
   });
@@ -203,7 +203,7 @@ test.describe('Authentication', () => {
       await page.locator('.sidebar-footer-btn').click();
 
       // Verify auth is cleared
-      const token = await page.evaluate(() => localStorage.getItem('ml_access_token'));
+      const token = await page.evaluate(() => localStorage.getItem('cope_access_token'));
       expect(token).toBeFalsy();
     });
   });

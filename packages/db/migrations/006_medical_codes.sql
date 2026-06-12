@@ -1,5 +1,5 @@
 -- =============================================================================
--- MindLog — Migration 006: Medical code infrastructure
+-- COPE — Migration 006: Medical code infrastructure
 -- Adds SNOMED-CT, RxNorm/NDC, LOINC columns to catalogue tables.
 -- Seeds ICD-10 psychiatric codes (DSM-5-aligned).
 -- Seeds SNOMED-CT codes for existing system symptoms.

@@ -3,7 +3,7 @@
 # Verifies that tapping the "+ New" button on the Journal tab navigates to
 # the check-in flow's journal step with a text input for free writing.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

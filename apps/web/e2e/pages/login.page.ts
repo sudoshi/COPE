@@ -84,7 +84,7 @@ export class LoginPage {
    * Verify login page is displayed correctly
    */
   async expectLoginPage() {
-    await expect(this.title).toContainText('MindLog');
+    await expect(this.title).toContainText('COPE');
     await expect(this.subtitle).toBeVisible();
     await expect(this.emailInput).toBeVisible();
     await expect(this.passwordInput).toBeVisible();

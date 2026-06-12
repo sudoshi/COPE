@@ -1,5 +1,5 @@
 -- =============================================================================
--- MindLog — Migration 007: OMOP CDM person_id sequential assignment
+-- COPE — Migration 007: OMOP CDM person_id sequential assignment
 -- Creates assign_omop_person_ids() function that grants stable OMOP person_ids
 -- to patients who have given data_research consent. Intended to be called by
 -- the nightly population snapshot worker before generating each snapshot.
@@ -97,7 +97,7 @@ $$;
 
 -- ---------------------------------------------------------------------------
 -- View: omop_person_map — convenience view for data warehouse exports
--- Maps MindLog patient UUIDs → OMOP person_ids for consented patients.
+-- Maps COPE patient UUIDs → OMOP person_ids for consented patients.
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE VIEW omop_person_map AS
@@ -106,12 +106,12 @@ CREATE OR REPLACE VIEW omop_person_map AS
     p.omop_person_id,
     p.research_cohort,
     p.primary_icd10_code,
-    p.created_at    AS mindlog_created_at
+    p.created_at    AS cope_created_at
   FROM patients p
   WHERE p.omop_person_id IS NOT NULL;
 
 COMMENT ON VIEW omop_person_map IS
-  'Maps MindLog patient UUIDs to OMOP CDM person_ids for export to the OMOP '
+  'Maps COPE patient UUIDs to OMOP CDM person_ids for export to the OMOP '
   'common data model. Only includes patients with assigned person_ids (i.e., '
   'those who have given data_research consent).';
 
@@ -119,5 +119,5 @@ COMMENT ON VIEW omop_person_map IS
 -- Grant: allow the snapshot worker role to call the function (adjust role name)
 -- ---------------------------------------------------------------------------
 
--- GRANT EXECUTE ON FUNCTION assign_omop_person_ids() TO mindlog_worker;
+-- GRANT EXECUTE ON FUNCTION assign_omop_person_ids() TO cope_worker;
 -- Commented out — uncomment and adjust role name to match your deployment.

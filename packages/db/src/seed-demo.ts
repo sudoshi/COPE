@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog — Demo Seed Script
+// COPE — Demo Seed Script
 //
 // Creates:
 //   • 1 organisation
@@ -137,19 +137,19 @@ function generateMood(dayIndex: number, profile: PatientProfile): number | null 
 // ---------------------------------------------------------------------------
 
 const CLINICIANS = [
-  { email: 'dr.kim@mindlogdemo.com',     firstName: 'Sarah',   lastName: 'Kim',     title: 'Dr', role: 'psychiatrist',     npi: '1234567801', patientCount: 22 },
-  { email: 'dr.torres@mindlogdemo.com',  firstName: 'Michael', lastName: 'Torres',  title: 'Dr', role: 'psychiatrist',     npi: '1234567802', patientCount: 22 },
-  { email: 'dr.walsh@mindlogdemo.com',   firstName: 'Jennifer',lastName: 'Walsh',   title: 'Dr', role: 'psychiatrist',     npi: '1234567803', patientCount: 20 },
-  { email: 'dr.okafor@mindlogdemo.com',  firstName: 'David',   lastName: 'Okafor',  title: 'Dr', role: 'psychologist',     npi: '1234567804', patientCount: 20 },
-  { email: 'dr.patel@mindlogdemo.com',   firstName: 'Rachel',  lastName: 'Patel',   title: 'Dr', role: 'psychologist',     npi: '1234567805', patientCount: 20 },
-  { email: 'dr.johnson@mindlogdemo.com', firstName: 'Marcus',  lastName: 'Johnson', title: 'Dr', role: 'care_coordinator', npi: '1234567806', patientCount: 20 },
-  { email: 'np.zhang@mindlogdemo.com',   firstName: 'Emily',   lastName: 'Zhang',   title: 'NP', role: 'nurse',            npi: '1234567807', patientCount: 22 },
+  { email: 'dr.kim@copedemo.com',     firstName: 'Sarah',   lastName: 'Kim',     title: 'Dr', role: 'psychiatrist',     npi: '1234567801', patientCount: 22 },
+  { email: 'dr.torres@copedemo.com',  firstName: 'Michael', lastName: 'Torres',  title: 'Dr', role: 'psychiatrist',     npi: '1234567802', patientCount: 22 },
+  { email: 'dr.walsh@copedemo.com',   firstName: 'Jennifer',lastName: 'Walsh',   title: 'Dr', role: 'psychiatrist',     npi: '1234567803', patientCount: 20 },
+  { email: 'dr.okafor@copedemo.com',  firstName: 'David',   lastName: 'Okafor',  title: 'Dr', role: 'psychologist',     npi: '1234567804', patientCount: 20 },
+  { email: 'dr.patel@copedemo.com',   firstName: 'Rachel',  lastName: 'Patel',   title: 'Dr', role: 'psychologist',     npi: '1234567805', patientCount: 20 },
+  { email: 'dr.johnson@copedemo.com', firstName: 'Marcus',  lastName: 'Johnson', title: 'Dr', role: 'care_coordinator', npi: '1234567806', patientCount: 20 },
+  { email: 'np.zhang@copedemo.com',   firstName: 'Emily',   lastName: 'Zhang',   title: 'NP', role: 'nurse',            npi: '1234567807', patientCount: 22 },
 ] as const;
 
 // Spotlight patients with rich backstories
 const SPOTLIGHT_PATIENTS = [
   {
-    email: 'alice@mindlogdemo.com',
+    email: 'alice@copedemo.com',
     firstName: 'Alice', lastName: 'Johnson',
     dob: '1985-03-15',
     mrn: 'MRN-0001',
@@ -161,7 +161,7 @@ const SPOTLIGHT_PATIENTS = [
     ],
   },
   {
-    email: 'bob@mindlogdemo.com',
+    email: 'bob@copedemo.com',
     firstName: 'Bob', lastName: 'Williams',
     dob: '1990-07-22',
     mrn: 'MRN-0002',
@@ -174,7 +174,7 @@ const SPOTLIGHT_PATIENTS = [
     ],
   },
   {
-    email: 'carol@mindlogdemo.com',
+    email: 'carol@copedemo.com',
     firstName: 'Carol', lastName: 'Martinez',
     dob: '1978-11-30',
     mrn: 'MRN-0003',
@@ -185,7 +185,7 @@ const SPOTLIGHT_PATIENTS = [
     ],
   },
   {
-    email: 'david@mindlogdemo.com',
+    email: 'david@copedemo.com',
     firstName: 'David', lastName: 'Chen',
     dob: '1995-05-10',
     mrn: 'MRN-0004',
@@ -289,7 +289,7 @@ const ALERT_BODIES = {
 async function wipeDemoData(): Promise<void> {
   console.log('⚠  Wiping existing demo data...');
   const [org] = await sql<{ id: string }[]>`
-    SELECT id FROM organisations WHERE name = 'MindLog Demo Clinic' LIMIT 1
+    SELECT id FROM organisations WHERE name = 'COPE Demo Clinic' LIMIT 1
   `;
   if (!org) {
     console.log('  Nothing to wipe.');
@@ -390,13 +390,13 @@ async function seedCatalogues(): Promise<{
 // Main seed
 // ---------------------------------------------------------------------------
 async function seed(): Promise<void> {
-  console.log('\nMindLog — Demo Seed');
+  console.log('\nCOPE — Demo Seed');
   console.log('===================');
   console.log('WARNING: For demo use only. Never run against production.\n');
 
   // Idempotency check
   const [existing] = await sql<{ id: string }[]>`
-    SELECT id FROM organisations WHERE name = 'MindLog Demo Clinic' LIMIT 1
+    SELECT id FROM organisations WHERE name = 'COPE Demo Clinic' LIMIT 1
   `;
 
   if (existing && !FORCE) {
@@ -417,7 +417,7 @@ async function seed(): Promise<void> {
   console.log('\n[2/8] Creating organisation...');
   const [org] = await sql<{ id: string }[]>`
     INSERT INTO organisations (name, type, city, state, country, timezone, locale)
-    VALUES ('MindLog Demo Clinic', 'clinic', 'San Francisco', 'CA', 'US', 'America/Los_Angeles', 'en-US')
+    VALUES ('COPE Demo Clinic', 'clinic', 'San Francisco', 'CA', 'US', 'America/Los_Angeles', 'en-US')
     RETURNING id
   `;
   if (!org) throw new Error('Failed to create organisation');
@@ -559,7 +559,7 @@ async function seed(): Promise<void> {
     const lastName = LAST_NAMES[i % LAST_NAMES.length]!;
     const num = String(i + 5).padStart(4, '0'); // MRN-0005 onwards
     bgPatients.push({
-      email: `patient.${firstName.toLowerCase()}.${lastName.toLowerCase()}.${i + 1}@mindlogdemo.com`,
+      email: `patient.${firstName.toLowerCase()}.${lastName.toLowerCase()}.${i + 1}@copedemo.com`,
       firstName,
       lastName,
       mrn: `MRN-${num}`,

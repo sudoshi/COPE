@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Web — Cohort Builder v2 page
+// COPE Web — Cohort Builder v2 page
 // Route: /cohort  (clinician + admin roles)
 //
 // Two-column layout: left filter builder + saved cohorts,
@@ -7,7 +7,7 @@
 // =============================================================================
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { CohortFilterGroup } from '@mindlog/shared';
+import type { CohortFilterGroup } from '@cope/shared';
 import { api, ApiError } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
 import { CohortFilterBuilder } from '../components/CohortFilterBuilder.js';

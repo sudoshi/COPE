@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — Accessibility label tests
+// COPE Mobile — Accessibility label tests
 // These strings are read aloud by screen readers; clinical values must be
 // announced unambiguously (WCAG 2.1 AA).
 // =============================================================================

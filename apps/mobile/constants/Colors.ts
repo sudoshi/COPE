@@ -3,7 +3,7 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-// MindLog design tokens — always dark theme
+// COPE design tokens — always dark theme
 const tintColor = '#2a9d8f'; // DESIGN_TOKENS.COLOR_PRIMARY
 
 export const Colors = {

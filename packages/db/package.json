@@ -1,5 +1,5 @@
 {
-  "name": "@mindlog/db",
+  "name": "@cope/db",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "postgres": "^3.4.5",
-    "@mindlog/shared": "*"
+    "@cope/shared": "*"
   },
   "devDependencies": {
     "typescript": "^5.7.2",

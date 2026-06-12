@@ -4,7 +4,7 @@
 # section, which may show as locked (AI disabled), consent-required, or
 # an active AI clinical summary depending on server configuration.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# MindLog Docs Agent
+# COPE Docs Agent
 # Reads source files and uses the Anthropic API (Claude) to regenerate
 # specific sections of README.md: Version, Project Status, Tech Stack.
 #
@@ -157,13 +157,13 @@ migration_count= ${MIGRATION_COUNT@Q}
 git_log        = ${GIT_LOG@Q}
 
 system_prompt = (
-    "You are a technical documentation agent for the MindLog clinical mental health platform. "
+    "You are a technical documentation agent for the COPE clinical mental health platform. "
     "You update specific sections of README.md based on current source code data. "
     "You MUST return ONLY the complete updated README.md content — no commentary, "
     "no markdown fences, no explanation. Just the raw file content."
 )
 
-user_prompt = f"""Update the following README.md for the MindLog project.
+user_prompt = f"""Update the following README.md for the COPE project.
 
 CURRENT DATE: {current_date}
 REPO VERSION (package.json): {root_version}
@@ -279,7 +279,7 @@ if git -C "$REPO_ROOT" diff --quiet HEAD -- README.md 2>/dev/null; then
 else
   git -C "$REPO_ROOT" add README.md
   git -C "$REPO_ROOT" commit -m "docs: auto-update README from docs-agent [skip ci]" \
-    --author="MindLog Docs Agent <docs-agent@mindlog.local>" \
+    --author="COPE Docs Agent <docs-agent@cope.local>" \
     --no-verify 2>/dev/null || true
   echo "${STAMP}  Committed README.md update to git"
 fi

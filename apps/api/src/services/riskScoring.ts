@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Evidence-Based Graduated Risk Scoring Service
+// COPE API — Evidence-Based Graduated Risk Scoring Service
 //
 // Computes a composite clinical risk score (0–100) for a patient using
 // ten graduated rules grounded in the latest psychiatric literature.
@@ -32,7 +32,7 @@
 //  75–100  Critical (red)
 // =============================================================================
 
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 
 // ---------------------------------------------------------------------------
 // Types

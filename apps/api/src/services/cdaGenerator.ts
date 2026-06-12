@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — CDA R2 Handover Document Generator
+// COPE API — CDA R2 Handover Document Generator
 //
 // Generates a HL7 Clinical Document Architecture (CDA) Release 2 XML document
 // for patient handover (cover clinician transitions).
@@ -21,7 +21,7 @@
 //   8. Social History              (substance use from daily_entries)
 // =============================================================================
 
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 
 // ---------------------------------------------------------------------------
 // Input type
@@ -185,7 +185,7 @@ function buildMedicationsSection(meds: MedCdaRow[]): string {
 }
 
 function buildProblemsSection(diagnosis: string | null): string {
-  const text = diagnosis ?? 'No active diagnoses recorded in MindLog.';
+  const text = diagnosis ?? 'No active diagnoses recorded in COPE.';
   return `<component><section>
     <templateId root="2.16.840.1.113883.10.20.22.2.5.1"/>
     <code code="11450-4" codeSystem="2.16.840.1.113883.6.1" displayName="Problem List"/>
@@ -371,7 +371,7 @@ export async function generateCda(input: CdaInput): Promise<string> {
 
   const docId      = crypto.randomUUID();
   const createdAt  = new Date().toISOString().replace('T', 'T').split('.')[0]! + '+00:00';
-  const docTitle   = input.title ?? `MindLog Handover — ${patient.first_name} ${patient.last_name}`;
+  const docTitle   = input.title ?? `COPE Handover — ${patient.first_name} ${patient.last_name}`;
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="CDA.xsl"?>

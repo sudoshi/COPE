@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Daily entry routes (patient-facing + clinician read)
+// COPE API — Daily entry routes (patient-facing + clinician read)
 // POST /api/v1/daily-entries              — create / upsert today's entry
 // GET  /api/v1/daily-entries              — list patient's entries (history)
 // GET  /api/v1/daily-entries/:id          — single entry detail
@@ -9,8 +9,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { CreateDailyEntrySchema, PaginationSchema, UuidSchema, IsoDateSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { CreateDailyEntrySchema, PaginationSchema, UuidSchema, IsoDateSchema } from '@cope/shared';
 import { rulesQueue } from '../../workers/rules-engine.js';
 
 export default async function dailyEntryRoutes(fastify: FastifyInstance): Promise<void> {

@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Notification dispatch plugin
+// COPE API — Notification dispatch plugin
 // Handles push notifications (Expo Push API) and email alerts (Resend).
 //
 // HIPAA compliance note:
@@ -14,7 +14,7 @@
 import fp from 'fastify-plugin';
 import type { FastifyInstance } from 'fastify';
 import { config } from '../config.js';
-import { sql } from '@mindlog/db';
+import { sql } from '@cope/db';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -158,7 +158,7 @@ export async function dispatchAlertNotifications(params: AlertNotificationParams
     .map((cl) => cl.email);
 
   const severityEmoji = severity === 'critical' ? '🚨' : severity === 'warning' ? '⚠️' : 'ℹ️';
-  const pushTitle = `${severityEmoji} MindLog Alert`;
+  const pushTitle = `${severityEmoji} COPE Alert`;
   // Push body must NOT include PHI — no patient name, just the rule category
   const pushBody = title;
 
@@ -176,7 +176,7 @@ export async function dispatchAlertNotifications(params: AlertNotificationParams
       </a>
       <hr style="margin-top: 32px; border: none; border-top: 1px solid #eee;" />
       <p style="font-size: 11px; color: #999;">
-        MindLog · 988 Suicide &amp; Crisis Lifeline: Call or text 988 ·
+        COPE · 988 Suicide &amp; Crisis Lifeline: Call or text 988 ·
         Crisis Text Line: Text HOME to 741741
       </p>
     </div>
@@ -184,7 +184,7 @@ export async function dispatchAlertNotifications(params: AlertNotificationParams
 
   await Promise.allSettled([
     sendExpoPush(pushTokens, pushTitle, pushBody, { alertId, severity, ruleKey }),
-    sendResendEmail(emailAddresses, `${severityEmoji} MindLog: ${title}`, emailHtml),
+    sendResendEmail(emailAddresses, `${severityEmoji} COPE: ${title}`, emailHtml),
   ]);
 
   // Log notification dispatch to audit trail using actual schema columns.

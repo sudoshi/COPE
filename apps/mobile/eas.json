@@ -6,7 +6,7 @@
   "build": {
     "base": {
       "env": {
-        "EXPO_PUBLIC_API_BASE": "https://app.mindlog.health",
+        "EXPO_PUBLIC_API_BASE": "https://app.cope.health",
         "EXPO_PUBLIC_AI_INSIGHTS_ENABLED": "false"
       }
     },
@@ -32,7 +32,7 @@
         "simulator": false
       },
       "env": {
-        "EXPO_PUBLIC_API_BASE": "https://staging.mindlog.health",
+        "EXPO_PUBLIC_API_BASE": "https://staging.cope.health",
         "EXPO_PUBLIC_AI_INSIGHTS_ENABLED": "false"
       }
     },

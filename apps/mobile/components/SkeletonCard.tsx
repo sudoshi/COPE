@@ -1,12 +1,12 @@
 // =============================================================================
-// MindLog Mobile — Skeleton shimmer loading placeholder (Phase 11f)
+// COPE Mobile — Skeleton shimmer loading placeholder (Phase 11f)
 // Shows animated pulsing grey bars while content is being fetched.
 // =============================================================================
 
 import { useEffect, useRef } from 'react';
 import { Animated, View, StyleSheet } from 'react-native';
 import type { ViewStyle } from 'react-native';
-import { DESIGN_TOKENS } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@cope/shared';
 
 interface SkeletonLineProps {
   width?: string | number;

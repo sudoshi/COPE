@@ -4,7 +4,7 @@
 # avatar, account info, streak stats, member-since date, settings section,
 # and the sign-out button.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

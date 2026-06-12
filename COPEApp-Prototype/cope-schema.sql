@@ -1,5 +1,5 @@
 -- =============================================================================
--- MindLog — Complete Database DDL
+-- COPE — Complete Database DDL
 -- PostgreSQL 15+
 --
 -- Schema covers:

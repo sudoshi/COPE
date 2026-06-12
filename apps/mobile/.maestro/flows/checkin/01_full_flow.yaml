@@ -4,7 +4,7 @@
 # lifestyle, wellness, triggers, symptoms, journal, and submit.
 # Verifies the review screen shows the entered mood score, then submits.
 # =============================================================================
-appId: com.mindlog.app
+appId: com.cope.app
 
 ---
 

@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Sentry initialisation
+// COPE API — Sentry initialisation
 // Must be imported BEFORE any other module in server.ts / worker.ts.
 //
 // • Only active when SENTRY_DSN is set (gracefully skipped in dev/test).

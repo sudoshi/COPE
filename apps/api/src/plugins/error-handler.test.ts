@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Error handler plugin tests
+// COPE API — Error handler plugin tests
 // Verifies status-code mapping: validation → 4xx, infrastructure → 503,
 // unexpected → 500. The 503 mapping is load-bearing: clients retry on 503 but
 // surface 500 as a hard failure, and the login UI distinguishes the two.

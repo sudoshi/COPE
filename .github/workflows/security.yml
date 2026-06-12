@@ -1,5 +1,5 @@
 # =============================================================================
-# MindLog — Security Analysis Pipeline
+# COPE — Security Analysis Pipeline
 # Runs CodeQL static analysis and dependency vulnerability scanning.
 # =============================================================================
 

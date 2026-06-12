@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog API — Clinical alert routes (clinician-facing)
+// COPE API — Clinical alert routes (clinician-facing)
 // GET   /api/v1/alerts                     — list org alerts (filtered)
 // GET   /api/v1/alerts/:id                 — get single alert
 // PATCH /api/v1/alerts/:id/acknowledge     — acknowledge alert
@@ -10,8 +10,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { sql } from '@mindlog/db';
-import { AlertFilterSchema, UuidSchema } from '@mindlog/shared';
+import { sql } from '@cope/db';
+import { AlertFilterSchema, UuidSchema } from '@cope/shared';
 import { auditLog } from '../../middleware/audit.js';
 
 export default async function alertRoutes(fastify: FastifyInstance): Promise<void> {

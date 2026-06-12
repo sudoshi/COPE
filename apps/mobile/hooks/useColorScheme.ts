@@ -1,5 +1,5 @@
 // =============================================================================
-// MindLog Mobile — useColorScheme hook
+// COPE Mobile — useColorScheme hook
 // Wraps React Native's useColorScheme and respects:
 //  1. User override stored in SecureStore (system / light / dark)
 //  2. OS system preference as fallback
@@ -11,7 +11,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useColorScheme as useRNColorScheme } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
-const OVERRIDE_KEY = 'ml_colour_scheme';
+const OVERRIDE_KEY = 'cope_colour_scheme';
 
 export type SchemePref = 'system' | 'light' | 'dark';
 

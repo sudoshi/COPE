@@ -9,14 +9,14 @@ const __dirname = path.dirname(__filename);
 const clinicianAuthFile = path.join(__dirname, '../../.auth/clinician.json');
 const adminAuthFile = path.join(__dirname, '../../.auth/admin.json');
 
-// Storage keys used by MindLog
+// Storage keys used by COPE
 export const STORAGE_KEYS = {
-  ACCESS_TOKEN: 'ml_access_token',
-  REFRESH_TOKEN: 'ml_refresh_token',
-  TOKEN_EXPIRES_AT: 'ml_token_expires_at',
-  CLINICIAN_ID: 'ml_clinician_id',
-  ORG_ID: 'ml_org_id',
-  ROLE: 'ml_role',
+  ACCESS_TOKEN: 'cope_access_token',
+  REFRESH_TOKEN: 'cope_refresh_token',
+  TOKEN_EXPIRES_AT: 'cope_token_expires_at',
+  CLINICIAN_ID: 'cope_clinician_id',
+  ORG_ID: 'cope_org_id',
+  ROLE: 'cope_role',
 } as const;
 
 export type UserRole = 'clinician' | 'admin';
@@ -104,7 +104,7 @@ export const test = base.extend<{
   isAuthenticated: async ({ page }, use) => {
     const isAuthenticated = async () => {
       const token = await page.evaluate(() => {
-        return localStorage.getItem('ml_access_token');
+        return localStorage.getItem('cope_access_token');
       });
       return token !== null && token !== '';
     };
@@ -115,7 +115,7 @@ export const test = base.extend<{
   getCurrentRole: async ({ page }, use) => {
     const getCurrentRole = async () => {
       return page.evaluate(() => {
-        return localStorage.getItem('ml_role');
+        return localStorage.getItem('cope_role');
       });
     };
 
