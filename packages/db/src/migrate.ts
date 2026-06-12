@@ -6,7 +6,17 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { sql, closeDb } from './client.js';
+import postgres from 'postgres';
+
+const DATABASE_URL = process.env['DATABASE_URL'];
+if (!DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is required');
+}
+
+// Dedicated single connection: several migrations contain explicit
+// BEGIN/COMMIT blocks, which postgres.js rejects on a pooled connection
+// (UNSAFE_TRANSACTION) — transaction state isn't tied to one socket there.
+const sql = postgres(DATABASE_URL, { max: 1, onnotice: () => {} });
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const MIGRATIONS_DIR = join(__dirname, '..', 'migrations');
@@ -34,7 +44,8 @@ async function applyMigration(filename: string, sqlContent: string): Promise<voi
   // postgres.js wraps each tagged-template call in a transaction by default
   // For multi-statement DDL we need unsafe (no prepared statements)
   await sql.unsafe(sqlContent);
-  await sql`INSERT INTO _migrations (filename) VALUES (${filename})`;
+  // ON CONFLICT: 015/016 self-insert their _migrations row inside the script
+  await sql`INSERT INTO _migrations (filename) VALUES (${filename}) ON CONFLICT (filename) DO NOTHING`;
   console.log(`  ✓ Applied: ${filename}`);
 }
 
@@ -67,7 +78,7 @@ async function migrate(): Promise<void> {
     console.log(`\nApplied ${count} migration(s).`);
   }
 
-  await closeDb();
+  await sql.end({ timeout: 5 });
 }
 
 migrate().catch((err: unknown) => {
