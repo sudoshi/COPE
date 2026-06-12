@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "lint": "eslint src --ext .ts,.tsx"
+    "lint": "eslint src"
   },
   "dependencies": {
     "@sentry/react": "^8.45.0",

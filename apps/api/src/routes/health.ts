@@ -3,8 +3,14 @@
 // GET /health  →  200 { status: 'ok', ... }
 // =============================================================================
 
+import { createRequire } from 'node:module';
 import type { FastifyInstance } from 'fastify';
 import { sql } from '@mindlog/db';
+
+// Resolves to apps/api/package.json from both src/ and dist/ layouts;
+// createRequire keeps the JSON file outside the tsc rootDir.
+const pkgRequire = createRequire(import.meta.url);
+const { version: API_VERSION } = pkgRequire('../../package.json') as { version: string };
 
 export default async function healthRoutes(fastify: FastifyInstance): Promise<void> {
   fastify.get('/health', { logLevel: 'silent' }, async (_request, reply) => {
@@ -23,7 +29,7 @@ export default async function healthRoutes(fastify: FastifyInstance): Promise<vo
     return reply.status(httpStatus).send({
       status,
       timestamp: new Date().toISOString(),
-      version: process.env['npm_package_version'] ?? '0.1.0',
+      version: API_VERSION,
       db: dbOk ? 'connected' : 'unreachable',
     });
   });
