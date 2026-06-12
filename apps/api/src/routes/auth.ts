@@ -130,6 +130,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
           resourceType: 'auth',
           ipAddress: request.ip,
           userAgent: request.headers['user-agent'],
+          newValues: { attempted_email: body.email },
           success: false,
           failureReason: 'invalid_credentials',
         });
@@ -181,17 +182,39 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
     // -------------------------------------------------------------------------
     // SUPABASE AUTH: Fallback when clinician has no password_hash
     // -------------------------------------------------------------------------
-    const supabaseRes = await fetch(
-      `${config.supabaseUrl}/auth/v1/token?grant_type=password`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          apikey: config.supabaseServiceRoleKey,
+    let supabaseRes: Response;
+    try {
+      supabaseRes = await fetch(
+        `${config.supabaseUrl}/auth/v1/token?grant_type=password`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            apikey: config.supabaseServiceRoleKey,
+          },
+          body: JSON.stringify({ email: body.email, password: body.password }),
         },
-        body: JSON.stringify({ email: body.email, password: body.password }),
-      },
-    );
+      );
+    } catch (err) {
+      // Supabase unreachable. Answer with the same 401 as a wrong password:
+      // bcrypt users get 401 on bad credentials, so any other status here would
+      // let an attacker distinguish which emails have local accounts.
+      request.log.error({ err }, '[auth] Supabase unreachable during login — returning uniform 401');
+      await auditLog({
+        actor: { sub: 'unknown', email: body.email, role: 'clinician', org_id: 'unknown' },
+        action: 'login',
+        resourceType: 'auth',
+        ipAddress: request.ip,
+        userAgent: request.headers['user-agent'],
+        newValues: { attempted_email: body.email },
+        success: false,
+        failureReason: 'upstream_unavailable',
+      });
+      return reply.status(401).send({
+        success: false,
+        error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' },
+      });
+    }
 
     if (!supabaseRes.ok) {
       await auditLog({
@@ -200,6 +223,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
         resourceType: 'auth',
         ipAddress: request.ip,
         userAgent: request.headers['user-agent'],
+        newValues: { attempted_email: body.email },
         success: false,
         failureReason: 'invalid_credentials',
       });
@@ -304,6 +328,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
         resourceType: 'auth',
         ipAddress: request.ip,
         userAgent: request.headers['user-agent'],
+        newValues: { attempted_email: body.email },
         success: false,
         failureReason: 'account_not_found',
       });

@@ -33,6 +33,16 @@ interface AuditLogParams {
   failureReason?: string | undefined;
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Unauthenticated events (e.g. failed logins) carry sentinel actor values like
+ * 'unknown' — store NULL rather than violating the uuid columns.
+ */
+function asUuidOrNull(value: string): string | null {
+  return UUID_RE.test(value) ? value : null;
+}
+
 /**
  * Write an entry to the HIPAA audit_log table.
  * Fire-and-forget — errors are swallowed to avoid disrupting the primary operation.
@@ -48,23 +58,25 @@ export async function auditLog(params: AuditLogParams): Promise<void> {
         old_values, new_values,
         success, failure_reason
       ) VALUES (
-        ${params.actor.org_id},
+        ${asUuidOrNull(params.actor.org_id)},
         ${params.actor.role === 'admin' ? 'admin' : params.actor.role},
-        ${params.actor.sub},
+        ${asUuidOrNull(params.actor.sub)},
         ${params.action},
         ${params.resourceType},
         ${params.resourceId ?? null},
         ${params.patientId ?? null},
         ${params.ipAddress ?? null},
         ${params.userAgent ?? null},
-        ${params.oldValues ? JSON.stringify(params.oldValues) : null},
-        ${params.newValues ? JSON.stringify(params.newValues) : null},
+        ${params.oldValues ? sql.json(params.oldValues as Parameters<typeof sql.json>[0]) : null},
+        ${params.newValues ? sql.json(params.newValues as Parameters<typeof sql.json>[0]) : null},
         ${params.success ?? true},
         ${params.failureReason ?? null}
       )
     `;
-  } catch {
-    // Log failure to pino — do not surface to caller
-    console.error('[audit] Failed to write audit log entry');
+  } catch (err) {
+    // Do not surface to caller, but keep the cause — a silent audit gap is a
+    // HIPAA monitoring blind spot (this exact catch hid a uuid violation that
+    // dropped every failed-login audit entry).
+    console.error('[audit] Failed to write audit log entry:', err);
   }
 }
