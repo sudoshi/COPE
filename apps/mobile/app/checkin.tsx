@@ -14,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DESIGN_TOKENS, MOOD_COLORS, MOOD_LABELS, MOOD_EMOJIS, CRISIS_CONTACTS } from '@mindlog/shared';
-import { COLOR, FONTS, GRADIENT } from '../constants/DesignTokens';
+import { COLOR, FONTS } from '../constants/DesignTokens';
 import { apiFetch, getStoredUser } from '../services/auth';
 import { database } from '../db/index';
 import type DailyEntry from '../db/models/DailyEntry';

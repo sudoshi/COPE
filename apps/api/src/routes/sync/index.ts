@@ -9,7 +9,7 @@
 // Clinicians pull via REST (no WDB), so this endpoint is patient-only.
 // =============================================================================
 
-import type { FastifyInstance, FastifyRequest } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import fp from 'fastify-plugin';
 import { sql } from '@mindlog/db';
 import { auditLog } from '../../middleware/audit.js';

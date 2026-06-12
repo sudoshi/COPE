@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS, API_PREFIX } from '@mindlog/shared';
+import { DESIGN_TOKENS } from '@mindlog/shared';
 import { apiFetch } from '../../services/auth';
 
 interface ConsentRecord {

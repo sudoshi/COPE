@@ -170,7 +170,7 @@ export default async function patientRoutes(fastify: FastifyInstance): Promise<v
     const isAdmin = await isAdminUser(request.user.sub);
 
     // Verify access - admin can access any, others need care team membership
-    let hasAccess = false;
+    let hasAccess: boolean;
     if (isAdmin) {
       const [patient] = await sql<{ id: string }[]>`
         SELECT id FROM patients WHERE id = ${id} AND is_active = TRUE

@@ -56,7 +56,9 @@ export interface ResearchExportJobData {
 // Safe Harbour de-identification field list
 // ---------------------------------------------------------------------------
 
-const SAFE_HARBOUR_REMOVE = [
+// Kept as reference documentation for the de-identification contract even
+// though the exporter currently selects allowed columns explicitly.
+const _SAFE_HARBOUR_REMOVE = [
   'first_name', 'last_name', 'preferred_name', 'email', 'phone',
   'mrn', 'address_line1', 'address_line2', 'city', 'postal_code',
   'emergency_contact_name', 'emergency_contact_phone',
@@ -789,7 +791,7 @@ async function processResearchExport(job: Job<ResearchExportJobData>): Promise<v
         'Content-Type': contentType,
         'x-upsert': 'true',
       },
-      body: new Uint8Array(fileBuffer) as unknown as BodyInit,
+      body: new Uint8Array(fileBuffer) as never,
     });
 
     if (!uploadRes.ok) {

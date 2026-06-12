@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DESIGN_TOKENS } from '@mindlog/shared';
 import { COLOR, FONTS } from '../../constants/DesignTokens';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { apiFetch } from '../../services/auth';
 import { SkeletonCard } from '../../components/SkeletonCard';

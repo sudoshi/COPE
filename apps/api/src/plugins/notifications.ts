@@ -122,7 +122,7 @@ async function sendResendEmail(
 // ---------------------------------------------------------------------------
 
 export async function dispatchAlertNotifications(params: AlertNotificationParams): Promise<void> {
-  const { patientId, orgId, alertId, severity, title, ruleKey } = params;
+  const { patientId, alertId, severity, title, ruleKey } = params;
 
   // Fetch clinicians on this patient's care team with notification prefs enabled.
   // The demo DB has no auth.users table — email lives directly on clinicians.

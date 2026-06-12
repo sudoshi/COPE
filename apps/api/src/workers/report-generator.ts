@@ -584,7 +584,7 @@ async function uploadToStorage(
       'Content-Type': contentType,
       'x-upsert': 'true',
     },
-    body: new Uint8Array(fileBuffer) as unknown as BodyInit,
+    body: new Uint8Array(fileBuffer) as never,
   });
 
   if (!res.ok) {

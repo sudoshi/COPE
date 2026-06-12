@@ -85,7 +85,7 @@ const statStyles = StyleSheet.create({
 // ── Screen ────────────────────────────────────────────────────────────────────
 
 export default function TodayScreen() {
-  const { entry, loading, refresh } = useTodayEntry();
+  const { entry, refresh } = useTodayEntry();
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
   const [profile, setProfile] = useState<PatientProfile | null>(null);

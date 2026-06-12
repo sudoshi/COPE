@@ -19,9 +19,6 @@ import { z } from 'zod';
 import { sql } from '@mindlog/db';
 import { UuidSchema, UpsertSafetyPlanSchema } from '@mindlog/shared';
 
-// Shorthand type for the JWT payload shape (matches auth plugin augmentation)
-type JwtUser = { sub: string; org_id: string; role: string };
-
 // Static list — extend via DB table in a future phase if clinician-configurable
 // resources are needed.  These US resources are always safe to expose.
 const SAFETY_RESOURCES = [

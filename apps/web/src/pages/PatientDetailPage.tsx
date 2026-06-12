@@ -3,7 +3,7 @@
 // 5 tabs: Overview · Mood Trends · Journal · Notes · Alerts
 // =============================================================================
 
-import { useState, useEffect, useCallback, useRef, type CSSProperties } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ResponsiveContainer,
@@ -17,7 +17,7 @@ import {
   Legend,
 } from 'recharts';
 import { format, parseISO, differenceInYears, subDays } from 'date-fns';
-import { MEDICATION_FREQUENCY_LABELS, type MedicationFrequency } from '@mindlog/shared';
+import { MEDICATION_FREQUENCY_LABELS } from '@mindlog/shared';
 import { api } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
 import { uiActions } from '../stores/ui.js';
@@ -1451,7 +1451,7 @@ function RiskFactorBars({ factors }: { factors: RiskFactorItem[] | null }) {
 // ---------------------------------------------------------------------------
 // TrajectorySparklines — SVG mini-charts for risk, PHQ-9, GAD-7
 // ---------------------------------------------------------------------------
-function TrajectorySparklines({ riskHistory, insights }: {
+function TrajectorySparklines({ riskHistory }: {
   riskHistory: RiskHistoryPoint[];
   insights: AiInsight[];
 }) {
@@ -2482,7 +2482,6 @@ export function PatientDetailPage() {
   }, [token, patientId, patient, editStatus, editRisk]);
 
   const name = patient ? `${patient.first_name} ${patient.last_name}` : '…';
-  const statusColor = patient ? (STATUS_COLOR[patient.status] ?? '#4a5568') : SUB;
 
   const TABS: Array<{ key: Tab; label: string }> = [
     { key: 'overview', label: 'Overview' },

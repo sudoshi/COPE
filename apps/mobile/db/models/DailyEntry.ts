@@ -3,7 +3,7 @@
 // =============================================================================
 
 import { Model } from '@nozbe/watermelondb';
-import { field, date, readonly, text, nochange } from '@nozbe/watermelondb/decorators';
+import { field, date, readonly, text } from '@nozbe/watermelondb/decorators';
 
 export default class DailyEntry extends Model {
   static override table = 'daily_entries';

@@ -71,7 +71,7 @@ export function VoiceRecorder({ onTranscript, onCancel }: VoiceRecorderProps) {
   const updateBars = useCallback((level: number) => {
     // level: -160..0 (dBFS). Normalise to 0..1
     const norm = Math.max(0, Math.min(1, (level + 60) / 60));
-    barAnims.forEach((anim, i) => {
+    barAnims.forEach((anim) => {
       const rand  = Math.random() * 0.4 + 0.6; // slight randomness per bar
       const height = Math.max(4, Math.round(norm * rand * 48));
       Animated.timing(anim, {

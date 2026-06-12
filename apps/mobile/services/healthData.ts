@@ -73,7 +73,7 @@ async function requestHealthKitPermissions(): Promise<boolean> {
   try {
     // Dynamic import so the module can be absent on Android or non-bare builds
     const { default: AppleHealthKit, Permissions } =
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+       
       require('react-native-health') as {
         default: { initHealthKit: (opts: unknown, cb: (err: unknown) => void) => void };
         Permissions: Record<string, string>;
@@ -111,7 +111,7 @@ async function requestHealthKitPermissions(): Promise<boolean> {
 async function fetchHealthKitSnapshot(date: Date): Promise<Partial<HealthSnapshot>> {
   try {
     const AppleHealthKit =
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+       
       (require('react-native-health') as { default: unknown }).default as Record<string, unknown>;
 
     const dateStr  = date.toISOString().substring(0, 10);
@@ -162,7 +162,7 @@ async function fetchHealthKitSnapshot(date: Date): Promise<Partial<HealthSnapsho
 async function requestHealthConnectPermissions(): Promise<boolean> {
   try {
     const { initialize, requestPermission } =
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+       
       require('react-native-health-connect') as {
         initialize: () => Promise<boolean>;
         requestPermission: (perms: unknown[]) => Promise<unknown[]>;
@@ -189,7 +189,7 @@ async function requestHealthConnectPermissions(): Promise<boolean> {
 async function fetchHealthConnectSnapshot(date: Date): Promise<Partial<HealthSnapshot>> {
   try {
     const { readRecords } =
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+       
       require('react-native-health-connect') as {
         readRecords: <T>(type: string, opts: unknown) => Promise<{ records: T[] }>;
       };

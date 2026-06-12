@@ -258,7 +258,7 @@ export default function OnboardingConsentScreen() {
   const [screen, setScreen] = useState(0);
   const slideAnim = useRef(new Animated.Value(0)).current;
   const [firstName, setFirstName] = useState('');
-  const [clinicianName, setClinicianName] = useState('');
+  const [clinicianName] = useState('');
 
   // Load user name from SecureStore on mount
   useState(() => {

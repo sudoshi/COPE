@@ -313,7 +313,6 @@ interface MedCardProps {
 function MedCard({ med, toggling, onToggle }: MedCardProps) {
   const taken = med.taken === true;
   const skipped = med.taken === false;
-  const unlogged = med.log_id === null;
 
   return (
     <View style={[styles.medCard, taken && styles.medCardTaken]}>

@@ -49,7 +49,6 @@ const GAD7_LEVELS = ['minimal', 'mild', 'moderate', 'severe'];
 const CARD = 'var(--glass-01)';
 const BORDER = 'var(--border)';
 const TEXT = 'var(--ink)';
-const SUB = 'var(--ink-mid)';
 
 function selectStyle(): CSSProperties {
   return {

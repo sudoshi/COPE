@@ -438,7 +438,7 @@ async function processOmopExport(job: Job<OmopExportJobData>): Promise<void> {
           'Content-Type': 'text/tab-separated-values',
           'x-upsert': 'true',
         },
-        body: new Uint8Array(buf) as unknown as BodyInit,
+        body: new Uint8Array(buf) as never,
       });
 
       if (!uploadRes.ok) {
