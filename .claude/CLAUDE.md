@@ -93,8 +93,9 @@ import { Patient, LoginSchema, MOOD_COLORS, ALERT_THRESHOLDS } from '@mindlog/sh
 - **RLS context setter**: `setRlsContext(userId, role)` must be called before queries
 
 ### API Routes
-All routes under `/api/v1/`:
-- `/health` - Liveness check
+- `GET /health` - Liveness check (registered at root, NOT under the prefix)
+
+All other routes under `/api/v1/`:
 - `/auth` - Login, refresh, MFA
 - `/patients`, `/patients/me` - Patient CRUD
 - `/daily-entries` - Mood/sleep/exercise check-ins
