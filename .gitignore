@@ -61,3 +61,8 @@ ios/
 *.pem
 *.key
 secrets/
+
+# Production/demo env files contain real secrets — never track (untracked 2026-06-12 after JWT_SECRET leak)
+.env.production
+.env.demo
+.env.production.bak*
