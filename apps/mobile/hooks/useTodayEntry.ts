@@ -92,7 +92,9 @@ export function useTodayEntry(): { entry: TodayEntry | null; loading: boolean; e
           data: {
             id: string;
             entry_date: string;
-            mood_score: number | null;
+            mood: number | null;
+            mood_score?: number | null;
+            coping: number | null;
             completion_pct: number;
             submitted_at: string | null;
             core_complete: boolean;
@@ -108,8 +110,8 @@ export function useTodayEntry(): { entry: TodayEntry | null; loading: boolean; e
           setEntry({
             id: d.id,
             entry_date: d.entry_date,
-            mood: d.mood_score,
-            coping: null,
+            mood: d.mood ?? d.mood_score ?? null,
+            coping: d.coping,
             completion_pct: d.completion_pct,
             submitted_at: d.submitted_at,
             core_complete: d.core_complete,

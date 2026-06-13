@@ -34,6 +34,7 @@
 
 - [17a. Nightly Batch Bug Fixes & First Successful Population Run](#17a-nightly-batch-bug-fixes--first-successful-population-run)
 - [18a. Security Hardening — Care Team Access Control](#18a-security-hardening--care-team-access-control-2026-02-24)
+- [19a. Schema Contract Remediation — Sync, FHIR, CDA, Research, OMOP](#19a-schema-contract-remediation--sync-fhir-cda-research-omop-2026-06-13)
 20. [Appendix: Complete File Inventory](#20-appendix-complete-file-inventory)
 
 ---
@@ -1713,4 +1714,41 @@ Security audit revealed three categories of endpoints lacking proper care-team g
 
 ---
 
-*Last updated 2026-02-25. This document consolidates learnings from 17 versions (+ post-release patches), 16 migrations, and 14 existing documentation files into a single development reference.*
+## 19a. Schema Contract Remediation — Sync, FHIR, CDA, Research, OMOP (2026-06-13)
+
+A deep codebase assessment found that several runtime SQL paths had drifted from the migrated PostgreSQL schema. The most important mismatch was the split between mobile/API DTO field names such as `mood_score`, `sleep_hours`, and `exercise_minutes` and the normalized server tables, where mood lives on `daily_entries` and sleep/exercise live in `sleep_logs` and `exercise_logs`.
+
+### Changes
+
+| File | Change |
+|------|--------|
+| `docs/artifacts/CODEBASE_REMEDIATION_PLAN.md` | Added a phased remediation plan with completed work and remaining backlog |
+| `apps/api/src/routes/sync/index.ts` | Added compatibility projection for WatermelonDB sync; pull aliases normalized server rows into mobile shapes, push writes daily entries plus sleep/exercise/trigger/symptom/wellness log tables |
+| `apps/api/src/routes/fhir/index.ts` | Repaired stale patient, medication, daily-entry, validated-assessment, concept-search, and condition queries against current schema |
+| `apps/api/src/services/cdaGenerator.ts` | Repaired CDA patient diagnosis, medication, daily-entry, assessment, and substance-use rendering against current schema |
+| `apps/api/src/routes/research/index.ts` | Repaired de-identified export daily-entry measurements and replaced missing `medical_codes` lookup with current catalogue unions |
+| `apps/api/src/workers/omop-export-worker.ts` | Repaired daily-entry measurement exports and patient state projection against current schema |
+| `apps/mobile/hooks/useTodayEntry.ts` | Fixed Today's entry mapping to consume API `mood` while tolerating legacy `mood_score` |
+| `apps/web/src/pages/MfaPage.tsx` | Persisted the refresh token returned by MFA verification |
+| `apps/api/src/config.ts`, notification routes/plugins, `.env.example`, `docs/USER_MANUAL_AND_ADMIN_GUIDE.md` | Standardized `EXPO_PUSH_ACCESS_TOKEN` while keeping `EXPO_ACCESS_TOKEN` as a backward-compatible alias |
+| `apps/web/src/pages/LoginPage.tsx`, `apps/web/src/pages/RegisterPage.tsx`, `apps/web/design/login.html` | Replaced unverified compliance claims with more defensible current-state wording |
+
+### Verification
+
+- `npm run typecheck` — passed
+- `npm run lint` — passed
+- `npm run test` — passed
+- `npm run build` — passed
+- `git diff --check` — passed
+
+### Remaining Backlog
+
+- Add migrated-Postgres integration tests for sync, FHIR, CDA, research export, and OMOP export paths.
+- Centralize patient access and tenant-scoping helpers.
+- Clarify whether runtime isolation is app-level SQL scoping or request-level RLS, then update docs/tests accordingly.
+- Triage high and critical dependency audit findings.
+- Make Playwright E2E self-contained with API/Postgres/Redis test services.
+
+---
+
+*Last updated 2026-06-13. This document consolidates learnings from 17 versions (+ post-release patches), 19 migrations, and 14 existing documentation files into a single development reference.*

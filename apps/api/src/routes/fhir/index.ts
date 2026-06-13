@@ -141,8 +141,17 @@ export default async function fhirRoutes(fastify: FastifyInstance): Promise<void
         SELECT
           p.id, p.mrn, p.first_name, p.last_name, p.preferred_name,
           p.date_of_birth, p.gender, p.phone, p.email,
-          p.address_line1, p.city, p.state, p.postal_code,
-          p.diagnosis, p.status, p.organisation_id, p.updated_at
+          NULL::TEXT AS address_line1,
+          NULL::TEXT AS city,
+          NULL::TEXT AS state,
+          NULL::TEXT AS postal_code,
+          (
+            SELECT string_agg(COALESCE(pd.description_override, ic.description), '; ' ORDER BY pd.is_primary DESC, pd.diagnosed_at DESC NULLS LAST)
+            FROM patient_diagnoses pd
+            LEFT JOIN icd10_codes ic ON ic.code = pd.icd10_code
+            WHERE pd.patient_id = p.id AND pd.resolved_at IS NULL
+          ) AS diagnosis,
+          p.status, p.organisation_id, p.updated_at
         FROM patients p
         WHERE p.id = ${id}::UUID AND p.is_active = TRUE
         LIMIT 1
@@ -174,37 +183,58 @@ export default async function fhirRoutes(fastify: FastifyInstance): Promise<void
         sql<PatientRow[]>`
           SELECT p.id, p.mrn, p.first_name, p.last_name, p.preferred_name,
                  p.date_of_birth, p.gender, p.phone, p.email,
-                 p.address_line1, p.city, p.state, p.postal_code,
-                 p.diagnosis, p.status, p.organisation_id, p.updated_at
+                 NULL::TEXT AS address_line1,
+                 NULL::TEXT AS city,
+                 NULL::TEXT AS state,
+                 NULL::TEXT AS postal_code,
+                 (
+                   SELECT string_agg(COALESCE(pd.description_override, ic.description), '; ' ORDER BY pd.is_primary DESC, pd.diagnosed_at DESC NULLS LAST)
+                   FROM patient_diagnoses pd
+                   LEFT JOIN icd10_codes ic ON ic.code = pd.icd10_code
+                   WHERE pd.patient_id = p.id AND pd.resolved_at IS NULL
+                 ) AS diagnosis,
+                 p.status, p.organisation_id, p.updated_at
           FROM patients p WHERE p.id = ${id}::UUID AND p.is_active = TRUE LIMIT 1
         `,
         sql<DailyEntryRow[]>`
-          SELECT id, patient_id, entry_date, mood, coping, sleep_hours, sleep_quality,
-                 exercise_minutes, anxiety_score, mania_score, anhedonia_score,
-                 suicidal_ideation, stress_score, notes, submitted_at
-          FROM daily_entries
-          WHERE patient_id = ${id}::UUID AND entry_date >= ${since}::DATE
-            AND submitted_at IS NOT NULL
-          ORDER BY entry_date DESC
+          SELECT de.id, de.patient_id, de.entry_date, de.mood, de.coping,
+                 ROUND(sl.total_minutes::NUMERIC / 60, 2)::FLOAT8 AS sleep_hours,
+                 sl.quality AS sleep_quality,
+                 el.duration_minutes AS exercise_minutes,
+                 de.anxiety_score, de.mania_score, de.anhedonia_score,
+                 de.suicidal_ideation, de.stress_score, de.notes, de.submitted_at
+          FROM daily_entries de
+          LEFT JOIN sleep_logs sl ON sl.daily_entry_id = de.id
+          LEFT JOIN exercise_logs el ON el.daily_entry_id = de.id
+          WHERE de.patient_id = ${id}::UUID AND de.entry_date >= ${since}::DATE
+            AND de.submitted_at IS NOT NULL
+          ORDER BY de.entry_date DESC
           LIMIT 90
         `,
         sql<MedicationRow[]>`
-          SELECT pm.id, pm.patient_id, pm.medication_name, pm.generic_name,
-                 mc.rxnorm_code, pm.dose_value, pm.dose_unit, pm.frequency,
+          SELECT pm.id, pm.patient_id, pm.medication_name,
+                 COALESCE(mc.generic_name, pm.medication_name) AS generic_name,
+                 COALESCE(pm.rxnorm_code, mc.rxnorm_code) AS rxnorm_code,
+                 pm.dose AS dose_value, pm.dose_unit, pm.frequency,
                  pm.prescribed_at, pm.discontinued_at,
                  NULL::TEXT AS prescriber_name, NULL::TEXT AS prescriber_npi,
-                 pm.notes
+                 pm.instructions AS notes
           FROM patient_medications pm
-          LEFT JOIN medication_catalogue mc ON mc.id = pm.catalogue_id
+          LEFT JOIN medications_catalogue mc ON mc.id = pm.catalogue_id
           WHERE pm.patient_id = ${id}::UUID AND pm.show_in_app = TRUE
         `,
         sql<AssessmentRow[]>`
-          SELECT va.id, va.patient_id, va.scale_code, va.total_score,
-                 va.responses, va.severity_label, va.assessed_at,
-                 va.assessed_by, NULL::TEXT AS clinician_name
+          SELECT va.id, va.patient_id,
+                 va.scale AS scale_code,
+                 va.score AS total_score,
+                 va.item_responses AS responses,
+                 NULL::TEXT AS severity_label,
+                 va.completed_at AS assessed_at,
+                 NULL::UUID AS assessed_by,
+                 NULL::TEXT AS clinician_name
           FROM validated_assessments va
-          WHERE va.patient_id = ${id}::UUID AND va.assessed_at >= ${since}::DATE
-          ORDER BY va.assessed_at DESC
+          WHERE va.patient_id = ${id}::UUID AND va.completed_at >= ${since}::DATE
+          ORDER BY va.completed_at DESC
           LIMIT 50
         `,
         sql<ConsentRow[]>`
@@ -257,14 +287,19 @@ export default async function fhirRoutes(fastify: FastifyInstance): Promise<void
       const base = fhirBase(request);
 
       const rows = await sql<DailyEntryRow[]>`
-        SELECT id, patient_id, entry_date, mood, coping, sleep_hours, sleep_quality,
-               exercise_minutes, anxiety_score, mania_score, anhedonia_score,
-               suicidal_ideation, stress_score, notes, submitted_at
-        FROM daily_entries
-        WHERE patient_id    = ${pid}::UUID
-          AND entry_date   >= ${since}::DATE
-          AND submitted_at IS NOT NULL
-        ORDER BY entry_date DESC
+        SELECT de.id, de.patient_id, de.entry_date, de.mood, de.coping,
+               ROUND(sl.total_minutes::NUMERIC / 60, 2)::FLOAT8 AS sleep_hours,
+               sl.quality AS sleep_quality,
+               el.duration_minutes AS exercise_minutes,
+               de.anxiety_score, de.mania_score, de.anhedonia_score,
+               de.suicidal_ideation, de.stress_score, de.notes, de.submitted_at
+        FROM daily_entries de
+        LEFT JOIN sleep_logs sl ON sl.daily_entry_id = de.id
+        LEFT JOIN exercise_logs el ON el.daily_entry_id = de.id
+        WHERE de.patient_id    = ${pid}::UUID
+          AND de.entry_date   >= ${since}::DATE
+          AND de.submitted_at IS NOT NULL
+        ORDER BY de.entry_date DESC
         LIMIT ${limit} OFFSET ${offset}
       `;
 
@@ -306,13 +341,15 @@ export default async function fhirRoutes(fastify: FastifyInstance): Promise<void
       const base = fhirBase(request);
 
       const rows = await sql<MedicationRow[]>`
-        SELECT pm.id, pm.patient_id, pm.medication_name, pm.generic_name,
-               mc.rxnorm_code, pm.dose_value, pm.dose_unit, pm.frequency,
+        SELECT pm.id, pm.patient_id, pm.medication_name,
+               COALESCE(mc.generic_name, pm.medication_name) AS generic_name,
+               COALESCE(pm.rxnorm_code, mc.rxnorm_code) AS rxnorm_code,
+               pm.dose AS dose_value, pm.dose_unit, pm.frequency,
                pm.prescribed_at, pm.discontinued_at,
                NULL::TEXT AS prescriber_name, NULL::TEXT AS prescriber_npi,
-               pm.notes
+               pm.instructions AS notes
         FROM patient_medications pm
-        LEFT JOIN medication_catalogue mc ON mc.id = pm.catalogue_id
+        LEFT JOIN medications_catalogue mc ON mc.id = pm.catalogue_id
         WHERE pm.patient_id  = ${pid}::UUID
           AND pm.show_in_app = TRUE
           ${activeOnly ? sql`AND pm.discontinued_at IS NULL` : sql``}
@@ -358,13 +395,18 @@ export default async function fhirRoutes(fastify: FastifyInstance): Promise<void
         : null;
 
       const rows = await sql<AssessmentRow[]>`
-        SELECT va.id, va.patient_id, va.scale_code, va.total_score,
-               va.responses, va.severity_label, va.assessed_at,
-               va.assessed_by, NULL::TEXT AS clinician_name
+        SELECT va.id, va.patient_id,
+               va.scale AS scale_code,
+               va.score AS total_score,
+               va.item_responses AS responses,
+               NULL::TEXT AS severity_label,
+               va.completed_at AS assessed_at,
+               NULL::UUID AS assessed_by,
+               NULL::TEXT AS clinician_name
         FROM validated_assessments va
         WHERE va.patient_id = ${pid}::UUID
-          ${scaleCode ? sql`AND va.scale_code = ${scaleCode}` : sql``}
-        ORDER BY va.assessed_at DESC
+          ${scaleCode ? sql`AND va.scale = ${scaleCode}` : sql``}
+        ORDER BY va.completed_at DESC
         LIMIT ${limit} OFFSET ${offset}
       `;
 
@@ -404,14 +446,12 @@ export default async function fhirRoutes(fastify: FastifyInstance): Promise<void
 
       const base = fhirBase(request);
 
-      // Build conditions from patient.diagnosis (simple single-row approach)
-      // A production EHR integration would use a separate diagnoses table (migration 014).
-      // For now we synthesise from the patients.diagnosis text field + any OMOP assignments.
       const [patient] = await sql<{
-        id: string; diagnosis: string | null;
-        organisation_id: string; updated_at: string;
+        id: string;
+        organisation_id: string;
+        updated_at: string;
       }[]>`
-        SELECT id, diagnosis, organisation_id, updated_at
+        SELECT id, organisation_id, updated_at
         FROM patients WHERE id = ${pid}::UUID LIMIT 1
       `;
 
@@ -419,21 +459,20 @@ export default async function fhirRoutes(fastify: FastifyInstance): Promise<void
 
       const rows = await sql<DiagnosisRow[]>`
         SELECT
-          oa.id,
-          oa.patient_id,
-          oa.icd10_code,
-          oa.snomed_code,
-          COALESCE(oa.description, mc.preferred_label, 'Clinical diagnosis') AS description,
-          NULL::DATE AS onset_date,
-          'active' AS status,
-          NULL::UUID AS recorded_by,
-          oa.assigned_at AS recorded_at
-        FROM omop_assignments oa
-        LEFT JOIN medical_codes mc ON mc.code = oa.icd10_code
-        WHERE oa.patient_id   = ${pid}::UUID
-          AND oa.vocabulary_id = 'ICD10CM'
-          ${statusFilter === 'active' ? sql`` : sql``}
-        ORDER BY oa.assigned_at DESC
+          pd.id,
+          pd.patient_id,
+          pd.icd10_code,
+          NULL::TEXT AS snomed_code,
+          COALESCE(pd.description_override, ic.description, 'Clinical diagnosis') AS description,
+          pd.diagnosed_at AS onset_date,
+          CASE WHEN pd.resolved_at IS NULL THEN 'active' ELSE 'resolved' END AS status,
+          pd.diagnosed_by AS recorded_by,
+          pd.updated_at AS recorded_at
+        FROM patient_diagnoses pd
+        LEFT JOIN icd10_codes ic ON ic.code = pd.icd10_code
+        WHERE pd.patient_id = ${pid}::UUID
+          ${statusFilter === 'active' ? sql`AND pd.resolved_at IS NULL` : sql``}
+        ORDER BY pd.is_primary DESC, pd.diagnosed_at DESC NULLS LAST, pd.created_at DESC
       `;
 
       const resources = rows.map((r) => mapCondition(r, base));

@@ -47,6 +47,21 @@ interface PushBody {
   };
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function uuidOrNull(value: unknown): string | null {
+  return typeof value === 'string' && UUID_RE.test(value) ? value : null;
+}
+
+function roundSleepMinutes(sleepHours: number): { hours: number; minutes: 0 | 15 | 30 | 45 } {
+  const hours = Math.floor(sleepHours);
+  const rawMinutes = Math.round((sleepHours - hours) * 60);
+  const minutes = ([0, 15, 30, 45] as const).reduce((prev, curr) =>
+    Math.abs(curr - rawMinutes) < Math.abs(prev - rawMinutes) ? curr : prev,
+  );
+  return { hours, minutes };
+}
+
 // ---------------------------------------------------------------------------
 // Route plugin
 // ---------------------------------------------------------------------------
@@ -87,27 +102,54 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
       ] = await Promise.all([
         // daily_entries created after sinceDate
         sql<SyncRow[]>`
-          SELECT id, patient_id, entry_date, mood_score, sleep_hours, exercise_minutes,
-                 notes, is_complete, completion_pct, core_complete, wellness_complete,
-                 triggers_complete, symptoms_complete, journal_complete,
-                 submitted_at, created_at, updated_at,
-                 id AS server_id
-          FROM daily_entries
-          WHERE patient_id = ${patientId}
-            AND created_at > ${sinceDate}::timestamptz
-            AND updated_at = created_at
+          SELECT de.id, de.patient_id, de.entry_date,
+                 de.mood AS mood_score,
+                 ROUND(sl.total_minutes::NUMERIC / 60, 2)::FLOAT8 AS sleep_hours,
+                 el.duration_minutes AS exercise_minutes,
+                 de.notes,
+                 (de.submitted_at IS NOT NULL) AS is_complete,
+                 de.completion_pct, de.core_complete, de.wellness_complete,
+                 de.triggers_complete, de.symptoms_complete, de.journal_complete,
+                 de.submitted_at, de.created_at,
+                 GREATEST(
+                   de.updated_at,
+                   COALESCE(sl.updated_at, de.updated_at),
+                   COALESCE(el.created_at, de.updated_at)
+                 ) AS updated_at,
+                 de.id AS server_id
+          FROM daily_entries de
+          LEFT JOIN sleep_logs sl ON sl.daily_entry_id = de.id
+          LEFT JOIN exercise_logs el ON el.daily_entry_id = de.id
+          WHERE de.patient_id = ${patientId}
+            AND de.created_at > ${sinceDate}::timestamptz
         `,
         // daily_entries updated (but not created) after sinceDate
         sql<SyncRow[]>`
-          SELECT id, patient_id, entry_date, mood_score, sleep_hours, exercise_minutes,
-                 notes, is_complete, completion_pct, core_complete, wellness_complete,
-                 triggers_complete, symptoms_complete, journal_complete,
-                 submitted_at, created_at, updated_at,
-                 id AS server_id
-          FROM daily_entries
-          WHERE patient_id = ${patientId}
-            AND updated_at > ${sinceDate}::timestamptz
-            AND updated_at > created_at
+          SELECT de.id, de.patient_id, de.entry_date,
+                 de.mood AS mood_score,
+                 ROUND(sl.total_minutes::NUMERIC / 60, 2)::FLOAT8 AS sleep_hours,
+                 el.duration_minutes AS exercise_minutes,
+                 de.notes,
+                 (de.submitted_at IS NOT NULL) AS is_complete,
+                 de.completion_pct, de.core_complete, de.wellness_complete,
+                 de.triggers_complete, de.symptoms_complete, de.journal_complete,
+                 de.submitted_at, de.created_at,
+                 GREATEST(
+                   de.updated_at,
+                   COALESCE(sl.updated_at, de.updated_at),
+                   COALESCE(el.created_at, de.updated_at)
+                 ) AS updated_at,
+                 de.id AS server_id
+          FROM daily_entries de
+          LEFT JOIN sleep_logs sl ON sl.daily_entry_id = de.id
+          LEFT JOIN exercise_logs el ON el.daily_entry_id = de.id
+          WHERE de.patient_id = ${patientId}
+            AND de.created_at <= ${sinceDate}::timestamptz
+            AND GREATEST(
+              de.updated_at,
+              COALESCE(sl.updated_at, de.updated_at),
+              COALESCE(el.created_at, de.updated_at)
+            ) > ${sinceDate}::timestamptz
         `,
         // No soft-delete on entries yet — return empty
         sql<{ id: string }[]>`SELECT NULL::uuid AS id WHERE FALSE`,
@@ -138,74 +180,96 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
 
         // daily_entry_triggers created
         sql<SyncRow[]>`
-          SELECT det.id, det.daily_entry_id, det.trigger_id, det.severity,
-                 det.created_at, det.updated_at, det.id AS server_id
-          FROM daily_entry_triggers det
-          JOIN daily_entries de ON de.id = det.daily_entry_id
+          SELECT tl.id, tl.daily_entry_id, tl.trigger_id, tl.severity,
+                 tl.created_at, tl.updated_at, tl.id AS server_id
+          FROM trigger_logs tl
+          JOIN daily_entries de ON de.id = tl.daily_entry_id
           WHERE de.patient_id = ${patientId}
-            AND det.created_at > ${sinceDate}::timestamptz
-            AND det.updated_at = det.created_at
+            AND tl.created_at > ${sinceDate}::timestamptz
+            AND tl.updated_at = tl.created_at
         `,
         // daily_entry_triggers updated
         sql<SyncRow[]>`
-          SELECT det.id, det.daily_entry_id, det.trigger_id, det.severity,
-                 det.created_at, det.updated_at, det.id AS server_id
-          FROM daily_entry_triggers det
-          JOIN daily_entries de ON de.id = det.daily_entry_id
+          SELECT tl.id, tl.daily_entry_id, tl.trigger_id, tl.severity,
+                 tl.created_at, tl.updated_at, tl.id AS server_id
+          FROM trigger_logs tl
+          JOIN daily_entries de ON de.id = tl.daily_entry_id
           WHERE de.patient_id = ${patientId}
-            AND det.updated_at > ${sinceDate}::timestamptz
-            AND det.updated_at > det.created_at
+            AND tl.updated_at > ${sinceDate}::timestamptz
+            AND tl.updated_at > tl.created_at
         `,
         sql<{ id: string }[]>`SELECT NULL::uuid AS id WHERE FALSE`,
 
         // daily_entry_symptoms created
         sql<SyncRow[]>`
-          SELECT des.id, des.daily_entry_id, des.symptom_id, des.severity,
-                 des.created_at, des.updated_at, des.id AS server_id
-          FROM daily_entry_symptoms des
-          JOIN daily_entries de ON de.id = des.daily_entry_id
+          SELECT sl.id, sl.daily_entry_id, sl.symptom_id,
+                 sl.intensity AS severity,
+                 sl.created_at, sl.updated_at, sl.id AS server_id
+          FROM symptom_logs sl
+          JOIN daily_entries de ON de.id = sl.daily_entry_id
           WHERE de.patient_id = ${patientId}
-            AND des.created_at > ${sinceDate}::timestamptz
-            AND des.updated_at = des.created_at
+            AND sl.created_at > ${sinceDate}::timestamptz
+            AND sl.updated_at = sl.created_at
         `,
         // daily_entry_symptoms updated
         sql<SyncRow[]>`
-          SELECT des.id, des.daily_entry_id, des.symptom_id, des.severity,
-                 des.created_at, des.updated_at, des.id AS server_id
-          FROM daily_entry_symptoms des
-          JOIN daily_entries de ON de.id = des.daily_entry_id
+          SELECT sl.id, sl.daily_entry_id, sl.symptom_id,
+                 sl.intensity AS severity,
+                 sl.created_at, sl.updated_at, sl.id AS server_id
+          FROM symptom_logs sl
+          JOIN daily_entries de ON de.id = sl.daily_entry_id
           WHERE de.patient_id = ${patientId}
-            AND des.updated_at > ${sinceDate}::timestamptz
-            AND des.updated_at > des.created_at
+            AND sl.updated_at > ${sinceDate}::timestamptz
+            AND sl.updated_at > sl.created_at
         `,
         sql<{ id: string }[]>`SELECT NULL::uuid AS id WHERE FALSE`,
 
         // daily_entry_strategies created
         sql<SyncRow[]>`
-          SELECT dew.id, dew.daily_entry_id, dew.strategy_id, dew.helped,
-                 dew.created_at, dew.updated_at, dew.id AS server_id
-          FROM daily_entry_strategies dew
-          JOIN daily_entries de ON de.id = dew.daily_entry_id
+          SELECT wl.id, wl.daily_entry_id, wl.strategy_id,
+                 (wl.state = 'yes') AS helped,
+                 wl.created_at, wl.updated_at, wl.id AS server_id
+          FROM wellness_logs wl
+          JOIN daily_entries de ON de.id = wl.daily_entry_id
           WHERE de.patient_id = ${patientId}
-            AND dew.created_at > ${sinceDate}::timestamptz
-            AND dew.updated_at = dew.created_at
+            AND wl.created_at > ${sinceDate}::timestamptz
+            AND wl.updated_at = wl.created_at
         `,
         // daily_entry_strategies updated
         sql<SyncRow[]>`
-          SELECT dew.id, dew.daily_entry_id, dew.strategy_id, dew.helped,
-                 dew.created_at, dew.updated_at, dew.id AS server_id
-          FROM daily_entry_strategies dew
-          JOIN daily_entries de ON de.id = dew.daily_entry_id
+          SELECT wl.id, wl.daily_entry_id, wl.strategy_id,
+                 (wl.state = 'yes') AS helped,
+                 wl.created_at, wl.updated_at, wl.id AS server_id
+          FROM wellness_logs wl
+          JOIN daily_entries de ON de.id = wl.daily_entry_id
           WHERE de.patient_id = ${patientId}
-            AND dew.updated_at > ${sinceDate}::timestamptz
-            AND dew.updated_at > dew.created_at
+            AND wl.updated_at > ${sinceDate}::timestamptz
+            AND wl.updated_at > wl.created_at
         `,
         sql<{ id: string }[]>`SELECT NULL::uuid AS id WHERE FALSE`,
 
         // Catalogues — full sync always (small tables, rarely change)
-        sql<SyncRow[]>`SELECT id, name, category, created_at, updated_at, id AS server_id FROM triggers ORDER BY name`,
-        sql<SyncRow[]>`SELECT id, name, is_safety_symptom, created_at, updated_at, id AS server_id FROM symptoms ORDER BY name`,
-        sql<SyncRow[]>`SELECT id, name, category, created_at, updated_at, id AS server_id FROM wellness_strategies ORDER BY name`,
+        sql<SyncRow[]>`
+          SELECT id, name, category, created_at, created_at AS updated_at, id AS server_id
+          FROM trigger_catalogue
+          WHERE is_active = TRUE
+            AND (is_system = TRUE OR organisation_id = ${user.org_id}::UUID OR patient_id = ${patientId})
+          ORDER BY name
+        `,
+        sql<SyncRow[]>`
+          SELECT id, name, is_safety_symptom, created_at, created_at AS updated_at, id AS server_id
+          FROM symptom_catalogue
+          WHERE is_active = TRUE
+            AND (is_system = TRUE OR organisation_id = ${user.org_id}::UUID OR patient_id = ${patientId})
+          ORDER BY name
+        `,
+        sql<SyncRow[]>`
+          SELECT id, name, category, created_at, created_at AS updated_at, id AS server_id
+          FROM wellness_strategies
+          WHERE is_active = TRUE
+            AND (is_system = TRUE OR organisation_id = ${user.org_id}::UUID OR patient_id = ${patientId})
+          ORDER BY name
+        `,
       ]);
 
       await auditLog({
@@ -291,33 +355,161 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
       // -----------------------------------------------------------------------
       const entryCreated = changes.daily_entries?.created ?? [];
       const entryUpdated = changes.daily_entries?.updated ?? [];
+      const entryRefs = new Map<string, { id: string; entry_date: string }>();
 
       for (const row of [...entryCreated, ...entryUpdated]) {
+        const requestedId = uuidOrNull(row.server_id) ?? uuidOrNull(row.id);
+        const entryDate = row.entry_date as string;
+
         // Ensure the record belongs to this patient (never trust client patientId)
-        await sql`
+        const [entry] = await sql<{ id: string; entry_date: string }[]>`
           INSERT INTO daily_entries (
-            id, patient_id, entry_date, mood_score, sleep_hours, exercise_minutes,
-            notes, is_complete, completion_pct, submitted_at
+            id, patient_id, entry_date, mood, notes, completion_pct,
+            core_complete, wellness_complete, triggers_complete, symptoms_complete,
+            journal_complete, submitted_at
           )
           VALUES (
-            ${(row.server_id as string) || sql`gen_random_uuid()`},
+            COALESCE(${requestedId}::UUID, gen_random_uuid()),
             ${patientId},
-            ${(row.entry_date as string)},
+            ${entryDate},
             ${(row.mood_score as number | null) ?? null},
-            ${(row.sleep_hours as number | null) ?? null},
-            ${(row.exercise_minutes as number | null) ?? null},
             ${(row.notes as string | null) ?? null},
-            ${Boolean(row.is_complete)},
             ${(row.completion_pct as number) ?? 0},
+            ${Boolean(row.core_complete)},
+            ${Boolean(row.wellness_complete)},
+            ${Boolean(row.triggers_complete)},
+            ${Boolean(row.symptoms_complete)},
+            ${Boolean(row.journal_complete)},
             ${(row.submitted_at as string | null) ?? null}
           )
           ON CONFLICT (patient_id, entry_date)
           DO UPDATE SET
-            mood_score = EXCLUDED.mood_score,
-            sleep_hours = EXCLUDED.sleep_hours,
-            exercise_minutes = EXCLUDED.exercise_minutes,
+            mood = EXCLUDED.mood,
             notes = EXCLUDED.notes,
+            completion_pct = EXCLUDED.completion_pct,
+            core_complete = EXCLUDED.core_complete,
+            wellness_complete = EXCLUDED.wellness_complete,
+            triggers_complete = EXCLUDED.triggers_complete,
+            symptoms_complete = EXCLUDED.symptoms_complete,
+            journal_complete = EXCLUDED.journal_complete,
+            last_saved_at = NOW(),
             submitted_at = COALESCE(EXCLUDED.submitted_at, daily_entries.submitted_at)
+          RETURNING id, entry_date::TEXT AS entry_date
+        `;
+
+        if (!entry) continue;
+
+        const clientId = typeof row.id === 'string' ? row.id : null;
+        const serverId = typeof row.server_id === 'string' ? row.server_id : null;
+        if (clientId) entryRefs.set(clientId, entry);
+        if (serverId) entryRefs.set(serverId, entry);
+        entryRefs.set(entry.id, entry);
+
+        if (typeof row.sleep_hours === 'number') {
+          const sleep = roundSleepMinutes(row.sleep_hours);
+          await sql`
+            INSERT INTO sleep_logs (daily_entry_id, patient_id, entry_date, hours, minutes)
+            VALUES (${entry.id}::UUID, ${patientId}, ${entry.entry_date}, ${sleep.hours}, ${sleep.minutes})
+            ON CONFLICT (daily_entry_id) DO UPDATE
+              SET hours = EXCLUDED.hours,
+                  minutes = EXCLUDED.minutes
+          `;
+        }
+
+        if (typeof row.exercise_minutes === 'number') {
+          await sql`
+            INSERT INTO exercise_logs (daily_entry_id, patient_id, entry_date, duration_minutes)
+            VALUES (${entry.id}::UUID, ${patientId}, ${entry.entry_date}, ${row.exercise_minutes})
+            ON CONFLICT (daily_entry_id) DO UPDATE
+              SET duration_minutes = EXCLUDED.duration_minutes
+          `;
+        }
+      }
+
+      async function resolveEntry(ref: unknown): Promise<{ id: string; entry_date: string } | null> {
+        if (typeof ref !== 'string') return null;
+        const mapped = entryRefs.get(ref);
+        if (mapped) return mapped;
+        const serverId = uuidOrNull(ref);
+        if (!serverId) return null;
+        const [entry] = await sql<{ id: string; entry_date: string }[]>`
+          SELECT id, entry_date::TEXT AS entry_date
+          FROM daily_entries
+          WHERE id = ${serverId}::UUID AND patient_id = ${patientId}
+          LIMIT 1
+        `;
+        if (entry) entryRefs.set(ref, entry);
+        return entry ?? null;
+      }
+
+      for (const row of [
+        ...(changes.daily_entry_triggers?.created ?? []),
+        ...(changes.daily_entry_triggers?.updated ?? []),
+      ]) {
+        const entry = await resolveEntry(row.daily_entry_id);
+        if (!entry) continue;
+        const logId = uuidOrNull(row.server_id) ?? uuidOrNull(row.id);
+        await sql`
+          INSERT INTO trigger_logs (id, daily_entry_id, patient_id, trigger_id, entry_date, is_active, severity)
+          VALUES (
+            COALESCE(${logId}::UUID, gen_random_uuid()),
+            ${entry.id}::UUID,
+            ${patientId},
+            ${(row.trigger_id as string)}::UUID,
+            ${entry.entry_date},
+            TRUE,
+            ${(row.severity as number) ?? null}
+          )
+          ON CONFLICT (daily_entry_id, trigger_id) DO UPDATE
+            SET is_active = EXCLUDED.is_active,
+                severity = EXCLUDED.severity
+        `;
+      }
+
+      for (const row of [
+        ...(changes.daily_entry_symptoms?.created ?? []),
+        ...(changes.daily_entry_symptoms?.updated ?? []),
+      ]) {
+        const entry = await resolveEntry(row.daily_entry_id);
+        if (!entry) continue;
+        const logId = uuidOrNull(row.server_id) ?? uuidOrNull(row.id);
+        await sql`
+          INSERT INTO symptom_logs (id, daily_entry_id, patient_id, symptom_id, entry_date, is_present, intensity)
+          VALUES (
+            COALESCE(${logId}::UUID, gen_random_uuid()),
+            ${entry.id}::UUID,
+            ${patientId},
+            ${(row.symptom_id as string)}::UUID,
+            ${entry.entry_date},
+            TRUE,
+            ${(row.severity as number) ?? null}
+          )
+          ON CONFLICT (daily_entry_id, symptom_id) DO UPDATE
+            SET is_present = EXCLUDED.is_present,
+                intensity = EXCLUDED.intensity
+        `;
+      }
+
+      for (const row of [
+        ...(changes.daily_entry_strategies?.created ?? []),
+        ...(changes.daily_entry_strategies?.updated ?? []),
+      ]) {
+        const entry = await resolveEntry(row.daily_entry_id);
+        if (!entry) continue;
+        const logId = uuidOrNull(row.server_id) ?? uuidOrNull(row.id);
+        const state = row.helped === false ? 'no' : 'yes';
+        await sql`
+          INSERT INTO wellness_logs (id, daily_entry_id, patient_id, strategy_id, entry_date, state)
+          VALUES (
+            COALESCE(${logId}::UUID, gen_random_uuid()),
+            ${entry.id}::UUID,
+            ${patientId},
+            ${(row.strategy_id as string)}::UUID,
+            ${entry.entry_date},
+            ${state}
+          )
+          ON CONFLICT (daily_entry_id, strategy_id) DO UPDATE
+            SET state = EXCLUDED.state
         `;
       }
 
@@ -328,19 +520,13 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
       const journalUpdated = changes.journal_entries?.updated ?? [];
 
       for (const row of journalCreated) {
-        // Look up matching daily_entry server id
-        const [de] = await sql<{ id: string }[]>`
-          SELECT id FROM daily_entries
-          WHERE patient_id = ${patientId} AND entry_date = CURRENT_DATE
-          LIMIT 1
-        `;
-        const dailyEntryId = de?.id;
+        const entry = await resolveEntry(row.daily_entry_id);
 
         await sql`
           INSERT INTO journal_entries (patient_id, daily_entry_id, body, word_count, is_shared_with_care_team)
           VALUES (
             ${patientId},
-            ${dailyEntryId ?? null},
+            ${entry?.id ?? null},
             ${(row.body as string)},
             ${(row.word_count as number) ?? 0},
             ${Boolean(row.is_shared_with_care_team)}

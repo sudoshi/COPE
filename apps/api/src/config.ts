@@ -60,7 +60,7 @@ export const config = {
   ollamaModel: optional('OLLAMA_MODEL', 'alibayram/medgemma:27b'),
 
   // Notifications — Expo Push + Resend email
-  expoPushAccessToken: process.env['EXPO_PUSH_ACCESS_TOKEN'] ?? '',
+  expoPushAccessToken: process.env['EXPO_PUSH_ACCESS_TOKEN'] ?? process.env['EXPO_ACCESS_TOKEN'] ?? '',
   resendApiKey: process.env['RESEND_API_KEY'] ?? '',
   emailFrom: optional('EMAIL_FROM', 'alerts@cope.app'),
   webAppUrl: optional('WEB_APP_URL', 'http://localhost:5173'),

@@ -1549,8 +1549,8 @@ Results are grouped by type (Patients, Notes) with category headers. Use:
 
 | Variable | Description |
 |----------|-------------|
-| `EXPO_ACCESS_TOKEN` | Expo push service token |
-| `EXPO_PUSH_ACCESS_TOKEN` | Alternative Expo push token |
+| `EXPO_PUSH_ACCESS_TOKEN` | Expo push service token |
+| `EXPO_ACCESS_TOKEN` | Backward-compatible alias |
 
 **Storage** (optional):
 

@@ -48,7 +48,7 @@ async function sendExpoPush(
   data: Record<string, unknown> = {},
 ): Promise<void> {
   if (!config.expoPushAccessToken) {
-    console.warn('[notifications] EXPO_PUSH_ACCESS_TOKEN not set — skipping push');
+    console.warn('[notifications] EXPO_PUSH_ACCESS_TOKEN/EXPO_ACCESS_TOKEN not set — skipping push');
     return;
   }
   if (pushTokens.length === 0) return;

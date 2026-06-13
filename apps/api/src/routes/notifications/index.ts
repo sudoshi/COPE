@@ -15,7 +15,7 @@ const EXPO_PUSH_URL = 'https://exp.host/--/api/v2/push/send';
 
 async function sendPatientPush(pushToken: string, title: string, body: string, data: Record<string, unknown> = {}): Promise<void> {
   if (!config.expoPushAccessToken) {
-    console.warn('[notifications] EXPO_PUSH_ACCESS_TOKEN not set — skipping push');
+    console.warn('[notifications] EXPO_PUSH_ACCESS_TOKEN/EXPO_ACCESS_TOKEN not set — skipping push');
     return;
   }
   await fetch(EXPO_PUSH_URL, {

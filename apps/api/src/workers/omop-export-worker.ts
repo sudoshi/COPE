@@ -169,7 +169,9 @@ async function processOmopExport(job: Job<OmopExportJobData>): Promise<void> {
 
     // Step 4: Fetch consented patients (data_research consent)
     const consentedPatients = await sql<(PatientRow & { omop_person_id: number })[]>`
-      SELECT p.id, p.omop_person_id, p.date_of_birth, p.gender, p.state, p.updated_at::TEXT AS updated_at
+      SELECT p.id, p.omop_person_id, p.date_of_birth, p.gender,
+             NULL::TEXT AS state,
+             p.updated_at::TEXT AS updated_at
       FROM patients p
       JOIN consent_records cr
         ON cr.patient_id = p.id
@@ -231,17 +233,30 @@ async function processOmopExport(job: Job<OmopExportJobData>): Promise<void> {
 
     // ── MEASUREMENT (daily_entries numeric) ─────────────────────
     const dailyEntries = await sql<DailyEntryRow[]>`
-      SELECT id, patient_id, entry_date::TEXT AS entry_date,
-             mood, sleep_hours, exercise_minutes, sleep_quality,
+      SELECT de.id, de.patient_id, de.entry_date::TEXT AS entry_date,
+             de.mood,
+             ROUND(sl.total_minutes::NUMERIC / 60, 2)::FLOAT8 AS sleep_hours,
+             el.duration_minutes AS exercise_minutes,
+             sl.quality AS sleep_quality,
              anxiety_score, mania_score, coping, anhedonia_score,
              stress_score, cognitive_score, appetite_score, social_score,
              suicidal_ideation, substance_use, racing_thoughts, decreased_sleep_need,
-             updated_at::TEXT AS updated_at
-      FROM daily_entries
-      WHERE patient_id = ANY(${patientIds}::UUID[])
-        AND submitted_at IS NOT NULL
-        AND updated_at > ${hwm.daily_entries_hwm}::TIMESTAMPTZ
-      ORDER BY patient_id, entry_date
+             GREATEST(
+               de.updated_at,
+               COALESCE(sl.updated_at, de.updated_at),
+               COALESCE(el.created_at, de.updated_at)
+             )::TEXT AS updated_at
+      FROM daily_entries de
+      LEFT JOIN sleep_logs sl ON sl.daily_entry_id = de.id
+      LEFT JOIN exercise_logs el ON el.daily_entry_id = de.id
+      WHERE de.patient_id = ANY(${patientIds}::UUID[])
+        AND de.submitted_at IS NOT NULL
+        AND GREATEST(
+          de.updated_at,
+          COALESCE(sl.updated_at, de.updated_at),
+          COALESCE(el.created_at, de.updated_at)
+        ) > ${hwm.daily_entries_hwm}::TIMESTAMPTZ
+      ORDER BY de.patient_id, de.entry_date
     `;
 
     // Per-patient sequence counters for measurement IDs

@@ -14,6 +14,7 @@ import { MFA_PARTIAL_TOKEN_KEY } from './LoginPage.js';
 
 interface MfaResponseData {
   access_token: string;
+  refresh_token: string;
   clinician_id: string | null;
   org_id: string;
   role: string;
@@ -64,7 +65,7 @@ export function MfaPage() {
         data.access_token,
         data.clinician_id ?? data.org_id,
         data.org_id,
-        undefined, // refresh_token not returned from MFA verify
+        data.refresh_token,
         900,       // expiresIn
         false,     // remember (not applicable for MFA flow)
         data.role ?? 'clinician',

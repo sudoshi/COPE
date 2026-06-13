@@ -13,7 +13,7 @@
 // Sections implemented:
 //   1. Allergies and Intolerances  (placeholder — not tracked in v1)
 //   2. Medications                 (patient_medications)
-//   3. Problems / Diagnoses        (omop_assignments + patients.diagnosis)
+//   3. Problems / Diagnoses        (patient_diagnoses)
 //   4. Results (Observations)      (daily_entries — last 30 days mood/sleep)
 //   5. Vital Signs                 (daily_entries — last 30 days)
 //   6. Assessment Scales           (validated_assessments — last 90 days)
@@ -106,7 +106,7 @@ interface EntryRow {
   sleep_hours: number | null;
   exercise_minutes: number | null;
   suicidal_ideation: number | null;
-  substance_use: string | null;
+  substance_use: boolean | null;
   notes: string | null;
 }
 
@@ -284,10 +284,10 @@ function buildSafetyPlanSection(plan: SafetyPlanCdaRow | null): string {
 }
 
 function buildSocialHistorySection(entries: EntryRow[]): string {
-  const substanceEntries = entries.filter((e) => e.substance_use && e.substance_use !== 'none');
+  const substanceEntries = entries.filter((e) => e.substance_use === true);
   const text = substanceEntries.length > 0
     ? substanceEntries
-        .map((e) => `${e.entry_date}: ${e.substance_use}`)
+        .map((e) => `${e.entry_date}: substance use endorsed`)
         .join('; ')
     : 'No substance use recorded in the selected period.';
 
@@ -315,7 +315,13 @@ export async function generateCda(input: CdaInput): Promise<string> {
     await Promise.all([
       sql<PatientCdaRow[]>`
         SELECT p.id, p.mrn, p.first_name, p.last_name, p.date_of_birth,
-               p.gender, p.phone, p.email, p.diagnosis
+               p.gender, p.phone, p.email,
+               (
+                 SELECT string_agg(COALESCE(pd.description_override, ic.description), '; ' ORDER BY pd.is_primary DESC, pd.diagnosed_at DESC NULLS LAST)
+                 FROM patient_diagnoses pd
+                 LEFT JOIN icd10_codes ic ON ic.code = pd.icd10_code
+                 WHERE pd.patient_id = p.id AND pd.resolved_at IS NULL
+               ) AS diagnosis
         FROM patients p WHERE p.id = ${patientId}::UUID LIMIT 1
       `,
       sql<ClinicianCdaRow[]>`
@@ -326,32 +332,41 @@ export async function generateCda(input: CdaInput): Promise<string> {
         WHERE c.id = ${clinicianId}::UUID LIMIT 1
       `,
       sql<MedCdaRow[]>`
-        SELECT pm.medication_name, pm.generic_name, mc.rxnorm_code,
-               pm.dose_value, pm.dose_unit, pm.frequency,
+        SELECT pm.medication_name,
+               COALESCE(mc.generic_name, pm.medication_name) AS generic_name,
+               COALESCE(pm.rxnorm_code, mc.rxnorm_code) AS rxnorm_code,
+               pm.dose AS dose_value, pm.dose_unit, pm.frequency,
                pm.prescribed_at, pm.discontinued_at
         FROM patient_medications pm
-        LEFT JOIN medication_catalogue mc ON mc.id = pm.catalogue_id
+        LEFT JOIN medications_catalogue mc ON mc.id = pm.catalogue_id
         WHERE pm.patient_id  = ${patientId}::UUID
           AND pm.show_in_app = TRUE
         ORDER BY pm.prescribed_at DESC NULLS LAST
       `,
       sql<EntryRow[]>`
-        SELECT entry_date, mood, sleep_hours, exercise_minutes,
-               suicidal_ideation, substance_use, notes
-        FROM daily_entries
-        WHERE patient_id   = ${patientId}::UUID
-          AND entry_date  >= ${periodStart}::DATE
-          AND entry_date  <= ${periodEnd}::DATE
-          AND submitted_at IS NOT NULL
-        ORDER BY entry_date DESC
+        SELECT de.entry_date, de.mood,
+               ROUND(sl.total_minutes::NUMERIC / 60, 2)::FLOAT8 AS sleep_hours,
+               el.duration_minutes AS exercise_minutes,
+               de.suicidal_ideation, de.substance_use, de.notes
+        FROM daily_entries de
+        LEFT JOIN sleep_logs sl ON sl.daily_entry_id = de.id
+        LEFT JOIN exercise_logs el ON el.daily_entry_id = de.id
+        WHERE de.patient_id   = ${patientId}::UUID
+          AND de.entry_date  >= ${periodStart}::DATE
+          AND de.entry_date  <= ${periodEnd}::DATE
+          AND de.submitted_at IS NOT NULL
+        ORDER BY de.entry_date DESC
       `,
       sql<AssessmentCdaRow[]>`
-        SELECT scale_code, total_score, severity_label, assessed_at
+        SELECT scale AS scale_code,
+               score AS total_score,
+               NULL::TEXT AS severity_label,
+               completed_at AS assessed_at
         FROM validated_assessments
         WHERE patient_id   = ${patientId}::UUID
-          AND assessed_at >= ${periodStart}::DATE
-          AND assessed_at <= ${periodEnd}::DATE
-        ORDER BY assessed_at DESC
+          AND completed_at >= ${periodStart}::DATE
+          AND completed_at <= ${periodEnd}::DATE
+        ORDER BY completed_at DESC
       `,
       sql<SafetyPlanCdaRow[]>`
         SELECT warning_signs, internal_coping_strategies,

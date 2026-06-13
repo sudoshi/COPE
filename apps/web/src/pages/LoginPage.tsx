@@ -176,15 +176,15 @@ export function LoginPage() {
           <div className="login-trust-row">
             <div className="login-trust-item">
               <span className="login-trust-icon"><ShieldIcon /></span>
-              HIPAA Compliant
+              HIPAA-ready controls
             </div>
             <div className="login-trust-item">
               <span className="login-trust-icon"><LockIcon /></span>
-              SOC 2 Type II
+              SOC 2 planned
             </div>
             <div className="login-trust-item">
               <span className="login-trust-icon"><CheckIcon /></span>
-              FDA Class II
+              FDA review needed
             </div>
           </div>
         </div>

@@ -499,8 +499,47 @@ export default async function researchRoutes(fastify: FastifyInstance): Promise<
       const searchTerm = `%${search.trim().toLowerCase()}%`;
 
       const rows = await sql`
+        WITH concepts AS (
+          SELECT
+            code,
+            'ICD10CM'::TEXT AS vocabulary_id,
+            description AS preferred_label,
+            ARRAY[]::TEXT[] AS synonyms
+          FROM icd10_codes
+          WHERE is_active = TRUE
+
+          UNION ALL
+
+          SELECT
+            rxnorm_code AS code,
+            'RXNORM'::TEXT AS vocabulary_id,
+            COALESCE(rxnorm_display, generic_name) AS preferred_label,
+            COALESCE(brand_names, ARRAY[]::TEXT[]) AS synonyms
+          FROM medications_catalogue
+          WHERE is_active = TRUE AND rxnorm_code IS NOT NULL
+
+          UNION ALL
+
+          SELECT
+            snomed_code AS code,
+            'SNOMEDCT'::TEXT AS vocabulary_id,
+            COALESCE(snomed_display, name) AS preferred_label,
+            ARRAY[]::TEXT[] AS synonyms
+          FROM symptom_catalogue
+          WHERE is_active = TRUE AND snomed_code IS NOT NULL
+
+          UNION ALL
+
+          SELECT
+            snomed_code AS code,
+            'SNOMEDCT'::TEXT AS vocabulary_id,
+            COALESCE(snomed_display, name) AS preferred_label,
+            ARRAY[]::TEXT[] AS synonyms
+          FROM trigger_catalogue
+          WHERE is_active = TRUE AND snomed_code IS NOT NULL
+        )
         SELECT code, vocabulary_id, preferred_label, synonyms
-        FROM medical_codes
+        FROM concepts
         WHERE (LOWER(preferred_label) LIKE ${searchTerm}
                OR LOWER(code) LIKE ${searchTerm})
           ${vocabulary ? sql`AND vocabulary_id = ${vocabulary.toUpperCase()}` : sql``}
@@ -726,17 +765,22 @@ async function processResearchExport(job: Job<ResearchExportJobData>): Promise<v
   try {
     const rows = await sql<PatientExportRow[]>`
       SELECT
-        p.id, p.date_of_birth, p.gender, p.state,
+        p.id, p.date_of_birth, p.gender, NULL::TEXT AS state,
         p.risk_level, p.primary_concern,
         de.entry_date,
-        de.mood, de.coping, de.sleep_hours, de.sleep_quality,
-        de.exercise_minutes, de.anxiety_score, de.mania_score,
+        de.mood, de.coping,
+        ROUND(sl.total_minutes::NUMERIC / 60, 2)::FLOAT8 AS sleep_hours,
+        sl.quality AS sleep_quality,
+        el.duration_minutes AS exercise_minutes,
+        de.anxiety_score, de.mania_score,
         de.anhedonia_score, de.suicidal_ideation
       FROM patients p
       JOIN daily_entries de ON de.patient_id = p.id
         AND de.entry_date >= ${periodStart}::DATE
         AND de.entry_date <= ${periodEnd}::DATE
         AND de.submitted_at IS NOT NULL
+      LEFT JOIN sleep_logs sl ON sl.daily_entry_id = de.id
+      LEFT JOIN exercise_logs el ON el.daily_entry_id = de.id
       WHERE p.organisation_id = ${orgId}::UUID
         AND p.is_active = TRUE
         ${activeOnly ? sql`AND p.status = 'active'` : sql``}
