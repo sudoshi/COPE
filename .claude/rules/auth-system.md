@@ -6,11 +6,15 @@ The following authentication system is production-deployed and MUST NOT be overw
 
 ### Backend (apps/api/)
 - `apps/api/src/routes/auth.ts` — Auth endpoints including:
-  - Direct bcrypt login path (checks password_hash before Supabase fallback)
+  - Direct bcrypt login path for clinicians AND patients (against password_hash)
   - `POST /auth/register-demo` — Demo user registration with temp password
   - `POST /auth/change-password` — Forced password change endpoint
-  - Existing Supabase auth flow (login, register invite-based, MFA, refresh) preserved
+  - `POST /auth/register` — invite-based patient registration (local bcrypt)
+  - MFA (TOTP via otplib): `/auth/mfa/{verify,enroll,activate}`
+  - `/auth/refresh` + `/auth/logout` — first-party rotating refresh tokens
 - `apps/api/src/plugins/auth.ts` — JWT plugin with must_change_password in payload
+- `apps/api/src/services/refresh-tokens.ts` — opaque, hashed, rotating refresh
+  tokens with RFC 6819 reuse detection (replaces Supabase refresh tokens)
 - `apps/api/src/services/messaging.ts` — sendCredentialsEmail() via Resend API
 
 ### Frontend (apps/web/)
@@ -20,21 +24,24 @@ The following authentication system is production-deployed and MUST NOT be overw
 - `apps/web/src/components/AppShell.tsx` — Renders ChangePasswordModal when mustChangePassword is true
 - `apps/web/src/stores/auth.ts` — Auth store with mustChangePassword state and clearMustChangePassword()
 
-### Database Schema
-- `clinicians` table includes: password_hash (text), must_change_password (boolean, default true)
+### Database Schema (migration 019_local_auth.sql)
+- `clinicians` table includes: password_hash (text), must_change_password (boolean, default true), mfa_secret (text)
+- `patients` table includes: password_hash (text)
+- `refresh_tokens` table: opaque token sha256 hashes, rotation chain, RLS-enabled
 - Role CHECK constraint: psychiatrist, psychologist, gp, care_coordinator, nurse, researcher, admin
 - Demo users registered with role 'researcher' under org f46cc7e7-163a-4291-acc3-148044a5b232
 
-## Dual Auth Architecture
+## Auth Architecture (local PostgreSQL — Supabase retired)
 
-COPE supports TWO authentication paths — both MUST be preserved:
+The Supabase project backing auth was paused past its 90-day recovery window
+(migration 019, 2026-06). All authentication is now first-party against
+PostgreSQL 17 — there is no Supabase fallback to preserve anymore.
 
-1. **Direct bcrypt auth** — For demo users and users with password_hash set in DB
-   - Login checks password_hash first; if present, verifies with bcrypt directly
-   - No Supabase dependency for these users
-2. **Supabase auth** — For production users managed via Supabase
-   - Falls back to Supabase when password_hash is null
-   - Supports MFA (TOTP) for clinicians
+- **Local bcrypt auth** — clinicians AND patients log in against `password_hash`
+  (bcrypt, 12 rounds). No external auth dependency.
+- **MFA (TOTP)** — clinician `mfa_secret` verified locally via `otplib`.
+- **Refresh tokens** — first-party, opaque, sha256-stored, rotated on every use,
+  with reuse detection (see `services/refresh-tokens.ts`).
 
 ## Enforced Auth Flow (MediCosts Paradigm)
 
@@ -51,8 +58,8 @@ COPE supports TWO authentication paths — both MUST be preserved:
 1. **NEVER remove the "Create Account" link from LoginPage.tsx**
 2. **NEVER remove or make the ChangePasswordModal dismissable**
 3. **NEVER bypass the must_change_password flow in AppShell**
-4. **NEVER remove the direct bcrypt login path** — demo users depend on it
-5. **NEVER remove the Supabase fallback** — production users depend on it
+4. **NEVER remove the direct bcrypt login path** — all users depend on it
+5. **NEVER reintroduce a Supabase dependency** — the project is retired; auth is local-only (do not add `@supabase/*` calls back to the auth path)
 6. **NEVER change the email sender from noreply@acumenus.net**
 7. **NEVER hardcode the Resend API key in source code** (use RESEND_API_KEY env var)
 8. **NEVER remove email enumeration prevention** on register-demo endpoint

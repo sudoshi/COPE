@@ -1010,7 +1010,7 @@ function SecuritySection() {
     {
       title: 'Encryption',
       items: [
-        { label: 'Data at Rest', value: 'AES-256 (PostgreSQL TDE via Supabase)', status: 'enabled' },
+        { label: 'Data at Rest', value: 'PostgreSQL 17 (self-hosted, host volume encryption)', status: 'enabled' },
         { label: 'Data in Transit', value: 'TLS 1.3 enforced, HSTS enabled', status: 'enabled' },
         { label: 'FHIR API Communication', value: 'TLS 1.2+ with certificate validation', status: 'enabled' },
         { label: 'Token Storage (Mobile)', value: 'iOS Keychain / Android Keystore', status: 'enabled' },

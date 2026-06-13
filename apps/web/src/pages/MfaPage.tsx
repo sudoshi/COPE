@@ -55,7 +55,7 @@ export function MfaPage() {
     setLoading(true);
 
     try {
-      // Pass partial token as Bearer; API extracts factor_id internally
+      // Pass partial token as Bearer; API verifies the code against the stored TOTP secret
       const data = await api.post<MfaResponseData>('/auth/mfa/verify', { code: trimmed }, partialToken);
 
       sessionStorage.removeItem(MFA_PARTIAL_TOKEN_KEY);

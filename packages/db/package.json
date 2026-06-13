@@ -17,17 +17,17 @@
     "db:migrate": "node --import tsx/esm src/migrate.ts",
     "db:seed": "node --import tsx/esm src/seed.ts",
     "db:seed-demo": "node --import tsx/esm src/seed-demo.ts",
-    "db:fix-clinician-auth": "node --import tsx/esm src/fix-clinician-auth.ts",
     "db:enrich-demo": "node --import tsx/esm src/enrich-demo-data.ts",
     "db:enrich-low-risk": "node --import tsx/esm src/enrich-low-risk-moods.ts",
     "db:simulate": "node --import tsx/esm src/live-simulation.ts"
   },
   "dependencies": {
-    "postgres": "^3.4.5",
-    "@cope/shared": "*"
+    "@cope/shared": "*",
+    "bcryptjs": "^3.0.3",
+    "postgres": "^3.4.5"
   },
   "devDependencies": {
-    "typescript": "^5.7.2",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   }
 }

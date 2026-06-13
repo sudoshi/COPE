@@ -40,7 +40,7 @@ export const sql = postgres(DATABASE_URL, {
 });
 
 /**
- * Set the Supabase/Postgres RLS context variables for a request.
+ * Set the PostgreSQL RLS context variables for a request.
  * Must be called at the start of each request that requires RLS enforcement.
  *
  * @param userId - The authenticated user's UUID (from JWT sub claim)

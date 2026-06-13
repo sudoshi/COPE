@@ -454,7 +454,7 @@ export function ReportsPage() {
         marginTop: 20, fontSize: 11, color: 'var(--ink-ghost)',
         borderTop: '1px solid var(--border)', paddingTop: 12,
       }}>
-        PDFs stored in Supabase Storage (private bucket: <code style={{ color: 'var(--ink-mid)' }}>reports</code>).{' '}
+        PDFs stored on the COPE server (signed, time-limited download links).{' '}
         Download links expire after 7 days. HIPAA: PDFs contain PHI — BAA required before production.
       </div>
     </div>

@@ -2,14 +2,14 @@
 // COPE API — OMOP CDM Export Worker
 //
 // BullMQ worker that performs incremental ETL from COPE source tables
-// to OMOP CDM v5.4 TSV files. Uploads to Supabase Storage for download.
+// to OMOP CDM v5.4 TSV files. Saves to local storage for signed download.
 //
 // Flow:
 //   1. Read high-water marks from omop_export_hwm
 //   2. Query consented patients (data_research consent)
 //   3. For each OMOP table: query source rows WHERE updated_at > HWM
 //   4. Map rows → OMOP format, write TSV buffers
-//   5. Upload TSV files to Supabase Storage
+//   5. Save TSV files to local storage (services/storage.ts)
 //   6. Update HWM timestamps + export run record
 //
 // Concurrency: 1 (serialised writes to avoid HWM race conditions)
@@ -18,7 +18,7 @@
 import { Worker, Queue, type Job } from 'bullmq';
 import { sql } from '@cope/db';
 import { connection } from './rules-engine.js';
-import { config } from '../config.js';
+import { createSignedUrl, saveObject } from '../services/storage.js';
 import {
   mapPerson,
   mapObservationPeriod,
@@ -429,35 +429,8 @@ async function processOmopExport(job: Job<OmopExportJobData>): Promise<void> {
       if (!buf) continue;
 
       const objectPath = `omop/${exportRunId}/${table}.tsv`;
-      const uploadUrl = `${config.supabaseUrl}/storage/v1/object/${STORAGE_BUCKET}/${objectPath}`;
-
-      const uploadRes = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${config.supabaseServiceRoleKey}`,
-          'Content-Type': 'text/tab-separated-values',
-          'x-upsert': 'true',
-        },
-        body: new Uint8Array(buf) as never,
-      });
-
-      if (!uploadRes.ok) {
-        throw new Error(`Storage upload failed for ${table}.tsv (${uploadRes.status})`);
-      }
-
-      // Create signed URL
-      const signUrl = `${config.supabaseUrl}/storage/v1/object/sign/${STORAGE_BUCKET}/${objectPath}`;
-      const signRes = await fetch(signUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${config.supabaseServiceRoleKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ expiresIn: SIGNED_URL_EXPIRY }),
-      });
-
-      const signJson = (await signRes.json()) as { signedURL: string };
-      fileUrls[table] = `${config.supabaseUrl}/storage/v1${signJson.signedURL}`;
+      await saveObject(STORAGE_BUCKET, objectPath, buf);
+      fileUrls[table] = createSignedUrl(STORAGE_BUCKET, objectPath, SIGNED_URL_EXPIRY);
     }
 
     // ── Update high-water marks ─────────────────────────────────

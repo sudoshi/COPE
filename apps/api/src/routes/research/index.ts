@@ -18,8 +18,8 @@
 //   SSN, MRN, Plan benef., Account, Certificate/license, URL, IP, Device IDs,
 //   Biometrics, Photo, Any other unique identifier.
 //
-// Research exports are stored in the private 'research-exports' Supabase Storage
-// bucket.  URLs are presigned with 48-hour expiry.
+// Research exports are stored under STORAGE_DIR/research-exports/ on the local
+// filesystem.  Download URLs are HMAC-signed with 48-hour expiry.
 // =============================================================================
 
 import type { FastifyInstance } from 'fastify';
@@ -666,7 +666,7 @@ export default async function researchRoutes(fastify: FastifyInstance): Promise<
 // ---------------------------------------------------------------------------
 
 import { Worker, type Job } from 'bullmq';
-import { config } from '../../config.js';
+import { createSignedUrl, saveObject } from '../../services/storage.js';
 
 const STORAGE_BUCKET   = 'research-exports';
 const SIGNED_URL_EXPIRY = 48 * 3600; // 48 hours
@@ -765,52 +765,23 @@ async function processResearchExport(job: Job<ResearchExportJobData>): Promise<v
     }));
 
     let fileBuffer: Buffer;
-    let contentType: string;
     let fileExt: string;
 
     if (format === 'csv') {
       const headers = Object.keys(deidentified[0] ?? {}).join(',');
       const csvRows = deidentified.map((r) => Object.values(r).map((v) => v === null ? '' : String(v)).join(','));
       fileBuffer = Buffer.from([headers, ...csvRows].join('\n'), 'utf8');
-      contentType = 'text/csv';
       fileExt = 'csv';
     } else {
       // Default: NDJSON (newline-delimited JSON)
       fileBuffer = Buffer.from(deidentified.map((r) => JSON.stringify(r)).join('\n'), 'utf8');
-      contentType = 'application/x-ndjson';
       fileExt = 'ndjson';
     }
 
-    // Upload to Supabase Storage
+    // Save to local storage and create a signed download URL
     const objectPath = `${orgId}/${exportId}.${fileExt}`;
-    const uploadUrl = `${config.supabaseUrl}/storage/v1/object/${STORAGE_BUCKET}/${objectPath}`;
-    const uploadRes = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${config.supabaseServiceRoleKey}`,
-        'Content-Type': contentType,
-        'x-upsert': 'true',
-      },
-      body: new Uint8Array(fileBuffer) as never,
-    });
-
-    if (!uploadRes.ok) {
-      throw new Error(`Storage upload failed (${uploadRes.status})`);
-    }
-
-    // Create signed URL
-    const signUrl = `${config.supabaseUrl}/storage/v1/object/sign/${STORAGE_BUCKET}/${objectPath}`;
-    const signRes = await fetch(signUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${config.supabaseServiceRoleKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ expiresIn: SIGNED_URL_EXPIRY }),
-    });
-
-    const signJson = (await signRes.json()) as { signedURL: string };
-    const signedUrl = `${config.supabaseUrl}/storage/v1${signJson.signedURL}`;
+    await saveObject(STORAGE_BUCKET, objectPath, fileBuffer);
+    const signedUrl = createSignedUrl(STORAGE_BUCKET, objectPath, SIGNED_URL_EXPIRY);
     const expiresAt = new Date(Date.now() + SIGNED_URL_EXPIRY * 1000).toISOString();
 
     await sql`

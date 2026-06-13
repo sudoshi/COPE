@@ -36,9 +36,10 @@ export const config = {
   jwtAccessExpiry: optional('JWT_ACCESS_EXPIRY', '15m'),
   jwtRefreshExpiry: optional('JWT_REFRESH_EXPIRY', '7d'),
 
-  // Supabase (for auth verification)
-  supabaseUrl: required('SUPABASE_URL'),
-  supabaseServiceRoleKey: required('SUPABASE_SERVICE_ROLE_KEY'),
+  // Local file storage (reports, research exports) — replaces Supabase Storage
+  storageDir: optional('STORAGE_DIR', './storage'),
+  // Prefix for signed download URLs; empty = relative (web + API share an origin)
+  apiPublicUrl: optional('API_PUBLIC_URL', ''),
 
   // Redis
   redisUrl: optional('REDIS_URL', 'redis://localhost:6379'),

@@ -46,7 +46,7 @@ export interface Organisation {
 }
 
 export interface User {
-  id: string; // UUID — maps to auth.users(id) in Supabase
+  id: string; // UUID (local PostgreSQL primary key)
   email: string;
   role: UserRole;
   organisation_id: string;

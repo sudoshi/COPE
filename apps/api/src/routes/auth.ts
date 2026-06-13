@@ -1,9 +1,11 @@
 // =============================================================================
 // COPE API — Auth routes
-// POST /api/v1/auth/login           — clinician OR patient login (bcrypt + Supabase)
+// POST /api/v1/auth/login           — clinician OR patient login (local bcrypt, PG 17)
 // POST /api/v1/auth/register-demo   — public demo clinician registration
 // POST /api/v1/auth/change-password — authenticated password change
-// POST /api/v1/auth/mfa/verify      — TOTP second factor (clinicians)
+// POST /api/v1/auth/mfa/verify      — TOTP second factor (clinicians, otplib)
+// POST /api/v1/auth/mfa/enroll      — generate TOTP secret (authenticated)
+// POST /api/v1/auth/mfa/activate    — confirm first TOTP code, enable MFA
 // POST /api/v1/auth/refresh
 // POST /api/v1/auth/logout
 // GET  /api/v1/auth/me
@@ -12,18 +14,28 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
+import { generateSecret, generateURI, verify as verifyTotp } from 'otplib';
 import { sql } from '@cope/db';
 import { LoginSchema, RefreshTokenSchema, RegisterSchema } from '@cope/shared';
 import { config } from '../config.js';
 import { auditLog } from '../middleware/audit.js';
+import {
+  issueRefreshToken,
+  revokeAllForUser,
+  rotateRefreshToken,
+} from '../services/refresh-tokens.js';
 import { sendWelcomeEmail, sendCredentialsEmail } from '../services/messaging.js';
 import type { JwtPayload } from '../plugins/auth.js';
 
-// MFA verify only needs the 6-digit code; factor_id + supabase token
-// are embedded in the partial JWT issued during login.
+// MFA verify only needs the 6-digit code; the clinician identity is
+// embedded in the partial JWT issued during login.
 const MfaVerifyBodySchema = z.object({
   code: z.string().length(6).regex(/^\d{6}$/, 'Must be a 6-digit code'),
 });
+
+// Compared against when an account has no usable password so unknown emails
+// take as long as wrong passwords (timing-based enumeration).
+const TIMING_PAD_HASH = bcrypt.hashSync('cope-timing-pad', 12);
 
 export default async function authRoutes(fastify: FastifyInstance): Promise<void> {
   // ---------------------------------------------------------------------------
@@ -36,7 +48,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
     const body = LoginSchema.parse(request.body);
 
     // -------------------------------------------------------------------------
-    // DEV-ONLY: admin:admin bypass for superuser access (no Supabase required)
+    // DEV-ONLY: admin:admin bypass for superuser access (no external dependencies)
     // This allows quick testing without MFA or external auth dependencies.
     // -------------------------------------------------------------------------
     if (config.isDev && body.email === 'admin' && body.password === 'admin') {
@@ -79,6 +91,11 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
         org_id: devAdmin.organisation_id,
       };
       const accessToken = fastify.jwt.sign(payload, { expiresIn: config.jwtAccessExpiry });
+      const devRefreshToken = await issueRefreshToken({
+        userId: devAdmin.id,
+        role: 'admin',
+        orgId: devAdmin.organisation_id,
+      });
 
       await sql`UPDATE clinicians SET last_login_at = NOW() WHERE id = ${devAdmin.id}`;
 
@@ -97,7 +114,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
         success: true,
         data: {
           access_token: accessToken,
-          refresh_token: 'dev-admin-refresh-token-not-real',
+          refresh_token: devRefreshToken,
           clinician_id: devAdmin.id,
           org_id: devAdmin.organisation_id,
           role: 'admin',  // Special admin role for frontend routing
@@ -107,185 +124,82 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
     }
 
     // -------------------------------------------------------------------------
-    // DIRECT BCRYPT AUTH: If clinician has a password_hash, verify directly
-    // without Supabase. Falls back to Supabase if password_hash is null.
+    // Uniform failure: identical 401 for every credential failure so account
+    // existence can't be probed; the audit trail keeps the real reason.
     // -------------------------------------------------------------------------
-    const [directClinician] = await sql<{
+    const invalidCredentials = async (
+      failureReason: string,
+      actorRole: 'clinician' | 'patient' = 'clinician',
+    ) => {
+      await auditLog({
+        actor: { sub: 'unknown', email: body.email, role: actorRole, org_id: 'unknown' },
+        action: 'login',
+        resourceType: 'auth',
+        ipAddress: request.ip,
+        userAgent: request.headers['user-agent'],
+        newValues: { attempted_email: body.email },
+        success: false,
+        failureReason,
+      });
+      return reply.status(401).send({
+        success: false,
+        error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' },
+      });
+    };
+
+    // -------------------------------------------------------------------------
+    // CLINICIAN LOGIN — bcrypt against clinicians.password_hash
+    // -------------------------------------------------------------------------
+    const [clinician] = await sql<{
       id: string; organisation_id: string; role: string; mfa_enabled: boolean;
-      password_hash: string | null; must_change_password: boolean;
+      mfa_secret: string | null; password_hash: string | null; must_change_password: boolean;
     }[]>`
-      SELECT id, organisation_id, role, mfa_enabled, password_hash, must_change_password
+      SELECT id, organisation_id, role, mfa_enabled, mfa_secret, password_hash, must_change_password
       FROM clinicians
       WHERE email = ${body.email} AND is_active = TRUE
       LIMIT 1
     `;
 
-    if (directClinician?.password_hash) {
-      const passwordValid = await bcrypt.compare(body.password, directClinician.password_hash);
-
-      if (!passwordValid) {
-        await auditLog({
-          actor: { sub: 'unknown', email: body.email, role: 'clinician', org_id: 'unknown' },
-          action: 'login',
-          resourceType: 'auth',
-          ipAddress: request.ip,
-          userAgent: request.headers['user-agent'],
-          newValues: { attempted_email: body.email },
-          success: false,
-          failureReason: 'invalid_credentials',
-        });
-        return reply.status(401).send({
-          success: false,
-          error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' },
-        });
+    if (clinician) {
+      if (!clinician.password_hash) {
+        // Supabase-era account that never received a local password
+        await bcrypt.compare(body.password, TIMING_PAD_HASH);
+        return invalidCredentials('no_local_password');
       }
 
-      const payload: JwtPayload = {
-        sub: directClinician.id,
-        email: body.email,
-        role: 'clinician',
-        org_id: directClinician.organisation_id,
-      };
-      const accessToken = fastify.jwt.sign(payload, { expiresIn: config.jwtAccessExpiry });
+      const passwordValid = await bcrypt.compare(body.password, clinician.password_hash);
+      if (!passwordValid) {
+        return invalidCredentials('invalid_credentials');
+      }
 
-      await sql`UPDATE clinicians SET last_login_at = NOW() WHERE id = ${directClinician.id}`;
-
-      await auditLog({
-        actor: payload,
-        action: 'login',
-        resourceType: 'auth',
-        resourceId: directClinician.id,
-        ipAddress: request.ip,
-        userAgent: request.headers['user-agent'],
-      });
-
-      return reply.send({
-        success: true,
-        data: {
-          access_token: accessToken,
-          refresh_token: null,
-          clinician_id: directClinician.id,
-          org_id: directClinician.organisation_id,
-          role: directClinician.role,
-          must_change_password: directClinician.must_change_password,
-          user: {
-            id: directClinician.id,
-            email: body.email,
-            role: directClinician.role,
-            org_id: directClinician.organisation_id,
-            must_change_password: directClinician.must_change_password,
-          },
-        },
-      });
-    }
-
-    // -------------------------------------------------------------------------
-    // SUPABASE AUTH: Fallback when clinician has no password_hash
-    // -------------------------------------------------------------------------
-    let supabaseRes: Response;
-    try {
-      supabaseRes = await fetch(
-        `${config.supabaseUrl}/auth/v1/token?grant_type=password`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            apikey: config.supabaseServiceRoleKey,
-          },
-          body: JSON.stringify({ email: body.email, password: body.password }),
-        },
-      );
-    } catch (err) {
-      // Supabase unreachable. Answer with the same 401 as a wrong password:
-      // bcrypt users get 401 on bad credentials, so any other status here would
-      // let an attacker distinguish which emails have local accounts.
-      request.log.error({ err }, '[auth] Supabase unreachable during login — returning uniform 401');
-      await auditLog({
-        actor: { sub: 'unknown', email: body.email, role: 'clinician', org_id: 'unknown' },
-        action: 'login',
-        resourceType: 'auth',
-        ipAddress: request.ip,
-        userAgent: request.headers['user-agent'],
-        newValues: { attempted_email: body.email },
-        success: false,
-        failureReason: 'upstream_unavailable',
-      });
-      return reply.status(401).send({
-        success: false,
-        error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' },
-      });
-    }
-
-    if (!supabaseRes.ok) {
-      await auditLog({
-        actor: { sub: 'unknown', email: body.email, role: 'clinician', org_id: 'unknown' },
-        action: 'login',
-        resourceType: 'auth',
-        ipAddress: request.ip,
-        userAgent: request.headers['user-agent'],
-        newValues: { attempted_email: body.email },
-        success: false,
-        failureReason: 'invalid_credentials',
-      });
-      return reply.status(401).send({
-        success: false,
-        error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' },
-      });
-    }
-
-    const supabaseData = (await supabaseRes.json()) as {
-      access_token: string;
-      refresh_token: string;
-      user: {
-        id: string;
-        email: string;
-        factors?: Array<{ id: string; factor_type: string; status: string }>;
-      };
-    };
-
-    // -------------------------------------------------------------------------
-    // Clinician path (Supabase-authenticated, no password_hash)
-    // -------------------------------------------------------------------------
-    const clinician = directClinician ?? (await sql<{
-      id: string; organisation_id: string; role: string; mfa_enabled: boolean;
-    }[]>`
-      SELECT id, organisation_id, role, mfa_enabled
-      FROM clinicians
-      WHERE email = ${body.email} AND is_active = TRUE
-      LIMIT 1
-    `)[0];
-
-    if (clinician) {
-      if (clinician.mfa_enabled) {
-        // Get the TOTP factor_id so the MFA verify endpoint can use it server-side
-        const factorId = supabaseData.user.factors?.find(
-          (f) => f.factor_type === 'totp' && f.status === 'verified',
-        )?.id ?? '';
-
+      // TOTP second factor — full token only after /mfa/verify succeeds
+      if (clinician.mfa_enabled && clinician.mfa_secret) {
         const partialToken = fastify.jwt.sign(
           {
-            sub: supabaseData.user.id,
+            sub: clinician.id,
             email: body.email,
             role: 'clinician',
             org_id: clinician.organisation_id,
             mfa_pending: true,
-            supabase_token: supabaseData.access_token,  // aal1 token for challenge
-            factor_id: factorId,
             clinician_id: clinician.id,
           },
           { expiresIn: '5m' },
         );
-
         return reply.send({ success: true, data: { mfa_required: true, partial_token: partialToken } });
       }
 
       const payload: JwtPayload = {
-        sub: supabaseData.user.id,
+        sub: clinician.id,
         email: body.email,
         role: 'clinician',
         org_id: clinician.organisation_id,
       };
       const accessToken = fastify.jwt.sign(payload, { expiresIn: config.jwtAccessExpiry });
+      const refreshToken = await issueRefreshToken({
+        userId: clinician.id,
+        role: 'clinician',
+        orgId: clinician.organisation_id,
+      });
 
       await sql`UPDATE clinicians SET last_login_at = NOW() WHERE id = ${clinician.id}`;
 
@@ -302,49 +216,58 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
         success: true,
         data: {
           access_token: accessToken,
-          refresh_token: supabaseData.refresh_token,
+          refresh_token: refreshToken,
           clinician_id: clinician.id,
           org_id: clinician.organisation_id,
-          role: 'clinician',
-          user: { id: clinician.id, email: body.email, role: 'clinician', org_id: clinician.organisation_id },
+          role: clinician.role,
+          must_change_password: clinician.must_change_password,
+          user: {
+            id: clinician.id,
+            email: body.email,
+            role: clinician.role,
+            org_id: clinician.organisation_id,
+            must_change_password: clinician.must_change_password,
+          },
         },
       });
     }
 
     // -------------------------------------------------------------------------
-    // Patient path — fallback when not a clinician
+    // PATIENT LOGIN — bcrypt against patients.password_hash
     // -------------------------------------------------------------------------
-    const [patient] = await sql<{ id: string; organisation_id: string }[]>`
-      SELECT id, organisation_id
+    const [patient] = await sql<{
+      id: string; organisation_id: string; password_hash: string | null;
+    }[]>`
+      SELECT id, organisation_id, password_hash
       FROM patients
       WHERE email = ${body.email} AND is_active = TRUE
       LIMIT 1
     `;
 
     if (!patient) {
-      await auditLog({
-        actor: { sub: 'unknown', email: body.email, role: 'patient', org_id: 'unknown' },
-        action: 'login',
-        resourceType: 'auth',
-        ipAddress: request.ip,
-        userAgent: request.headers['user-agent'],
-        newValues: { attempted_email: body.email },
-        success: false,
-        failureReason: 'account_not_found',
-      });
-      return reply.status(403).send({
-        success: false,
-        error: { code: 'ACCOUNT_NOT_FOUND', message: 'No account found for this email' },
-      });
+      await bcrypt.compare(body.password, TIMING_PAD_HASH);
+      return invalidCredentials('account_not_found', 'patient');
+    }
+    if (!patient.password_hash) {
+      await bcrypt.compare(body.password, TIMING_PAD_HASH);
+      return invalidCredentials('no_local_password', 'patient');
+    }
+    if (!(await bcrypt.compare(body.password, patient.password_hash))) {
+      return invalidCredentials('invalid_credentials', 'patient');
     }
 
     const patientPayload: JwtPayload = {
-      sub: patient.id,  // Use the patients table UUID, not the Supabase auth UUID
+      sub: patient.id,
       email: body.email,
       role: 'patient',
       org_id: patient.organisation_id,
     };
     const accessToken = fastify.jwt.sign(patientPayload, { expiresIn: config.jwtAccessExpiry });
+    const refreshToken = await issueRefreshToken({
+      userId: patient.id,
+      role: 'patient',
+      orgId: patient.organisation_id,
+    });
 
     await auditLog({
       actor: patientPayload,
@@ -359,7 +282,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
       success: true,
       data: {
         access_token: accessToken,
-        refresh_token: supabaseData.refresh_token,
+        refresh_token: refreshToken,
         patient_id: patient.id,
         org_id: patient.organisation_id,
         role: 'patient',
@@ -590,51 +513,22 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
       });
     }
 
-    // --- 3. Create Supabase Auth user ----------------------------------------
-    const supabaseRes = await fetch(
-      `${config.supabaseUrl}/auth/v1/admin/users`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          apikey: config.supabaseServiceRoleKey,
-          Authorization: `Bearer ${config.supabaseServiceRoleKey}`,
-        },
-        body: JSON.stringify({
-          email: body.email,
-          password: body.password,
-          email_confirm: true,
-        }),
-      },
-    );
+    // --- 3. Hash password (local auth — bcrypt 12 rounds) --------------------
+    const passwordHash = await bcrypt.hash(body.password, 12);
 
-    if (!supabaseRes.ok) {
-      const errBody = (await supabaseRes.json()) as { message?: string };
-      const msg = errBody.message ?? 'Failed to create auth account';
-      if (msg.toLowerCase().includes('already')) {
-        return reply.status(409).send({
-          success: false,
-          error: { code: 'EMAIL_TAKEN', message: 'An account with this email already exists' },
-        });
-      }
-      return reply.status(500).send({
-        success: false,
-        error: { code: 'AUTH_ERROR', message: msg },
-      });
-    }
-
-    // --- 4. Insert patient row (new UUID, NOT Supabase auth UUID) -----------
+    // --- 4. Insert patient row ----------------------------------------------
     const autoMrn = `AUTO-${Date.now().toString(36).toUpperCase()}`;
 
     const [newPatient] = await sql<{ id: string }[]>`
       INSERT INTO patients (
-        organisation_id, mrn, email,
+        organisation_id, mrn, email, password_hash,
         first_name, last_name, date_of_birth,
         timezone, invite_id
       ) VALUES (
         ${invite.org_id}::UUID,
         ${autoMrn},
         ${body.email},
+        ${passwordHash},
         ${body.first_name},
         ${body.last_name},
         ${body.date_of_birth}::DATE,
@@ -723,23 +617,12 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
       fastify.log.error({ err }, '[register] sendWelcomeEmail failed');
     }
 
-    // --- 11. Issue tokens ---------------------------------------------------
-    // Use Supabase password grant to obtain a valid refresh token
-    const tokenRes = await fetch(
-      `${config.supabaseUrl}/auth/v1/token?grant_type=password`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          apikey: config.supabaseServiceRoleKey,
-        },
-        body: JSON.stringify({ email: body.email, password: body.password }),
-      },
-    );
-
-    const tokenData = tokenRes.ok
-      ? ((await tokenRes.json()) as { access_token: string; refresh_token: string })
-      : null;
+    // --- 11. Issue tokens -----------------------------------------------------
+    const registerRefreshToken = await issueRefreshToken({
+      userId: patientId,
+      role: 'patient',
+      orgId: invite.org_id,
+    });
 
     const jwtPayload: JwtPayload = {
       sub: patientId,
@@ -753,7 +636,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
       success: true,
       data: {
         access_token: accessToken,
-        refresh_token: tokenData?.refresh_token ?? null,
+        refresh_token: registerRefreshToken,
         patient_id: patientId,
         org_id: invite.org_id,
         role: 'patient',
@@ -764,82 +647,47 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
 
   // ---------------------------------------------------------------------------
   // POST /mfa/verify — complete TOTP second factor for clinicians
-  // factor_id and supabase_token are read from the partial JWT (not the request body)
+  // The clinician identity is read from the partial JWT (not the request body);
+  // the code is checked against the locally stored TOTP secret.
   // ---------------------------------------------------------------------------
   fastify.post('/mfa/verify', async (request, reply) => {
     const body = MfaVerifyBodySchema.parse(request.body);
 
     try {
-      const partial = await request.jwtVerify<JwtPayload & {
-        mfa_pending?: boolean;
-        supabase_token?: string;
-        factor_id?: string;
-        clinician_id?: string;
-      }>();
+      const partial = await request.jwtVerify<JwtPayload>();
 
-      if (!partial.mfa_pending) {
+      if (!partial.mfa_pending || !partial.clinician_id) {
         return reply.status(400).send({
           success: false,
           error: { code: 'BAD_REQUEST', message: 'MFA not required for this token' },
         });
       }
 
-      const factorId = partial.factor_id;
-      const supabaseToken = partial.supabase_token;
+      const [clinician] = await sql<{
+        id: string; organisation_id: string; role: string;
+        mfa_secret: string | null; must_change_password: boolean;
+      }[]>`
+        SELECT id, organisation_id, role, mfa_secret, must_change_password
+        FROM clinicians
+        WHERE id = ${partial.clinician_id} AND is_active = TRUE
+        LIMIT 1
+      `;
 
-      if (!factorId || !supabaseToken) {
-        return reply.status(400).send({
+      if (!clinician?.mfa_secret || !(await verifyTotp({ token: body.code, secret: clinician.mfa_secret })).valid) {
+        await auditLog({
+          actor: { sub: partial.sub, email: partial.email, role: 'clinician', org_id: partial.org_id },
+          action: 'login',
+          resourceType: 'auth',
+          ipAddress: request.ip,
+          userAgent: request.headers['user-agent'],
           success: false,
-          error: { code: 'BAD_REQUEST', message: 'Invalid partial token — missing MFA context' },
+          failureReason: 'mfa_invalid',
         });
-      }
-
-      // Step 1: Create a challenge (Supabase requires this before verify)
-      const challengeRes = await fetch(
-        `${config.supabaseUrl}/auth/v1/factors/${factorId}/challenge`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            apikey: config.supabaseServiceRoleKey,
-            Authorization: `Bearer ${supabaseToken}`,
-          },
-        },
-      );
-
-      if (!challengeRes.ok) {
-        return reply.status(401).send({
-          success: false,
-          error: { code: 'MFA_CHALLENGE_FAILED', message: 'Failed to initiate MFA challenge' },
-        });
-      }
-
-      const challengeData = (await challengeRes.json()) as { id: string };
-
-      // Step 2: Verify code using challenge_id
-      const verifyRes = await fetch(
-        `${config.supabaseUrl}/auth/v1/factors/${factorId}/verify`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            apikey: config.supabaseServiceRoleKey,
-            Authorization: `Bearer ${supabaseToken}`,
-          },
-          body: JSON.stringify({ challenge_id: challengeData.id, code: body.code }),
-        },
-      );
-
-      if (!verifyRes.ok) {
         return reply.status(401).send({
           success: false,
           error: { code: 'MFA_INVALID', message: 'Invalid MFA code' },
         });
       }
-
-      // Issue full-access JWT (strip MFA internals from payload)
-      const { mfa_pending: _mp, supabase_token: _st, factor_id: _fi, clinician_id, ..._ } = partial;
-      void _mp; void _st; void _fi; void _;
 
       const fullPayload: JwtPayload = {
         sub: partial.sub,
@@ -848,20 +696,34 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
         org_id: partial.org_id,
       };
       const accessToken = fastify.jwt.sign(fullPayload, { expiresIn: config.jwtAccessExpiry });
+      const refreshToken = await issueRefreshToken({
+        userId: clinician.id,
+        role: 'clinician',
+        orgId: clinician.organisation_id,
+      });
 
-      if (clinician_id) {
-        await sql`UPDATE clinicians SET last_login_at = NOW() WHERE id = ${clinician_id}`;
-      }
+      await sql`UPDATE clinicians SET last_login_at = NOW() WHERE id = ${clinician.id}`;
+
+      await auditLog({
+        actor: fullPayload,
+        action: 'login',
+        resourceType: 'auth',
+        resourceId: clinician.id,
+        ipAddress: request.ip,
+        userAgent: request.headers['user-agent'],
+      });
 
       return reply.send({
         success: true,
         data: {
           access_token: accessToken,
-          clinician_id: clinician_id ?? null,
+          refresh_token: refreshToken,
+          clinician_id: clinician.id,
           org_id: fullPayload.org_id,
           role: 'clinician',
+          must_change_password: clinician.must_change_password,
           user: {
-            id: clinician_id ?? fullPayload.sub,
+            id: clinician.id,
             email: fullPayload.email,
             role: 'clinician',
             org_id: fullPayload.org_id,
@@ -877,78 +739,122 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
   });
 
   // ---------------------------------------------------------------------------
-  // POST /refresh — supports both clinician and patient sessions
+  // POST /mfa/enroll — generate a TOTP secret for the authenticated clinician.
+  // MFA only takes effect after /mfa/activate confirms the first code.
+  // ---------------------------------------------------------------------------
+  fastify.post('/mfa/enroll', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    if (request.user.role === 'patient') {
+      return reply.status(403).send({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'MFA enrollment is for clinicians' },
+      });
+    }
+
+    const secret = generateSecret();
+    const [clinician] = await sql<{ id: string }[]>`
+      UPDATE clinicians
+      SET mfa_secret = ${secret}, mfa_enabled = FALSE, updated_at = NOW()
+      WHERE email = ${request.user.email} AND is_active = TRUE
+      RETURNING id
+    `;
+
+    if (!clinician) {
+      return reply.status(404).send({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Clinician not found' },
+      });
+    }
+
+    return reply.send({
+      success: true,
+      data: {
+        secret,
+        otpauth_url: generateURI({ issuer: 'COPE', label: request.user.email, secret }),
+      },
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // POST /mfa/activate — verify the first TOTP code and switch MFA on
+  // ---------------------------------------------------------------------------
+  fastify.post('/mfa/activate', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    const body = MfaVerifyBodySchema.parse(request.body);
+
+    const [clinician] = await sql<{ id: string; mfa_secret: string | null }[]>`
+      SELECT id, mfa_secret FROM clinicians
+      WHERE email = ${request.user.email} AND is_active = TRUE
+      LIMIT 1
+    `;
+
+    if (!clinician?.mfa_secret || !(await verifyTotp({ token: body.code, secret: clinician.mfa_secret })).valid) {
+      return reply.status(401).send({
+        success: false,
+        error: { code: 'MFA_INVALID', message: 'Invalid MFA code' },
+      });
+    }
+
+    await sql`UPDATE clinicians SET mfa_enabled = TRUE, updated_at = NOW() WHERE id = ${clinician.id}`;
+
+    await auditLog({
+      actor: request.user,
+      action: 'update',
+      resourceType: 'clinician',
+      resourceId: clinician.id,
+      ipAddress: request.ip,
+      userAgent: request.headers['user-agent'],
+      newValues: { mfa_enabled: true },
+    });
+
+    return reply.send({ success: true, data: { mfa_enabled: true } });
+  });
+
+  // ---------------------------------------------------------------------------
+  // POST /refresh — rotate a first-party refresh token (clinician or patient)
   // ---------------------------------------------------------------------------
   fastify.post('/refresh', async (request, reply) => {
     const body = RefreshTokenSchema.parse(request.body);
 
-    const supabaseRes = await fetch(`${config.supabaseUrl}/auth/v1/token?grant_type=refresh_token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: config.supabaseServiceRoleKey,
-      },
-      body: JSON.stringify({ refresh_token: body.refresh_token }),
-    });
-
-    if (!supabaseRes.ok) {
+    const rotated = await rotateRefreshToken(body.refresh_token);
+    if (!rotated) {
       return reply.status(401).send({
         success: false,
         error: { code: 'INVALID_REFRESH_TOKEN', message: 'Refresh token is invalid or expired' },
       });
     }
 
-    const data = (await supabaseRes.json()) as {
-      access_token: string;
-      refresh_token: string;
-      user: { id: string; email: string };
-    };
+    const { owner, newToken } = rotated;
+    const table = owner.role === 'patient' ? 'patients' : 'clinicians';
+    const [account] = owner.role === 'patient'
+      ? await sql<{ id: string; email: string; organisation_id: string }[]>`
+          SELECT id, email, organisation_id FROM patients
+          WHERE id = ${owner.userId} AND is_active = TRUE LIMIT 1
+        `
+      : await sql<{ id: string; email: string; organisation_id: string }[]>`
+          SELECT id, email, organisation_id FROM clinicians
+          WHERE id = ${owner.userId} AND is_active = TRUE LIMIT 1
+        `;
 
-    // Clinician first
-    const [clinician] = await sql<{ id: string; organisation_id: string }[]>`
-      SELECT id, organisation_id FROM clinicians
-      WHERE email = ${data.user.email} AND is_active = TRUE
-      LIMIT 1
-    `;
-
-    if (clinician) {
-      const payload: JwtPayload = {
-        sub: data.user.id,
-        email: data.user.email,
-        role: 'clinician',
-        org_id: clinician.organisation_id,
-      };
-      const accessToken = fastify.jwt.sign(payload, { expiresIn: config.jwtAccessExpiry });
-      return reply.send({
-        success: true,
-        data: { access_token: accessToken, refresh_token: data.refresh_token },
-      });
-    }
-
-    // Patient fallback
-    const [patient] = await sql<{ id: string; organisation_id: string }[]>`
-      SELECT id, organisation_id FROM patients
-      WHERE email = ${data.user.email} AND is_active = TRUE
-      LIMIT 1
-    `;
-
-    if (!patient) {
-      return reply.status(403).send({
+    if (!account) {
+      // Account deactivated since the token was issued — kill the session line.
+      await revokeAllForUser(owner.userId);
+      request.log.warn({ table, userId: owner.userId }, '[auth] refresh for inactive account');
+      return reply.status(401).send({
         success: false,
-        error: { code: 'ACCOUNT_NOT_FOUND', message: 'Account not found' },
+        error: { code: 'INVALID_REFRESH_TOKEN', message: 'Refresh token is invalid or expired' },
       });
     }
 
     const payload: JwtPayload = {
-      sub: patient.id,  // Use the patients table UUID, not the Supabase auth UUID
-      email: data.user.email,
-      role: 'patient',
-      org_id: patient.organisation_id,
+      sub: account.id,
+      email: account.email,
+      role: owner.role,
+      org_id: account.organisation_id,
     };
     const accessToken = fastify.jwt.sign(payload, { expiresIn: config.jwtAccessExpiry });
+
     return reply.send({
       success: true,
-      data: { access_token: accessToken, refresh_token: data.refresh_token },
+      data: { access_token: accessToken, refresh_token: newToken },
     });
   });
 
@@ -956,6 +862,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
   // POST /logout
   // ---------------------------------------------------------------------------
   fastify.post('/logout', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    await revokeAllForUser(request.user.sub);
     await auditLog({
       actor: request.user,
       action: 'logout',

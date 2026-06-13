@@ -5,7 +5,12 @@
 // Usage: npm run db:seed (from packages/db)
 // =============================================================================
 
+import bcrypt from 'bcryptjs';
 import { sql, closeDb } from './client.js';
+
+// Local bcrypt auth (Supabase retired) — dev accounts are loginable immediately.
+const CLINICIAN_PASSWORD = 'Demo@Clinic1!';
+const PATIENT_PASSWORD = 'Demo@Patient1!';
 
 async function seed(): Promise<void> {
   console.log('COPE — Development Seed');
@@ -36,12 +41,14 @@ async function seed(): Promise<void> {
   // ------------------------------------------------------------------
   const [clinician] = await sql<{ id: string }[]>`
     INSERT INTO clinicians (
-      organisation_id, email, first_name, last_name, title, role, npi
+      organisation_id, email, first_name, last_name, title, role, npi,
+      password_hash, must_change_password
     ) VALUES (
       ${orgId},
       'dr.smith@copedemo.com',
       'Sarah', 'Smith', 'Dr', 'psychiatrist',
-      '1234567890'
+      '1234567890',
+      ${bcrypt.hashSync(CLINICIAN_PASSWORD, 12)}, FALSE
     )
     RETURNING id
   `;
@@ -58,15 +65,16 @@ async function seed(): Promise<void> {
   // ------------------------------------------------------------------
   // Patients
   // ------------------------------------------------------------------
+  const patientHash = bcrypt.hashSync(PATIENT_PASSWORD, 12);
   const patients = await sql<{ id: string; first_name: string }[]>`
     INSERT INTO patients (
       organisation_id, mrn, email, first_name, last_name,
-      date_of_birth, timezone, locale, status, risk_level
+      date_of_birth, timezone, locale, status, risk_level, password_hash
     ) VALUES
       (${orgId}, 'MRN-001', 'alice@copedemo.com', 'Alice', 'Johnson',
-       '1985-03-15', 'America/Los_Angeles', 'en-US', 'active', 'moderate'),
+       '1985-03-15', 'America/Los_Angeles', 'en-US', 'active', 'moderate', ${patientHash}),
       (${orgId}, 'MRN-002', 'bob@copedemo.com', 'Bob', 'Williams',
-       '1990-07-22', 'America/Los_Angeles', 'en-US', 'active', 'high')
+       '1990-07-22', 'America/Los_Angeles', 'en-US', 'active', 'high', ${patientHash})
     RETURNING id, first_name
   `;
 
@@ -94,9 +102,9 @@ async function seed(): Promise<void> {
   }
 
   console.log('\nSeed complete. Development data is ready.');
-  console.log('Credentials (no passwords set — use Supabase Auth for login):');
-  console.log('  Clinician: dr.smith@copedemo.com');
-  console.log('  Patients:  alice@copedemo.com, bob@copedemo.com');
+  console.log('Credentials (local bcrypt auth):');
+  console.log(`  Clinician: dr.smith@copedemo.com  (password: ${CLINICIAN_PASSWORD})`);
+  console.log(`  Patients:  alice@copedemo.com, bob@copedemo.com  (password: ${PATIENT_PASSWORD})`);
 
   await closeDb();
 }

@@ -1,5 +1,5 @@
 // =============================================================================
-// COPE API — Auth plugin (Supabase JWT verification)
+// COPE API — Auth plugin (first-party JWT, local PostgreSQL auth)
 // Registers @fastify/jwt and decorates request with `request.user`.
 // =============================================================================
 
@@ -29,8 +29,6 @@ export interface JwtPayload {
   org_id: string;
   // MFA partial token fields — only present during 2FA challenge step
   mfa_pending?: boolean;
-  supabase_token?: string;
-  factor_id?: string;
   clinician_id?: string;
   // Direct bcrypt auth — set when user must change temp password
   must_change_password?: boolean;
@@ -67,6 +65,10 @@ async function authPlugin(fastify: FastifyInstance): Promise<void> {
     async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
       try {
         await request.jwtVerify<JwtPayload>();
+        // Partial tokens issued mid-MFA must never authorize normal endpoints
+        if (request.user.mfa_pending) {
+          throw new Error('mfa_pending token used outside /auth/mfa/verify');
+        }
       } catch {
         await reply.status(401).send({
           success: false,

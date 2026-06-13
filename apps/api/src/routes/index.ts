@@ -23,6 +23,7 @@ import assessmentRoutes from './assessments/index.js';
 import inviteRoutes from './invites/index.js';
 import voiceRoutes from './voice/index.js';
 import healthDataRoutes from './health-data/index.js';
+import fileRoutes from './files/index.js';
 import adminRoutes from './admin/index.js';
 import fhirRoutes from './fhir/index.js';
 import researchRoutes from './research/index.js';
@@ -53,6 +54,7 @@ export async function registerRoutes(fastify: FastifyInstance): Promise<void> {
       await api.register(inviteRoutes, { prefix: '/invites' });
       await api.register(voiceRoutes, { prefix: '/voice' });
       await api.register(healthDataRoutes, { prefix: '/health-data' });
+      await api.register(fileRoutes, { prefix: '/files' });
       await api.register(adminRoutes, { prefix: '/admin' });
       // Phase 4 — EHR Interoperability
       await api.register(fhirRoutes,     { prefix: '/fhir' });

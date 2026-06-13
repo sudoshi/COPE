@@ -66,3 +66,4 @@ secrets/
 .env.production
 .env.demo
 .env.production.bak*
+storage/

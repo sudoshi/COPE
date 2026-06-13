@@ -3,8 +3,8 @@
 //
 // Creates:
 //   • 1 organisation
-//   • 7 clinicians (Supabase auth + DB record)
-//   • 146 patients (Supabase auth + DB record)
+//   • 7 clinicians (local bcrypt auth)
+//   • 146 patients (local bcrypt auth)
 //   • 60 days of daily entries per patient (realistic mood trajectories)
 //   • Sleep logs, exercise logs, medication adherence
 //   • Patient medications (~2.5 per patient)
@@ -20,65 +20,24 @@
 // NEVER run against production data.
 // =============================================================================
 
+import bcrypt from 'bcryptjs';
 import { sql, closeDb } from './client.js';
 
 // ---------------------------------------------------------------------------
-// Config (from env)
+// Config
 // ---------------------------------------------------------------------------
-const SUPABASE_URL = process.env['SUPABASE_URL'] ?? '';
-const SERVICE_KEY = process.env['SUPABASE_SERVICE_ROLE_KEY'] ?? '';
-
-if (!SUPABASE_URL || !SERVICE_KEY) {
-  console.error('ERROR: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in .env');
-  process.exit(1);
-}
-
 const FORCE = process.argv.includes('--force');
 const DAYS = 60;
 const TODAY = new Date();
 
-// ---------------------------------------------------------------------------
-// Supabase Auth — create user via Admin REST API
-// ---------------------------------------------------------------------------
-async function createSupabaseUser(email: string, password: string): Promise<string | null> {
-  const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
-    method: 'POST',
-    headers: {
-      apikey: SERVICE_KEY,
-      Authorization: `Bearer ${SERVICE_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password, email_confirm: true }),
-  });
-
-  if (!res.ok) {
-    const err = await res.text();
-    // If user already exists, fetch their ID
-    if (res.status === 422 && err.includes('already been registered')) {
-      return getSupabaseUserId(email);
-    }
-    console.warn(`  ⚠ Supabase auth failed for ${email}: ${err}`);
-    return null;
-  }
-
-  const data = (await res.json()) as { user?: { id?: string } };
-  return data.user?.id ?? null;
-}
-
-async function getSupabaseUserId(email: string): Promise<string | null> {
-  const res = await fetch(
-    `${SUPABASE_URL}/auth/v1/admin/users?page=1&per_page=1&filter=${encodeURIComponent(email)}`,
-    {
-      headers: {
-        apikey: SERVICE_KEY,
-        Authorization: `Bearer ${SERVICE_KEY}`,
-      },
-    },
-  );
-  if (!res.ok) return null;
-  const data = (await res.json()) as { users?: Array<{ id: string; email: string }> };
-  return data.users?.find((u) => u.email === email)?.id ?? null;
-}
+// Demo passwords (echoed in the credentials summary at the end of the run).
+// All clinicians share one password and all patients another, so we hash each
+// once with bcrypt(12) and reuse the digest across rows — 2 hashes instead of
+// 153. Seeded accounts are usable immediately (must_change_password = FALSE).
+const CLINICIAN_PASSWORD = 'Demo@Clinic1!';
+const PATIENT_PASSWORD = 'Demo@Patient1!';
+const CLINICIAN_PASSWORD_HASH = bcrypt.hashSync(CLINICIAN_PASSWORD, 12);
+const PATIENT_PASSWORD_HASH = bcrypt.hashSync(PATIENT_PASSWORD, 12);
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -425,47 +384,28 @@ async function seed(): Promise<void> {
   console.log(`  ✓ Organisation: ${orgId}`);
 
   // ── Clinicians ─────────────────────────────────────────────────────────────
-  console.log('\n[3/8] Creating clinicians (Supabase auth + DB)...');
+  console.log('\n[3/8] Creating clinicians (local bcrypt auth)...');
 
   const clinicianIds: string[] = [];
 
-  // Create Supabase auth users in parallel batches
-  const clinicianAuthIds = await Promise.all(
-    CLINICIANS.map((c) => createSupabaseUser(c.email, 'Demo@Clinic1!')),
-  );
-
-  for (let i = 0; i < CLINICIANS.length; i++) {
-    const c = CLINICIANS[i]!;
-    const authId = clinicianAuthIds[i];
-
-    if (!authId) {
-      console.warn(`  ⚠ Skipping DB insert for ${c.email} (no auth ID)`);
-      // Still insert with generated UUID so we have a valid FK
-      const [row] = await sql<{ id: string }[]>`
-        INSERT INTO clinicians (organisation_id, email, first_name, last_name, title, role, npi)
-        VALUES (${orgId}, ${c.email}, ${c.firstName}, ${c.lastName}, ${c.title}, ${c.role}, ${c.npi})
-        RETURNING id
-      `;
-      clinicianIds.push(row!.id);
-    } else {
-      // Insert with the Supabase auth UUID as the clinician's PK
-      const [row] = await sql<{ id: string }[]>`
-        INSERT INTO clinicians (id, organisation_id, email, first_name, last_name, title, role, npi)
-        VALUES (${authId}, ${orgId}, ${c.email}, ${c.firstName}, ${c.lastName}, ${c.title}, ${c.role}, ${c.npi})
-        ON CONFLICT (id) DO UPDATE SET
-          organisation_id = EXCLUDED.organisation_id,
-          email = EXCLUDED.email,
-          first_name = EXCLUDED.first_name,
-          last_name = EXCLUDED.last_name
-        RETURNING id
-      `;
-      clinicianIds.push(row!.id);
-    }
+  for (const c of CLINICIANS) {
+    const [row] = await sql<{ id: string }[]>`
+      INSERT INTO clinicians (
+        organisation_id, email, first_name, last_name, title, role, npi,
+        password_hash, must_change_password
+      )
+      VALUES (
+        ${orgId}, ${c.email}, ${c.firstName}, ${c.lastName}, ${c.title}, ${c.role}, ${c.npi},
+        ${CLINICIAN_PASSWORD_HASH}, FALSE
+      )
+      RETURNING id
+    `;
+    clinicianIds.push(row!.id);
     console.log(`  ✓ ${c.firstName} ${c.lastName} (${c.email})`);
   }
 
   // ── Patients ───────────────────────────────────────────────────────────────
-  console.log('\n[4/8] Creating patients (Supabase auth + DB)...');
+  console.log('\n[4/8] Creating patients (local bcrypt auth)...');
 
   const PATIENT_PROFILES: PatientProfile[] = [
     // 30 low-risk patients
@@ -569,33 +509,15 @@ async function seed(): Promise<void> {
     });
   }
 
-  // Batch create Supabase auth for background patients (10 at a time)
-  console.log('  Creating Supabase auth users in batches...');
-  const bgAuthIds: (string | null)[] = [];
-  const BATCH_SIZE = 10;
-
-  for (let start = 0; start < bgPatients.length; start += BATCH_SIZE) {
-    const batch = bgPatients.slice(start, start + BATCH_SIZE);
-    const ids = await Promise.all(batch.map((p) => createSupabaseUser(p.email, 'Demo@Patient1!')));
-    bgAuthIds.push(...ids);
-    process.stdout.write(`  ${start + batch.length}/${bgPatients.length} auth users created\r`);
-  }
-  console.log('');
-
-  // Also create spotlight patient auth users
-  const spotlightAuthIds = await Promise.all(
-    SPOTLIGHT_PATIENTS.map((p) => createSupabaseUser(p.email, 'Demo@Patient1!')),
-  );
-
-  // Build patient DB records (spotlight first, then background)
+  // Build patient DB records (spotlight first, then background). Every patient
+  // gets a DB-generated UUID and the shared bcrypt password hash.
   const allPatientRows: Array<{
-    id: string | null; email: string; firstName: string; lastName: string;
+    email: string; firstName: string; lastName: string;
     mrn: string; dob: string; riskLevel: string; status: string;
     clinicianId: string; profile: PatientProfile;
     medications: Array<{ name: string; dose: number; unit: string; freq: string }>;
   }> = [
-    ...SPOTLIGHT_PATIENTS.map((sp, i) => ({
-      id: spotlightAuthIds[i] ?? null,
+    ...SPOTLIGHT_PATIENTS.map((sp) => ({
       email: sp.email, firstName: sp.firstName, lastName: sp.lastName,
       mrn: sp.mrn, dob: sp.dob,
       riskLevel: sp.profile.riskLevel, status: sp.profile.status,
@@ -603,8 +525,7 @@ async function seed(): Promise<void> {
       profile: sp.profile,
       medications: sp.medications,
     })),
-    ...bgPatients.map((bp, i) => ({
-      id: bgAuthIds[i] ?? null,
+    ...bgPatients.map((bp) => ({
       email: bp.email, firstName: bp.firstName, lastName: bp.lastName,
       mrn: bp.mrn, dob: bp.dob,
       riskLevel: bp.profile.riskLevel, status: bp.profile.status,
@@ -618,39 +539,18 @@ async function seed(): Promise<void> {
   const patientDbIds: Array<{ dbId: string; clinicianId: string; profile: PatientProfile; email: string; medications: Array<{ name: string; dose: number; unit: string; freq: string }> }> = [];
 
   for (const p of allPatientRows) {
-    let row: { id: string } | undefined;
-
-    if (p.id) {
-      [row] = await sql<{ id: string }[]>`
-        INSERT INTO patients (
-          id, organisation_id, mrn, email, first_name, last_name,
-          date_of_birth, timezone, locale, status, risk_level,
-          onboarding_complete, app_installed
-        ) VALUES (
-          ${p.id}, ${orgId}, ${p.mrn}, ${p.email}, ${p.firstName}, ${p.lastName},
-          ${p.dob}, 'America/Los_Angeles', 'en-US',
-          ${p.status}, ${p.riskLevel}, TRUE, TRUE
-        )
-        ON CONFLICT (id) DO UPDATE SET
-          organisation_id = EXCLUDED.organisation_id,
-          mrn = EXCLUDED.mrn,
-          status = EXCLUDED.status
-        RETURNING id
-      `;
-    } else {
-      [row] = await sql<{ id: string }[]>`
-        INSERT INTO patients (
-          organisation_id, mrn, email, first_name, last_name,
-          date_of_birth, timezone, locale, status, risk_level,
-          onboarding_complete, app_installed
-        ) VALUES (
-          ${orgId}, ${p.mrn}, ${p.email}, ${p.firstName}, ${p.lastName},
-          ${p.dob}, 'America/Los_Angeles', 'en-US',
-          ${p.status}, ${p.riskLevel}, TRUE, TRUE
-        )
-        RETURNING id
-      `;
-    }
+    const [row] = await sql<{ id: string }[]>`
+      INSERT INTO patients (
+        organisation_id, mrn, email, first_name, last_name,
+        date_of_birth, timezone, locale, status, risk_level,
+        onboarding_complete, app_installed, password_hash
+      ) VALUES (
+        ${orgId}, ${p.mrn}, ${p.email}, ${p.firstName}, ${p.lastName},
+        ${p.dob}, 'America/Los_Angeles', 'en-US',
+        ${p.status}, ${p.riskLevel}, TRUE, TRUE, ${PATIENT_PASSWORD_HASH}
+      )
+      RETURNING id
+    `;
 
     if (!row) continue;
     patientDbIds.push({
@@ -965,15 +865,15 @@ async function seed(): Promise<void> {
   console.log('═══════════════════════════════════════════════════════');
   console.log('  DEMO CREDENTIALS');
   console.log('═══════════════════════════════════════════════════════');
-  console.log('\nClinicians (password: Demo@Clinic1!)');
+  console.log(`\nClinicians (password: ${CLINICIAN_PASSWORD})`);
   for (const c of CLINICIANS) {
     console.log(`  ${c.email}`);
   }
-  console.log('\nSpotlight Patients (password: Demo@Patient1!)');
+  console.log(`\nSpotlight Patients (password: ${PATIENT_PASSWORD})`);
   for (const p of SPOTLIGHT_PATIENTS) {
     console.log(`  ${p.email}`);
   }
-  console.log('\nAll other patients also use: Demo@Patient1!');
+  console.log(`\nAll other patients also use: ${PATIENT_PASSWORD}`);
   console.log('\n  Summary:');
   console.log(`    Patients:      ${patientDbIds.length}`);
   console.log(`    Daily entries: ${totalEntries}`);

@@ -1,19 +1,19 @@
 // =============================================================================
 // COPE API — Report generation worker
 // BullMQ Worker: fetches patient data → renders HTML → Puppeteer PDF
-//               → uploads to Supabase Storage → notifies clinician.
+//               → saves to local storage → notifies clinician.
 //
 // HIPAA notes:
-//   - PDFs stored in a private Supabase Storage bucket ('reports').
-//   - Download links are presigned (7-day expiry) generated on-demand.
-//   - No PHI transmitted outside Supabase/Resend without BAA.
-//   - Bucket must be created manually in Supabase dashboard:
-//       Name: reports  |  Public: NO  |  RLS: disabled (service role only)
+//   - PDFs stored under STORAGE_DIR/reports/ on the local filesystem.
+//   - Download links are HMAC-signed (7-day expiry), generated on-demand and
+//     served by GET /api/v1/files/reports/... — the signature is the authz.
+//   - No PHI leaves the server except via Resend (requires BAA).
 // =============================================================================
 
 import { Worker, Queue, type Job } from 'bullmq';
 import { sql } from '@cope/db';
 import { config } from '../config.js';
+import { createSignedUrl as signedDownloadUrl, saveObject } from '../services/storage.js';
 import { connection } from './rules-engine.js';
 
 // ---------------------------------------------------------------------------
@@ -565,7 +565,8 @@ function renderHtml(job: ReportJobDataWithPatient, data: Awaited<ReturnType<type
 }
 
 // ---------------------------------------------------------------------------
-// Supabase Storage helpers
+// Local storage helpers (services/storage.ts) — content type derives from the
+// file extension at download time.
 // ---------------------------------------------------------------------------
 
 const STORAGE_BUCKET = 'reports';
@@ -574,47 +575,16 @@ const SIGNED_URL_EXPIRY_SECONDS = 7 * 24 * 3600; // 7 days
 async function uploadToStorage(
   fileBuffer: Buffer,
   objectPath: string,
-  contentType = 'application/pdf',
+  _contentType = 'application/pdf',
 ): Promise<string> {
-  const url = `${config.supabaseUrl}/storage/v1/object/${STORAGE_BUCKET}/${objectPath}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${config.supabaseServiceRoleKey}`,
-      'Content-Type': contentType,
-      'x-upsert': 'true',
-    },
-    body: new Uint8Array(fileBuffer) as never,
-  });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Supabase Storage upload failed (${res.status}): ${errText}`);
-  }
-
+  await saveObject(STORAGE_BUCKET, objectPath, fileBuffer);
   return `${STORAGE_BUCKET}/${objectPath}`;
 }
 
 async function createSignedUrl(objectPath: string): Promise<string> {
-  // objectPath is already 'reports/orgId/...' — strip bucket prefix for the sign endpoint
+  // objectPath is already 'reports/orgId/...' — strip bucket prefix
   const pathWithoutBucket = objectPath.replace(`${STORAGE_BUCKET}/`, '');
-  const url = `${config.supabaseUrl}/storage/v1/object/sign/${STORAGE_BUCKET}/${pathWithoutBucket}`;
-
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${config.supabaseServiceRoleKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ expiresIn: SIGNED_URL_EXPIRY_SECONDS }),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to create signed URL (${res.status})`);
-  }
-
-  const json = (await res.json()) as { signedURL: string };
-  return `${config.supabaseUrl}/storage/v1${json.signedURL}`;
+  return signedDownloadUrl(STORAGE_BUCKET, pathWithoutBucket, SIGNED_URL_EXPIRY_SECONDS);
 }
 
 // ---------------------------------------------------------------------------
@@ -745,7 +715,7 @@ async function processReportJob(job: Job<ReportJobData>): Promise<void> {
       await browser.close();
     }
 
-    // 4. Upload to Supabase Storage
+    // 4. Save the PDF to local storage
     const objectPath = `${orgId}/${reportId}.pdf`;
     await uploadToStorage(pdfBuffer, objectPath);
     const storageRef = `${STORAGE_BUCKET}/${objectPath}`;
