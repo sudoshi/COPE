@@ -1,6 +1,6 @@
 # COPE Web UI — Typography & Iconography Remediation Plan
 
-**Status:** Phases 0–2 + 4 shipped · Phase 3 pending · **Owner:** design system · **Created:** 2026-06-21
+**Status:** Phases 0–4 shipped (full remediation complete) · **Owner:** design system · **Created:** 2026-06-21
 **North stars:** Medgnosis (`apps/web`, lucide-react + Tailwind tokens), MediCosts (`client/`, icon factory + CSS tokens)
 
 ---
@@ -115,9 +115,13 @@ Replace 102 emoji + 15 ad-hoc SVGs with `<Icon>`/lucide, file by file:
 - Note: used `var(--text-*)` on the existing inline styles (lowest-risk) rather
   than extracting `.text-*` classes; the `--ink-*` colour vocabulary is Phase 3.
 
-### Phase 3 — Token unification & dead-CSS removal
-- Migrate inline `--ink-*` → classes/new vocab; shrink `compat.css` to a shim.
-- Delete `theme.css`; retire `theme-legacy-backup.css` + the env flag.
+### Phase 3 — Token unification & dead-CSS removal ✅ SHIPPED
+- Migrated all 398 inline `var(--ink*)` refs (17 `.tsx`) → canonical `--text-*`
+  (deterministic 1:1 alias swap; zero visual change).
+- Deleted dead `theme.css` (never imported).
+- _Kept:_ `compat.css` `--ink` aliases as the documented shim and
+  `theme-legacy-backup.css` + `VITE_USE_LEGACY_THEME` rollback path (inert,
+  off by default) — retiring them is optional future cleanup.
 
 ### Phase 4 — Enforcement (no regression) ✅ SHIPPED
 - `scripts/check-readability.sh` — fails on numeric inline `fontSize`,
