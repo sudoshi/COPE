@@ -1,4 +1,4 @@
-# COPE Design System v2.1
+# COPE Design System v3.0
 ## Dark Theme — Clinical Intelligence Platform
 
 ---
@@ -104,16 +104,86 @@ COPE v2.1 uses a dark theme design system with a **dark crimson / gold / dark gr
 
 ### Type Scale
 
-| Token | Size | Weight | Line Height | Usage |
-|-------|------|--------|-------------|-------|
-| `--text-xs` | 11px | 400 | 1.4 | Captions, overlines |
-| `--text-sm` | 13px | 400 | 1.5 | Secondary text |
-| `--text-base` | 14px | 400 | 1.5 | Default body |
-| `--text-lg` | 16px | 400 | 1.6 | Lead text |
-| `--text-xl` | 18px | 600 | 1.4 | Subsection headers |
-| `--text-2xl` | 22px | 600 | 1.35 | Card titles |
-| `--text-3xl` | 28px | 600 | 1.3 | Section headers |
-| `--text-4xl` | 36px | 700 | 1.2 | Page titles |
+Tokens are **rem-based** (`tokens-base.css` is the single source of truth) so
+text scales with the fluid root font-size on large displays. Sizes below are at
+the 16px root.
+
+| Token | rem | px @16 | Weight | Usage |
+|-------|-----|--------|--------|-------|
+| `--text-xs` | 0.6875 | 11px | 400 | Uppercase letter-spaced labels ONLY (floor exception) |
+| `--text-sm` | 0.75 | 12px | 400 | Captions, secondary/helper text (true minimum) |
+| `--text-base` | 0.875 | 14px | 400 | Default body |
+| `--text-md` | 0.9375 | 15px | 400 | Emphasised body |
+| `--text-lg` | 1 | 16px | 400 | Lead text |
+| `--text-xl` | 1.125 | 18px | 600 | Subsection headers |
+| `--text-2xl` | 1.375 | 22px | 600 | Card titles |
+| `--text-3xl` | 1.75 | 28px | 600 | Section headers |
+| `--text-4xl` | 2.25 | 36px | 700 | Page titles |
+| `--text-5xl` | 3 | 48px | 700 | Hero / display |
+| `--text-6xl` | 3.5 | 56px | 700 | Hero / display |
+
+### Typography Rules (enforced)
+
+1. **Use the scale, never raw px.** Apply a `.text-*` utility class
+   (`.text-xs … .text-4xl`) or `font-size: var(--text-*)`. **Never** write
+   `style={{ fontSize: <number> }}` in JSX or `font-size: 14px` in CSS.
+2. **12px floor.** No text renders below `--text-sm` (12px). The only exception
+   is uppercase labels with `letter-spacing`, which may use `--text-xs` (11px).
+3. **One vocabulary.** Use `--text-*` / `--surface-*` colour tokens. The legacy
+   `--ink-*` aliases (`compat.css`) are deprecated — do not add new usages.
+
+---
+
+## Iconography
+
+COPE uses **[lucide-react](https://lucide.dev)** for all icons. Emoji, ad-hoc
+inline SVGs, and icon fonts are **not** allowed — they render at inconsistent
+sizes, differ per operating system, and misalign with text.
+
+### The `<Icon>` primitive
+
+Always render icons through `src/components/ui/Icon.tsx`, which enforces the
+size vocabulary and ARIA semantics:
+
+```tsx
+import { Bell } from 'lucide-react';
+import { Icon } from '@/components/ui/Icon';
+
+<Icon icon={Bell} size="lg" />                    // decorative → aria-hidden
+<Icon icon={Bell} size="lg" title="Alerts" />     // meaningful → aria-label
+```
+
+### Size vocabulary (the ONLY allowed sizes)
+
+| Size | px | Usage |
+|------|----|-------|
+| `xs` | 12 | inline with `--text-xs`, dense badges |
+| `sm` | 14 | buttons, table cells, search, chips |
+| `md` | 16 | default body-adjacent icons |
+| `lg` | 20 | sidebar nav, section headers |
+| `xl` | 24 | page headers |
+| `2xl` | 32 | empty-state illustrations |
+
+### Rules
+
+1. **Stroke width:** `1.5` default, `2` for active/emphasis.
+2. **Colour via `currentColor`.** Icons inherit text colour; never hardcode hex.
+3. **Colour = signal, never decoration.** Status/severity must pair an icon
+   **and** a text label — never encode meaning by colour or glyph alone.
+4. **Decorative icons are `aria-hidden`** (the default); only pass `title` when
+   the icon is the sole carrier of meaning (e.g. icon-only buttons).
+5. **No squish:** `svg.lucide { flex-shrink: 0 }` is set globally.
+
+### Mood
+
+Mood (1–10) renders via `<MoodGlyph>` — a `--mood-N` colour dot **plus** the
+numeric value and optional band label (High/Good/Moderate/Low). Never a mood
+emoji.
+
+```tsx
+import { MoodGlyph } from '@/components/ui/MoodGlyph';
+<MoodGlyph value={7} showLabel />   // ● 7 · Good
+```
 
 ---
 
@@ -585,6 +655,16 @@ npx playwright test e2e/theme/
 ---
 
 ## Changelog
+
+### v3.0 — Readability Remediation (June 2026)
+- **Iconography:** adopted `lucide-react`; added the `<Icon>` primitive with a
+  fixed size vocabulary (xs 12 → 2xl 32) and ARIA defaults. Emoji and ad-hoc
+  inline SVGs are now banned. Added `<MoodGlyph>` to replace mood emoji.
+- **Typography:** added `.text-xs … .text-4xl` utility classes; corrected the
+  type-scale table to match the rem tokens (single source of truth); documented
+  the enforced 12px floor and the inline-`fontSize` ban.
+- Added `svg.lucide { flex-shrink: 0 }` and `.mood-glyph` layout.
+- Remediation tracked in `design/READABILITY_REMEDIATION_PLAN.md` (Phases 0–4).
 
 ### v2.2 — Panel Elegance & Legibility Pass (February 2026)
 - Added `--gradient-panel`, `--gradient-panel-raised`, `--gradient-panel-inset` tokens
