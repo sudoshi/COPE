@@ -16,6 +16,11 @@ import { InvitePatientModal } from './InvitePatientModal.js';
 import { GlobalSearch } from './GlobalSearch.js';
 import { QuickNotePanel } from './QuickNotePanel.js';
 import { ChangePasswordModal } from './ChangePasswordModal.js';
+import {
+  Globe, Users, Bell, TrendingUp, FileText, Microscope, UserPlus,
+  Settings, LogOut, Search, PenLine, HelpCircle, Check, type LucideIcon,
+} from 'lucide-react';
+import { Icon } from './ui/Icon.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -67,7 +72,7 @@ function formatDate(): string {
 function NavItem({
   icon, label, path, badge, badgeVariant, onClick,
 }: {
-  icon: string;
+  icon: LucideIcon;
   label: string;
   path: string;
   badge?: number;
@@ -83,7 +88,7 @@ function NavItem({
       className={`nav-item${isActive ? ' active' : ''}`}
       onClick={onClick}
     >
-      <span className="nav-icon">{icon}</span>
+      <span className="nav-icon"><Icon icon={icon} size="lg" strokeWidth={isActive ? 2 : 1.5} /></span>
       {label}
       {badge !== undefined && badge > 0 && (
         <span className={`nav-badge${badgeVariant ? ` ${badgeVariant}` : ''}`}>
@@ -253,15 +258,15 @@ export function AppShell() {
         {/* Nav: Overview */}
         <div className="nav-section">
           <div className="nav-section-label">Overview</div>
-          <NavItem icon="🌐" label="Population" path="/dashboard" onClick={() => navigate('/dashboard')} />
+          <NavItem icon={Globe} label="Population" path="/dashboard" onClick={() => navigate('/dashboard')} />
           <NavItem
-            icon="👥" label="All Patients" path="/patients"
+            icon={Users} label="All Patients" path="/patients"
             badge={snapshot?.total_patients ?? 0}
             badgeVariant="warning"
             onClick={() => navigate('/patients')}
           />
           <NavItem
-            icon="🔔" label="Alerts" path="/alerts"
+            icon={Bell} label="Alerts" path="/alerts"
             badge={criticalCount}
             badgeVariant="critical"
             onClick={() => { setCriticalCount(0); navigate('/alerts'); }}
@@ -271,10 +276,10 @@ export function AppShell() {
         {/* Nav: Clinical Tools */}
         <div className="nav-section">
           <div className="nav-section-label">Clinical Tools</div>
-          <NavItem icon="📈" label="Population Trends" path="/trends" onClick={() => navigate('/trends')} />
-          <NavItem icon="📄" label="Reports" path="/reports" onClick={() => navigate('/reports')} />
+          <NavItem icon={TrendingUp} label="Population Trends" path="/trends" onClick={() => navigate('/trends')} />
+          <NavItem icon={FileText} label="Reports" path="/reports" onClick={() => navigate('/reports')} />
           {role === 'admin' && (
-            <NavItem icon="🔬" label="Cohort Builder" path="/cohort" onClick={() => navigate('/cohort')} />
+            <NavItem icon={Microscope} label="Cohort Builder" path="/cohort" onClick={() => navigate('/cohort')} />
           )}
         </div>
 
@@ -285,7 +290,7 @@ export function AppShell() {
             className="nav-item action-btn"
             onClick={() => setShowInviteModal(true)}
           >
-            <span className="nav-icon">➕</span>
+            <span className="nav-icon"><Icon icon={UserPlus} size="lg" /></span>
             Invite Patient
           </div>
         </div>
@@ -295,7 +300,7 @@ export function AppShell() {
           <div className="nav-section">
             <div className="nav-section-label">Administration</div>
             <NavItem
-              icon="⚙️"
+              icon={Settings}
               label="Admin Panel"
               path="/admin"
               onClick={() => navigate('/admin')}
@@ -306,7 +311,8 @@ export function AppShell() {
         {/* Footer */}
         <div className="sidebar-footer">
           <button className="sidebar-footer-btn" onClick={() => void authActions.logout()}>
-            ⏻ Sign Out
+            <Icon icon={LogOut} size="sm" />
+            Sign Out
           </button>
         </div>
       </aside>
@@ -323,7 +329,7 @@ export function AppShell() {
           </div>
           <div className="topbar-spacer" />
           <div className="search-bar">
-            <span className="search-icon">🔍</span>
+            <span className="search-icon"><Icon icon={Search} size="sm" /></span>
             <input
               type="text"
               placeholder="Search patients…"
@@ -345,19 +351,18 @@ export function AppShell() {
             className="topbar-btn"
             title="Quick note (N)"
             onClick={() => setShowQuickNote(true)}
-            style={{ cursor: 'pointer' }}
             data-testid="quick-note-btn"
           >
-            <span style={{ fontSize: 13 }}>✏ Note</span>
+            <Icon icon={PenLine} size="sm" />
+            Note
           </button>
           <button
             className="topbar-btn"
             title="Keyboard shortcuts (?)"
             onClick={() => setShowShortcutsHelp(true)}
-            style={{ cursor: 'pointer', fontSize: 13 }}
             data-testid="shortcuts-help-btn"
           >
-            ?
+            <Icon icon={HelpCircle} size="sm" title="Keyboard shortcuts" />
           </button>
           <div
             className="topbar-btn"
@@ -365,7 +370,7 @@ export function AppShell() {
             style={{ gap: 8, cursor: 'default' }}
           >
             <span className="ws-dot" style={{ background: wsColor }} />
-            <span style={{ color: wsColor, fontSize: 11 }}>
+            <span style={{ color: wsColor }}>
               {ws === 'connected' ? 'Live' : ws === 'connecting' ? 'Connecting…' : 'Offline'}
             </span>
           </div>
@@ -396,6 +401,9 @@ export function AppShell() {
           position: 'fixed',
           bottom: 24,
           right: 24,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
           background: 'var(--safe-bg)',
           border: '1px solid var(--safe)',
           color: 'var(--safe)',
@@ -406,7 +414,7 @@ export function AppShell() {
           zIndex: 1100,
           boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
         }}>
-          ✓ {inviteToast}
+          <Icon icon={Check} size="sm" /> {inviteToast}
         </div>
       )}
 

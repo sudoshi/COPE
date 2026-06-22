@@ -68,7 +68,10 @@
 /* Nav item with icon */
 .nav-icon {
   width: 20px;
-  text-align: center;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0.8;
   flex-shrink: 0;
 }
