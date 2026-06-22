@@ -140,7 +140,7 @@
 
 .login-hero-brand {
   font-family: var(--font-display, 'DM Serif Display', Georgia, serif);
-  font-size: 44px;
+  font-size: var(--text-5xl);
   font-weight: 400;
   letter-spacing: -1px;
   color: var(--text-primary, #F0EDE8);
@@ -156,7 +156,7 @@
 }
 
 .login-hero-tagline {
-  font-size: 16px;
+  font-size: var(--text-lg);
   color: var(--text-muted, #8A857D);
   line-height: 1.6;
   max-width: 380px;
@@ -175,7 +175,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--text-muted, #8A857D);
   letter-spacing: 0.3px;
@@ -258,7 +258,7 @@
 .login-mobile-brand {
   display: none;
   font-family: var(--font-display, 'DM Serif Display', Georgia, serif);
-  font-size: 32px;
+  font-size: var(--text-4xl);
   font-weight: 400;
   letter-spacing: -0.5px;
   color: var(--text-primary, #F0EDE8);
@@ -280,7 +280,7 @@
 
 .login-title {
   font-family: var(--font-display, 'DM Serif Display', Georgia, serif);
-  font-size: 28px;
+  font-size: var(--text-3xl);
   font-weight: 400;
   color: var(--text-primary, #F0EDE8);
   margin: 0 0 8px;
@@ -288,7 +288,7 @@
 }
 
 .login-subtitle {
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--text-muted, #8A857D);
   margin: 0;
   line-height: 1.5;
@@ -318,7 +318,7 @@
 
 .login-label {
   display: block;
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-secondary, #C5C0B8);
   letter-spacing: 0.6px;
@@ -339,7 +339,7 @@
   border-radius: 10px;
   color: var(--text-primary, #F0EDE8);
   font-family: var(--font-body, 'DM Sans', sans-serif);
-  font-size: 15px;
+  font-size: var(--text-md);
   line-height: 1.4;
   outline: none;
   transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
@@ -438,7 +438,7 @@
 }
 
 .login-checkbox-label {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: var(--text-muted, #8A857D);
   cursor: pointer;
   user-select: none;
@@ -465,7 +465,7 @@
 }
 
 .login-error-text {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: var(--critical, #E85A6B);
   line-height: 1.5;
 }
@@ -492,7 +492,7 @@
   border: none;
   border-radius: 10px;
   font-family: var(--font-body, 'DM Sans', sans-serif);
-  font-size: 15px;
+  font-size: var(--text-md);
   font-weight: 600;
   letter-spacing: 0.2px;
   cursor: pointer;
@@ -571,7 +571,7 @@
 }
 
 .login-demo-label {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: var(--text-ghost, #5A5650);
   letter-spacing: 0.3px;
 }
@@ -588,7 +588,7 @@
   border-radius: 8px;
   color: var(--text-muted, #8A857D);
   font-family: var(--font-body, 'DM Sans', sans-serif);
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 500;
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s, background 0.2s;
@@ -610,7 +610,7 @@
 }
 
 .login-footer-text {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: var(--text-ghost, #5A5650);
   line-height: 1.6;
 }
@@ -630,7 +630,7 @@
   background: var(--glass-01, rgba(255,255,255,0.04));
   border: 1px solid var(--border-subtle, rgba(42,42,48,0.6));
   border-radius: 20px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--text-muted, #8A857D);
   letter-spacing: 0.5px;
