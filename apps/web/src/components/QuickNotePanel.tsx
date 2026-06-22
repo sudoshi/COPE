@@ -6,9 +6,11 @@
 // =============================================================================
 
 import { useState, useEffect, useRef } from 'react';
+import { X, Check } from 'lucide-react';
 import { api, ApiError } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
 import { useUiStore } from '../stores/ui.js';
+import { Icon } from './ui/Icon.js';
 
 const NOTE_TYPES = [
   { value: 'observation',         label: 'Observation' },
@@ -121,9 +123,9 @@ export function QuickNotePanel({ open, onClose }: QuickNotePanelProps) {
           </div>
           <button
             onClick={onClose}
-            style={{ background: 'transparent', border: 'none', color: 'var(--ink-soft)', fontSize: 18, cursor: 'pointer', padding: '4px 8px', borderRadius: 4 }}
+            style={{ background: 'transparent', border: 'none', color: 'var(--ink-soft)', cursor: 'pointer', padding: '4px 8px', borderRadius: 4, display: 'inline-flex', alignItems: 'center' }}
           >
-            ×
+            <Icon icon={X} size="md" title="Close" />
           </button>
         </div>
 
@@ -187,8 +189,8 @@ export function QuickNotePanel({ open, onClose }: QuickNotePanelProps) {
 
           {/* Success flash */}
           {saved && (
-            <div style={{ fontSize: 12, color: 'var(--safe)', background: 'rgba(45,212,191,0.1)', padding: '8px 12px', borderRadius: 6, textAlign: 'center' }}>
-              ✓ Note saved
+            <div style={{ fontSize: 12, color: 'var(--safe)', background: 'rgba(45,212,191,0.1)', padding: '8px 12px', borderRadius: 6, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <Icon icon={Check} size="sm" /> Note saved
             </div>
           )}
         </div>

@@ -9,6 +9,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Cell,
 } from 'recharts';
 import { format, parseISO } from 'date-fns';
+import { TrendingUp } from 'lucide-react';
+import { Icon } from '../components/ui/Icon.js';
 import { api } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
 
@@ -78,7 +80,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
           <div className="panel-sub">Population avg from nightly snapshots</div>
         </div>
         <div className="empty-state">
-          <div className="empty-state-icon">📈</div>
+          <div className="empty-state-icon"><Icon icon={TrendingUp} size="2xl" /></div>
           <div className="empty-state-title">Trend data building…</div>
           Snapshots accumulate nightly. Check back after the first scheduled run at 07:00 UTC.
         </div>

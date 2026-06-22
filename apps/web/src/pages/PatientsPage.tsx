@@ -5,8 +5,10 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { AlertTriangle, Flame, Hourglass, UserPlus, Users } from 'lucide-react';
 import { api } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
+import { Icon } from '../components/ui/Icon.js';
 import { InvitePatientModal } from '../components/InvitePatientModal.js';
 
 // ---------------------------------------------------------------------------
@@ -69,7 +71,7 @@ type SortType = 'risk' | 'mood' | 'streak' | 'last-checkin' | 'name';
 function FilterChip({
   label, active, variant, onClick, testId,
 }: {
-  label: string;
+  label: React.ReactNode;
   active: boolean;
   variant?: 'critical';
   onClick: () => void;
@@ -167,9 +169,10 @@ function InviteActions({
           borderRadius: 'var(--r-xs)', padding: '2px 8px',
           fontSize: 11, fontWeight: 700, cursor: 'pointer',
           border: '1px solid rgba(255,190,50,0.3)',
+          display: 'inline-flex', alignItems: 'center', gap: 4,
         }}
       >
-        ⏳ Pending
+        <Icon icon={Hourglass} size="sm" /> Pending
       </span>
       {open && (
         <div style={{
@@ -363,9 +366,10 @@ export function PatientsPage() {
             background: 'var(--safe)', color: '#0a0e1a',
             border: 'none', borderRadius: 8, padding: '7px 16px',
             fontSize: 12, fontWeight: 700, cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center', gap: 6,
           }}
         >
-          + Invite Patient
+          <Icon icon={UserPlus} size="sm" /> Invite Patient
         </button>
       </div>
 
@@ -379,7 +383,11 @@ export function PatientsPage() {
             testId="filter-all"
           />
           <FilterChip
-            label={`⚠ Crisis (${crisisCount})`}
+            label={
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <Icon icon={AlertTriangle} size="sm" /> Crisis ({crisisCount})
+              </span>
+            }
             variant="critical"
             active={filter === 'crisis'}
             onClick={() => setFilter(filter === 'crisis' ? 'all' : 'crisis')}
@@ -398,7 +406,11 @@ export function PatientsPage() {
             testId="filter-not-logged"
           />
           <FilterChip
-            label={`🔥 Streak 7d+ (${streakCount})`}
+            label={
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <Icon icon={Flame} size="sm" /> Streak 7d+ ({streakCount})
+              </span>
+            }
             active={filter === 'streak'}
             onClick={() => setFilter(filter === 'streak' ? 'all' : 'streak')}
             testId="filter-streak"
@@ -433,8 +445,8 @@ export function PatientsPage() {
       {pendingInvites.length > 0 && (
         <div style={{ padding: '0 24px 8px' }}>
           <div className="panel" style={{ marginBottom: 0 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--warning)', marginBottom: 10 }}>
-              ⏳ Pending Invites
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--warning)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Icon icon={Hourglass} size="lg" /> Pending Invites
             </div>
             <table className="patient-table">
               <thead>
@@ -486,7 +498,7 @@ export function PatientsPage() {
         ) : sorted.length === 0 ? (
           <div className="panel">
             <div className="empty-state">
-              <div className="empty-state-icon">👥</div>
+              <div className="empty-state-icon"><Icon icon={Users} size="2xl" /></div>
               <div className="empty-state-title">No patients match</div>
               Try a different filter or search term.
             </div>
@@ -547,7 +559,11 @@ export function PatientsPage() {
 
                   {/* Streak */}
                   <td style={{ fontSize: 13, color: row.tracking_streak >= 7 ? 'var(--warning)' : 'var(--ink-soft)' }}>
-                    {row.tracking_streak > 0 ? `🔥 ${row.tracking_streak}d` : '—'}
+                    {row.tracking_streak > 0 ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <Icon icon={Flame} size="sm" /> {row.tracking_streak}d
+                      </span>
+                    ) : '—'}
                   </td>
 
                   {/* Last check-in */}

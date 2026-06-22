@@ -6,6 +6,8 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FileText, Users, RefreshCw, Clock, X, type LucideIcon } from 'lucide-react';
+import { Icon } from '../components/ui/Icon.js';
 import { api, ApiError } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
 
@@ -49,24 +51,30 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   failed:     { label: 'Failed',      color: 'var(--critical)', bg: 'var(--critical-bg)' },
 };
 
-const REPORT_TYPES = [
+const REPORT_TYPES: Array<{
+  key: 'weekly_summary' | 'monthly_summary' | 'clinical_export';
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  days: number;
+}> = [
   {
-    key: 'weekly_summary' as const,
-    icon: '📄',
+    key: 'weekly_summary',
+    icon: FileText,
     title: 'Individual Patient',
     desc: '30-day mood, triggers, symptoms and medication adherence. Export as PDF for clinical handoff.',
     days: 30,
   },
   {
-    key: 'monthly_summary' as const,
-    icon: '👥',
+    key: 'monthly_summary',
+    icon: Users,
     title: 'Population Summary',
     desc: 'Aggregate outcomes across your caseload. Suitable for department review and supervision.',
     days: 30,
   },
   {
-    key: 'clinical_export' as const,
-    icon: '🔄',
+    key: 'clinical_export',
+    icon: RefreshCw,
     title: 'Handover Report',
     desc: 'Flagged patients, active alerts, and outstanding actions for cover clinician.',
     days: 90,
@@ -106,8 +114,9 @@ function StatusBadge({ status }: { status: ReportItem['status'] }) {
       background: cfg.bg, color: cfg.color,
       borderRadius: 'var(--r-xs)', padding: '2px 8px',
       fontSize: 11, fontWeight: 600,
+      display: 'inline-flex', alignItems: 'center', gap: 4,
     }}>
-      {status === 'generating' && '⟳ '}{cfg.label}
+      {status === 'generating' && <Icon icon={RefreshCw} size="xs" />}{cfg.label}
     </span>
   );
 }
@@ -233,7 +242,7 @@ export function ReportsPage() {
                 boxShadow: '0 0 20px rgba(110,168,254,0.18), inset 0 1px 0 rgba(110,168,254,0.12)',
               } : {}}
             >
-              <div className="report-type-card-icon">{rt.icon}</div>
+              <div className="report-type-card-icon"><Icon icon={rt.icon} size="2xl" /></div>
               <div className="report-type-card-title">{rt.title}</div>
               <div className="report-type-card-desc">{rt.desc}</div>
               <div className="report-type-card-action">
@@ -249,10 +258,18 @@ export function ReportsPage() {
         <div className="panel anim" style={{ marginBottom: 20 }}>
           <div className="panel-header">
             <div>
-              <div className="panel-title">{currentTypeInfo.icon} {currentTypeInfo.title}</div>
+              <div className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Icon icon={currentTypeInfo.icon} size="lg" /> {currentTypeInfo.title}
+              </div>
               <div className="panel-sub">Configure report parameters</div>
             </div>
-            <button className="panel-action" onClick={() => setActiveType(null)}>✕ Cancel</button>
+            <button
+              className="panel-action"
+              onClick={() => setActiveType(null)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+            >
+              <Icon icon={X} size="sm" /> Cancel
+            </button>
           </div>
           <div style={{ padding: '16px 18px' }}>
             <form onSubmit={(e) => void handleSubmit(e)}>
@@ -321,9 +338,10 @@ export function ReportsPage() {
                       opacity: submitting || (activeType === 'weekly_summary' && !formPatient) ? 0.5 : 1,
                       fontFamily: 'var(--font-body)',
                       transition: 'all 0.15s',
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                     }}
                   >
-                    {submitting ? '⟳ Generating…' : 'Generate Report'}
+                    {submitting ? <><Icon icon={RefreshCw} size="sm" /> Generating…</> : 'Generate Report'}
                   </button>
                 </div>
               </div>
@@ -356,7 +374,7 @@ export function ReportsPage() {
           <div style={{ color: 'var(--ink-soft)', textAlign: 'center', padding: 40 }}>Loading…</div>
         ) : reports.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state-icon">📄</div>
+            <div className="empty-state-icon"><Icon icon={FileText} size="2xl" /></div>
             <div className="empty-state-title">No reports yet</div>
             Select a report type above to generate your first PDF.
           </div>
@@ -427,7 +445,9 @@ export function ReportsPage() {
                         ) : r.status === 'ready' && expired ? (
                           <span style={{ color: 'var(--warning)', fontSize: 11 }}>Link expired</span>
                         ) : r.status === 'pending' || r.status === 'generating' ? (
-                          <span style={{ color: 'var(--ink-soft)', fontSize: 11 }}>⏳ Pending</span>
+                          <span style={{ color: 'var(--ink-soft)', fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                            <Icon icon={Clock} size="sm" /> Pending
+                          </span>
                         ) : r.status === 'failed' ? (
                           <span style={{ color: 'var(--critical)', fontSize: 11 }}>Error</span>
                         ) : null}

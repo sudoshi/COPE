@@ -7,9 +7,11 @@
 // =============================================================================
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Camera, Lock, Trash2 } from 'lucide-react';
 import type { CohortFilterGroup } from '@cope/shared';
 import { api, ApiError } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
+import { Icon } from '../components/ui/Icon.js';
 import { CohortFilterBuilder } from '../components/CohortFilterBuilder.js';
 import {
   CohortResultsPanel,
@@ -59,7 +61,7 @@ export function CohortPage() {
     return (
       <div className="view-pad">
         <div className="panel" style={{ padding: 48, textAlign: 'center' }}>
-          <div style={{ fontSize: 32, marginBottom: 16 }}>🔒</div>
+          <div style={{ marginBottom: 16, color: 'var(--ink-mid)' }}><Icon icon={Lock} size="2xl" /></div>
           <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
             Access Restricted
           </div>
@@ -377,10 +379,10 @@ export function CohortPage() {
                         title="Take snapshot"
                         style={{
                           background: 'transparent', border: 'none', cursor: 'pointer',
-                          fontSize: 14, padding: '2px 4px', color: SUB,
+                          padding: '2px 4px', color: SUB, display: 'inline-flex',
                         }}
                       >
-                        {'\uD83D\uDCF8'}
+                        <Icon icon={Camera} size="sm" title="Take snapshot" />
                       </button>
                     )}
                     <button
@@ -388,10 +390,10 @@ export function CohortPage() {
                       title="Delete cohort"
                       style={{
                         background: 'transparent', border: 'none', cursor: 'pointer',
-                        fontSize: 14, padding: '2px 4px', color: 'var(--ink-soft)',
+                        padding: '2px 4px', color: 'var(--ink-soft)', display: 'inline-flex',
                       }}
                     >
-                      {'\uD83D\uDDD1'}
+                      <Icon icon={Trash2} size="sm" title="Delete cohort" />
                     </button>
                   </div>
                 </div>

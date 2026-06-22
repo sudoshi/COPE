@@ -4,7 +4,9 @@
 // =============================================================================
 
 import { useState } from 'react';
+import { X } from 'lucide-react';
 import { api, ApiError } from '../services/api.js';
+import { Icon } from './ui/Icon.js';
 
 interface Props {
   token: string;
@@ -107,7 +109,7 @@ export function InvitePatientModal({ token, onClose, onSuccess }: Props) {
       <div style={S.box} onClick={(e) => e.stopPropagation()} data-testid="invite-modal">
         <div style={S.header}>
           <span style={S.title}>Invite Patient</span>
-          <button style={S.closeBtn} onClick={onClose}>✕</button>
+          <button style={S.closeBtn} onClick={onClose}><Icon icon={X} size="md" title="Close" /></button>
         </div>
 
         <form onSubmit={(e) => void handleSubmit(e)}>

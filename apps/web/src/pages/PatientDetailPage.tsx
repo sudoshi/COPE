@@ -17,7 +17,34 @@ import {
   Legend,
 } from 'recharts';
 import { format, parseISO, differenceInYears, subDays } from 'date-fns';
+import {
+  Check,
+  AlertTriangle,
+  NotebookPen,
+  ClipboardList,
+  Pill,
+  Lock,
+  Sparkles,
+  Flame,
+  FileText,
+  Siren,
+  Pencil,
+  Stethoscope,
+  Activity,
+  CircleDot,
+  Heart,
+  CirclePlus,
+  Circle,
+  Hourglass,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Zap,
+  Info,
+  type LucideIcon,
+} from 'lucide-react';
 import { MEDICATION_FREQUENCY_LABELS } from '@cope/shared';
+import { Icon } from '../components/ui/Icon.js';
 import { api } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
 import { uiActions } from '../stores/ui.js';
@@ -444,6 +471,7 @@ function OverviewTab({
               <div style={{ fontSize: 11, color: SUB, marginBottom: 2 }}>Status</div>
               <span style={{
                 fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 6,
+                display: 'inline-flex', alignItems: 'center', gap: 5,
                 background:
                   invite.status === 'accepted' ? 'var(--safe-bg)' :
                   invite.status === 'pending' ? 'var(--warning-bg)' : 'var(--glass-02)',
@@ -451,8 +479,8 @@ function OverviewTab({
                   invite.status === 'accepted' ? 'var(--safe)' :
                   invite.status === 'pending' ? 'var(--warning)' : 'var(--ink-soft)',
               }}>
-                {invite.status === 'pending' ? '⏳ Pending' :
-                 invite.status === 'accepted' ? '✓ Accepted' :
+                {invite.status === 'pending' ? <><Icon icon={Hourglass} size="sm" /> Pending</> :
+                 invite.status === 'accepted' ? <><Icon icon={Check} size="sm" /> Accepted</> :
                  invite.status === 'expired' ? 'Expired' : 'Cancelled'}
               </span>
             </div>
@@ -554,7 +582,9 @@ function HeatmapTooltip({
         <div>Check-in: <span style={{ fontWeight: 600 }}>{Math.round(day.completion_pct)}%</span></div>
       )}
       {day.has_safety_flag && (
-        <div style={{ color: 'var(--critical)', fontWeight: 700, marginTop: 4 }}>⚠ Safety flag</div>
+        <div style={{ color: 'var(--critical)', fontWeight: 700, marginTop: 4, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+          <Icon icon={AlertTriangle} size="sm" /> Safety flag
+        </div>
       )}
     </div>
   );
@@ -860,7 +890,7 @@ function JournalTab({
   if (entries.length === 0) {
     return (
       <div className="tab-empty">
-        <div className="empty-state-icon">📓</div>
+        <div className="empty-state-icon"><Icon icon={NotebookPen} size="2xl" /></div>
         <div className="empty-state-title">No shared journal entries</div>
         <div style={{ color: SUB, fontSize: 13 }}>
           The patient hasn't shared any journal entries with the care team.
@@ -995,7 +1025,7 @@ function NotesTab({
         <div className="tab-loading" style={{ padding: 40 }}>Loading notes…</div>
       ) : notes.length === 0 ? (
         <div className="tab-empty">
-          <div className="empty-state-icon">📋</div>
+          <div className="empty-state-icon"><Icon icon={ClipboardList} size="2xl" /></div>
           <div className="empty-state-title">No clinical notes yet</div>
           <div style={{ color: SUB, fontSize: 13 }}>Add the first note above.</div>
         </div>
@@ -1063,7 +1093,7 @@ function AlertsTab({
   if (alerts.length === 0) {
     return (
       <div className="tab-empty">
-        <div className="empty-state-icon">✓</div>
+        <div className="empty-state-icon"><Icon icon={Check} size="2xl" /></div>
         <div className="empty-state-title">No alerts</div>
         <div style={{ color: SUB, fontSize: 13 }}>This patient has no clinical alerts.</div>
       </div>
@@ -1170,7 +1200,7 @@ function MedicationsTab({
       {/* Empty state */}
       {!loading && medications.length === 0 && (
         <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 48, textAlign: 'center' }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>💊</div>
+          <div style={{ marginBottom: 12, color: SUB }}><Icon icon={Pill} size="2xl" /></div>
           <div style={{ color: TEXT, fontWeight: 600 }}>No medications on file</div>
           <div style={{ color: SUB, fontSize: 13, marginTop: 4 }}>
             Add the patient's first medication above.
@@ -1273,19 +1303,19 @@ const RISK_BAND_COLOR: Record<string, string> = {
   low:      'var(--safe)',
 };
 
-const DOMAIN_META: Record<RiskDomain, { label: string; icon: string; color: string }> = {
-  safety:     { label: 'Safety',     icon: '⚠', color: 'var(--critical)' },
-  mood:       { label: 'Mood',       icon: '◐', color: '#a78bfa' },
-  engagement: { label: 'Engagement', icon: '◉', color: '#60a5fa' },
-  physical:   { label: 'Physical',   icon: '♡', color: '#34d399' },
-  medication: { label: 'Medication', icon: '⊕', color: '#fbbf24' },
+const DOMAIN_META: Record<RiskDomain, { label: string; icon: LucideIcon; color: string }> = {
+  safety:     { label: 'Safety',     icon: AlertTriangle, color: 'var(--critical)' },
+  mood:       { label: 'Mood',       icon: Activity,      color: '#a78bfa' },
+  engagement: { label: 'Engagement', icon: CircleDot,     color: '#60a5fa' },
+  physical:   { label: 'Physical',   icon: Heart,         color: '#34d399' },
+  medication: { label: 'Medication', icon: CirclePlus,    color: '#fbbf24' },
 };
 
-const TRAJECTORY_META: Record<string, { label: string; color: string; icon: string }> = {
-  improving: { label: 'Improving', color: 'var(--safe)',     icon: '↗' },
-  stable:    { label: 'Stable',    color: '#60a5fa',         icon: '→' },
-  declining: { label: 'Declining', color: 'var(--warning)',  icon: '↘' },
-  acute:     { label: 'Acute',     color: 'var(--critical)', icon: '⚡' },
+const TRAJECTORY_META: Record<string, { label: string; color: string; icon: LucideIcon }> = {
+  improving: { label: 'Improving', color: 'var(--safe)',     icon: TrendingUp },
+  stable:    { label: 'Stable',    color: '#60a5fa',         icon: Minus },
+  declining: { label: 'Declining', color: 'var(--warning)',  icon: TrendingDown },
+  acute:     { label: 'Acute',     color: 'var(--critical)', icon: Zap },
 };
 
 function riskScoreBand(score: number | null): string {
@@ -1403,7 +1433,7 @@ function RiskFactorBars({ factors }: { factors: RiskFactorItem[] | null }) {
                 padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8,
               }}
             >
-              <span style={{ fontSize: 14 }}>{meta.icon}</span>
+              <span style={{ display: 'inline-flex', color: meta.color }}><Icon icon={meta.icon} size="md" /></span>
               <span style={{ fontSize: 13, fontWeight: 700, color: meta.color, flex: 1, textAlign: 'left' }}>{meta.label}</span>
               <span style={{ fontSize: 12, fontWeight: 700, color: domainTotal > 0 ? TEXT : SUB }}>
                 {domainTotal}/{domainMax}
@@ -1526,10 +1556,10 @@ function EarlyWarningSignals({ warnings }: {
     return order[a.urgency] - order[b.urgency];
   });
 
-  const urgencyStyle: Record<string, { bg: string; border: string; color: string; icon: string }> = {
-    urgent:   { bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.3)', color: 'var(--critical)', icon: '🔴' },
-    elevated: { bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)', color: 'var(--warning)', icon: '🟡' },
-    routine:  { bg: 'rgba(96,165,250,0.06)', border: 'rgba(96,165,250,0.2)', color: '#60a5fa', icon: '🔵' },
+  const urgencyStyle: Record<string, { bg: string; border: string; color: string; icon: LucideIcon }> = {
+    urgent:   { bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.3)', color: 'var(--critical)', icon: Siren },
+    elevated: { bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)', color: 'var(--warning)', icon: AlertTriangle },
+    routine:  { bg: 'rgba(96,165,250,0.06)', border: 'rgba(96,165,250,0.2)', color: '#60a5fa', icon: Info },
   };
 
   return (
@@ -1544,7 +1574,7 @@ function EarlyWarningSignals({ warnings }: {
             background: s.bg, border: `1px solid ${s.border}`, borderRadius: 8,
             padding: '8px 12px', marginBottom: 6, display: 'flex', alignItems: 'flex-start', gap: 8,
           }}>
-            <span style={{ fontSize: 12, flexShrink: 0 }}>{s.icon}</span>
+            <span style={{ flexShrink: 0, display: 'inline-flex', color: s.color, marginTop: 1 }}><Icon icon={s.icon} size="sm" /></span>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12, color: s.color, fontWeight: 600, lineHeight: 1.5 }}>{w.signal}</div>
               <div style={{ fontSize: 11, color: SUB, marginTop: 2 }}>
@@ -1624,8 +1654,9 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
               background: `${trajMeta.color}18`, border: `1px solid ${trajMeta.color}44`,
               borderRadius: 6, padding: '2px 10px', fontSize: 12, fontWeight: 700,
               color: trajMeta.color, letterSpacing: 0.3,
+              display: 'inline-flex', alignItems: 'center', gap: 5,
             }}>
-              {trajMeta.icon} {trajMeta.label}
+              <Icon icon={trajMeta.icon} size="sm" /> {trajMeta.label}
             </span>
           )}
         </div>
@@ -1662,14 +1693,14 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             {(Object.entries(sf.domain_findings) as Array<[string, string | undefined]>).filter(([, v]) => v).map(([domain, text]) => {
               const dKey = domain === 'anxiety' ? 'mood' : domain === 'sleep' ? 'physical' : domain as RiskDomain;
-              const meta = DOMAIN_META[dKey] ?? { icon: '•', color: SUB, label: domain };
+              const meta = DOMAIN_META[dKey] ?? { icon: Circle, color: SUB, label: domain };
               return (
                 <div key={domain} style={{
                   background: 'var(--glass-01)', border: `1px solid ${BORDER}`, borderRadius: 8,
                   padding: '10px 12px', borderLeft: `3px solid ${meta.color}`,
                 }}>
-                  <div style={{ fontSize: 11, color: meta.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
-                    {meta.icon} {domain}
+                  <div style={{ fontSize: 11, color: meta.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <Icon icon={meta.icon} size="sm" /> {domain}
                   </div>
                   <div style={{ fontSize: 12, color: TEXT, lineHeight: 1.5 }}>{text}</div>
                 </div>
@@ -1901,7 +1932,7 @@ function AiInsightsTab({
   if (unavailable) {
     return (
       <div className="tab-card" style={{ textAlign: 'center', padding: 48 }}>
-        <div style={{ fontSize: 36, marginBottom: 12 }}>🔒</div>
+        <div style={{ marginBottom: 12, color: SUB }}><Icon icon={Lock} size="2xl" /></div>
         <h3 style={{ color: TEXT, margin: '0 0 8px' }}>AI Insights Not Available</h3>
         <p style={{ color: SUB, maxWidth: 440, margin: '0 auto 16px', fontSize: 14, lineHeight: 1.6 }}>
           AI-powered clinical insights require either a signed Business Associate Agreement with Anthropic
@@ -1978,9 +2009,10 @@ function AiInsightsTab({
               color: PRIMARY, borderRadius: 8, padding: '10px 14px',
               fontSize: 13, fontWeight: 600, cursor: triggering ? 'not-allowed' : 'pointer',
               opacity: triggering ? 0.6 : 1,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
             }}
           >
-            {triggering ? 'Generating…' : '✦ Generate Insight'}
+            {triggering ? 'Generating…' : <><Icon icon={Sparkles} size="sm" /> Generate Insight</>}
           </button>
           {triggerMsg && (
             <div style={{
@@ -1995,8 +2027,9 @@ function AiInsightsTab({
 
         {/* HIPAA disclaimer */}
         <div style={{ background: 'var(--glass-01)', border: `1px solid ${BORDER}`, borderRadius: 8, padding: '10px 12px' }}>
-          <p style={{ fontSize: 11, color: SUB, margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
-            ⚕ {data?.disclaimer ?? 'AI-generated content is for clinical decision support only. It does not constitute a diagnosis or replace clinical assessment.'}
+          <p style={{ fontSize: 11, color: SUB, margin: 0, lineHeight: 1.6, fontStyle: 'italic', display: 'flex', alignItems: 'flex-start', gap: 5 }}>
+            <span style={{ flexShrink: 0, marginTop: 1, display: 'inline-flex' }}><Icon icon={Stethoscope} size="sm" /></span>
+            <span>{data?.disclaimer ?? 'AI-generated content is for clinical decision support only. It does not constitute a diagnosis or replace clinical assessment.'}</span>
           </p>
         </div>
 
@@ -2047,7 +2080,9 @@ function AiInsightsTab({
                     }} />
                     <span style={{ fontSize: 12, fontWeight: 600, color: TEXT, flex: 1 }}>{typeLabel}</span>
                     {trajMeta && (
-                      <span style={{ fontSize: 11, color: trajMeta.color, fontWeight: 600 }}>{trajMeta.icon} {trajMeta.label}</span>
+                      <span style={{ fontSize: 11, color: trajMeta.color, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <Icon icon={trajMeta.icon} size="sm" /> {trajMeta.label}
+                      </span>
                     )}
                     <span style={{ fontSize: 11, color: SUB }}>{format(parseISO(insight.generated_at), 'MMM d')}</span>
                     <span style={{ fontSize: 10, color: SUB, transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
@@ -2127,7 +2162,7 @@ function AiInsightsTab({
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
                 justifyContent: 'center', flex: 1, color: SUB, gap: 8, padding: 32,
               }}>
-                <span style={{ fontSize: 28, opacity: 0.5 }}>✦</span>
+                <span style={{ opacity: 0.5, display: 'inline-flex' }}><Icon icon={Sparkles} size="2xl" /></span>
                 <span style={{ fontSize: 13, textAlign: 'center', maxWidth: 300, lineHeight: 1.6 }}>
                   Ask questions about this patient's clinical data, trends, and trajectory.
                 </span>
@@ -2216,8 +2251,8 @@ function AiInsightsTab({
           </div>
 
           <div style={{ padding: '6px 16px 10px', borderTop: `1px solid ${BORDER}22` }}>
-            <p style={{ fontSize: 10, color: SUB, margin: 0, fontStyle: 'italic', opacity: 0.7 }}>
-              ⚕ AI-generated · For clinical decision support only · Always apply clinical judgment
+            <p style={{ fontSize: 10, color: SUB, margin: 0, fontStyle: 'italic', opacity: 0.7, display: 'flex', alignItems: 'center', gap: 5 }}>
+              <Icon icon={Stethoscope} size="xs" /> AI-generated · For clinical decision support only · Always apply clinical judgment
             </p>
           </div>
         </div>
@@ -2490,7 +2525,7 @@ export function PatientDetailPage() {
     { key: 'notes', label: 'Notes' },
     { key: 'alerts', label: alertsTotal > 0 ? `Alerts (${alertsTotal})` : 'Alerts' },
     { key: 'medications', label: `Medications${medications.length > 0 ? ` (${medications.length})` : ''}` },
-    { key: 'ai', label: '✦ AI Insights' },
+    { key: 'ai', label: 'AI Insights' },
   ];
 
   // Avatar color based on name hash
@@ -2538,7 +2573,9 @@ export function PatientDetailPage() {
                   <span className="detail-chip">{patient.gender}</span>
                 )}
                 {patient.tracking_streak > 0 && (
-                  <span className="detail-chip">🔥 {patient.tracking_streak}d streak</span>
+                  <span className="detail-chip" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <Icon icon={Flame} size="sm" /> {patient.tracking_streak}d streak
+                  </span>
                 )}
                 {patient.last_checkin_at && (
                   <span className="detail-chip">Last seen {formatRelative(patient.last_checkin_at)}</span>
@@ -2580,8 +2617,9 @@ export function PatientDetailPage() {
                 <button
                   className="detail-actions-btn primary"
                   onClick={() => navigate(`/reports?patientId=${patientId}`)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
                 >
-                  📋 Generate Report
+                  <Icon icon={ClipboardList} size="sm" /> Generate Report
                 </button>
                 <button
                   className="detail-actions-btn"
@@ -2604,7 +2642,9 @@ export function PatientDetailPage() {
             key={key}
             className={`detail-tab${tab === key ? ' active' : ''}`}
             onClick={() => setTab(key)}
+            style={key === 'ai' ? { display: 'inline-flex', alignItems: 'center', gap: 5 } : undefined}
           >
+            {key === 'ai' && <Icon icon={Sparkles} size="sm" />}
             {label}
           </div>
         ))}
@@ -2690,24 +2730,27 @@ export function PatientDetailPage() {
             className="detail-actions-btn"
             onClick={() => setTab('notes')}
             title="Go to Notes tab to add a clinical note"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            ✏ Add Note
+            <Icon icon={Pencil} size="sm" /> Add Note
           </button>
           <button
             className="detail-actions-btn"
             onClick={() => setShowAssessmentModal(true)}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            📋 Request Assessment
+            <Icon icon={ClipboardList} size="sm" /> Request Assessment
           </button>
           <button
             className="detail-actions-btn primary"
             onClick={() => navigate(`/reports?patientId=${patientId}`)}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            📄 Generate Report
+            <Icon icon={FileText} size="sm" /> Generate Report
           </button>
           <button
             className="detail-actions-btn"
-            style={{ color: 'var(--critical)', borderColor: 'var(--critical)44' }}
+            style={{ color: 'var(--critical)', borderColor: 'var(--critical)44', display: 'inline-flex', alignItems: 'center', gap: 6 }}
             onClick={() => {
               setEditStatus('crisis');
               void (async () => {
@@ -2721,7 +2764,7 @@ export function PatientDetailPage() {
               })();
             }}
           >
-            🚨 Escalate Alert
+            <Icon icon={Siren} size="sm" /> Escalate Alert
           </button>
           <div style={{ flex: 1 }} />
           <span style={{ fontSize: 11, color: 'var(--ink-ghost)' }}>
@@ -2752,8 +2795,9 @@ export function PatientDetailPage() {
           color: 'var(--safe)', padding: '10px 18px', borderRadius: 10,
           fontSize: 13, fontWeight: 600, zIndex: 1200,
           boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+          display: 'inline-flex', alignItems: 'center', gap: 6,
         }}>
-          ✓ {actionToast}
+          <Icon icon={Check} size="sm" /> {actionToast}
         </div>
       )}
     </div>

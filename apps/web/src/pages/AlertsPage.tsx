@@ -5,9 +5,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Siren, AlertTriangle, Info, X, Check, type LucideIcon } from 'lucide-react';
 import { api } from '../services/api.js';
 import { useAlertSocket, type LiveAlert } from '../hooks/useAlertSocket.js';
 import { useAuthStore } from '../stores/auth.js';
+import { Icon } from '../components/ui/Icon.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -34,10 +36,10 @@ const STATUS_LABEL: Record<string, string> = {
   escalated: 'Escalated',
 };
 
-const SEVERITY_ICON: Record<string, string> = {
-  critical: '🚨',
-  warning: '⚠️',
-  info: 'ℹ️',
+const SEVERITY_ICON: Record<string, LucideIcon> = {
+  critical: Siren,
+  warning: AlertTriangle,
+  info: Info,
 };
 
 function fmtRelative(iso: string): string {
@@ -101,14 +103,14 @@ function AlertCard({ alert, token, onRefresh }: { alert: Alert; token: string | 
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* Severity badge */}
           <span style={{
-            display: 'inline-block',
+            display: 'inline-flex', alignItems: 'center', gap: 4,
             background: `${borderColor}1a`,
             color: borderColor,
             fontSize: 9, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: 1,
             padding: '2px 8px', borderRadius: 'var(--r-xs)', marginBottom: 6,
             border: `1px solid ${borderColor}40`,
           }}>
-            {SEVERITY_ICON[alert.severity]} {alert.severity}
+            <Icon icon={SEVERITY_ICON[alert.severity] ?? Info} size="sm" /> {alert.severity}
           </span>
 
           {/* Title */}
@@ -192,9 +194,9 @@ function LiveToast({ alerts, onDismiss }: { alerts: LiveAlert[]; onDismiss: () =
         </span>
         <button
           onClick={onDismiss}
-          style={{ background: 'none', border: 'none', color: 'var(--ink-soft)', cursor: 'pointer', fontSize: 18 }}
+          style={{ background: 'none', border: 'none', color: 'var(--ink-soft)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', padding: 0 }}
         >
-          ×
+          <Icon icon={X} size="md" title="Dismiss" />
         </button>
       </div>
       <div style={{ color: 'var(--ink)', fontSize: 13 }}>{latest.title}</div>
@@ -335,7 +337,7 @@ export function AlertsPage() {
         ) : alerts.length === 0 ? (
           <div className="panel">
             <div className="empty-state">
-              <div className="empty-state-icon">✓</div>
+              <div className="empty-state-icon"><Icon icon={Check} size="2xl" /></div>
               <div className="empty-state-title">No alerts</div>
               {fStatus === 'open' ? 'All patients are stable.' : 'No alerts match your filters.'}
             </div>

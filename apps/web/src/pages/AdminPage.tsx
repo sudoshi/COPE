@@ -6,11 +6,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Lock, Check, KeyRound, ShieldCheck, Clock, ChevronDown } from 'lucide-react';
 import { api } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
 import { useThemeStore, themeActions } from '../stores/theme.js';
 import { PALETTES } from '../styles/palettes.js';
 import type { PaletteDefinition } from '../styles/palettes.js';
+import { Icon } from '../components/ui/Icon.js';
 
 // ---------------------------------------------------------------------------
 // Access Denied Component (for non-admin users)
@@ -32,9 +34,9 @@ function AccessDenied() {
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto 20px',
-          fontSize: 28,
+          color: 'var(--critical, #DC2626)',
         }}>
-          🔒
+          <Icon icon={Lock} size="2xl" />
         </div>
         <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>
           Admin Access Required
@@ -612,7 +614,7 @@ function UsersSection() {
                       <td style={{ fontSize: 11, color: 'var(--ink-mid)', fontFamily: 'monospace' }}>{u.npi ?? '—'}</td>
                       <td>
                         {u.mfa_enabled ? (
-                          <span style={{ color: '#0D9488' }}>✓</span>
+                          <span style={{ color: '#0D9488', display: 'inline-flex' }}><Icon icon={Check} size="sm" title="MFA enabled" /></span>
                         ) : (
                           <span style={{ fontSize: 11, color: '#DC2626', fontWeight: 600 }}>REQUIRED</span>
                         )}
@@ -717,7 +719,7 @@ function RolesSection() {
                 color: role.color,
                 fontWeight: 700,
               }}>
-                🔑
+                <Icon icon={KeyRound} size="lg" />
               </div>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>{role.label}</div>
@@ -1111,10 +1113,8 @@ function PaletteSwatch({ palette, isActive, onSelect }: {
           alignItems: 'center',
           justifyContent: 'center',
           color: '#fff',
-          fontSize: 12,
-          fontWeight: 700,
         }}>
-          ✓
+          <Icon icon={Check} size="sm" />
         </div>
       )}
 
@@ -1178,7 +1178,7 @@ function AppearanceSection() {
         color: 'var(--ink-mid)',
         lineHeight: 1.5,
       }}>
-        <span style={{ fontSize: 16, flexShrink: 0, marginTop: 1 }}>🛡</span>
+        <span style={{ flexShrink: 0, marginTop: 1, display: 'flex', color: 'var(--safe)' }}><Icon icon={ShieldCheck} size="md" /></span>
         <span>
           <strong style={{ color: 'var(--ink)' }}>Clinical safety note:</strong> Semantic colors for
           risk levels, alerts, and status badges (red, orange, green, blue) remain consistent across
@@ -1714,7 +1714,7 @@ function OmopSection() {
         <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           {/* Static info */}
           <div style={{ fontSize: 13, color: 'var(--ink)', display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span style={{ fontSize: 16 }}>&#128337;</span>
+            <span style={{ display: 'flex', color: 'var(--ink-mid)' }}><Icon icon={Clock} size="md" /></span>
             Nightly export runs at <strong>02:00 EST</strong> (Step 6 of nightly batch)
           </div>
 
@@ -1866,8 +1866,8 @@ function OmopSection() {
                     cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, userSelect: 'none',
                   }}
                 >
-                  <span style={{ fontSize: 12, color: 'var(--ink-mid)', transform: collapsedDomains.has(domain) ? 'rotate(-90deg)' : 'rotate(0)', transition: 'transform 0.15s' }}>
-                    &#9660;
+                  <span style={{ display: 'flex', color: 'var(--ink-mid)', transform: collapsedDomains.has(domain) ? 'rotate(-90deg)' : 'rotate(0)', transition: 'transform 0.15s' }}>
+                    <Icon icon={ChevronDown} size="sm" />
                   </span>
                   <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{domain}</span>
                   <span style={{ fontSize: 11, color: 'var(--ink-soft)' }}>({entries.length})</span>

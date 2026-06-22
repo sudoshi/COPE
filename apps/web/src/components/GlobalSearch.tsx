@@ -6,8 +6,10 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import { api } from '../services/api.js';
 import { useAuthStore } from '../stores/auth.js';
+import { Icon } from './ui/Icon.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -188,7 +190,7 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
       }} data-testid="global-search">
         {/* Search input */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', gap: 10, borderBottom: '1px solid var(--border)' }}>
-          <span style={{ fontSize: 16, color: 'var(--ink-soft)' }}>🔍</span>
+          <span style={{ color: 'var(--ink-soft)', display: 'flex' }}><Icon icon={Search} size="md" /></span>
           <input
             ref={inputRef}
             value={query}
