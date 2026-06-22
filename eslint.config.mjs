@@ -46,6 +46,22 @@ export default tseslint.config(
     },
   },
   {
+    // Web typography contract: inline font sizes must use --text-* tokens, not
+    // raw px numbers (RN/mobile is exempt — numeric fontSize is correct there).
+    // See apps/web/design/DESIGN_SYSTEM.md and scripts/check-readability.sh.
+    files: ['apps/web/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "Property[key.name='fontSize'] > Literal[raw=/^[0-9]/]",
+          message:
+            "Use a typography token — fontSize: 'var(--text-*)' — not a numeric px value. See apps/web/design/DESIGN_SYSTEM.md.",
+        },
+      ],
+    },
+  },
+  {
     // Plain .js files (Expo config plugins, maintenance scripts) are CommonJS
     // run directly by Node.
     files: ['**/*.js', '**/*.cjs'],

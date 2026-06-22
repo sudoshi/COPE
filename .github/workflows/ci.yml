@@ -69,6 +69,8 @@ jobs:
       - run: npm ci
       - run: npm run build --workspace=packages/shared && npm run build --workspace=packages/db
       - run: npm run lint
+      - name: Readability gate (icons + typography)
+        run: npm run check:readability
 
   # ---------------------------------------------------------------------------
   # API unit tests (requires PostgreSQL + Redis)

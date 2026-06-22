@@ -132,6 +132,11 @@ the 16px root.
 3. **One vocabulary.** Use `--text-*` / `--surface-*` colour tokens. The legacy
    `--ink-*` aliases (`compat.css`) are deprecated — do not add new usages.
 
+**Enforced by** (CI `lint` job + local `npm run check:readability`):
+- `scripts/check-readability.sh` — fails on numeric inline `fontSize`,
+  pictographic emoji in `.tsx`, or raw px font-sizes for text in CSS.
+- ESLint (`apps/web`) bans numeric `fontSize` literals in inline styles.
+
 ---
 
 ## Iconography

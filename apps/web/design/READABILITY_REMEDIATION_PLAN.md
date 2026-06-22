@@ -1,6 +1,6 @@
 # COPE Web UI — Typography & Iconography Remediation Plan
 
-**Status:** Phases 0–2 shipped · Phase 3–4 pending · **Owner:** design system · **Created:** 2026-06-21
+**Status:** Phases 0–2 + 4 shipped · Phase 3 pending · **Owner:** design system · **Created:** 2026-06-21
 **North stars:** Medgnosis (`apps/web`, lucide-react + Tailwind tokens), MediCosts (`client/`, icon factory + CSS tokens)
 
 ---
@@ -119,11 +119,15 @@ Replace 102 emoji + 15 ad-hoc SVGs with `<Icon>`/lucide, file by file:
 - Migrate inline `--ink-*` → classes/new vocab; shrink `compat.css` to a shim.
 - Delete `theme.css`; retire `theme-legacy-backup.css` + the env flag.
 
-### Phase 4 — Enforcement (no regression)
-- ESLint: ban inline `fontSize`/raw-number `width`/`height` and emoji-in-JSX.
-- Stylelint: forbid raw `px` on `font-size`.
-- CI gate: the Phase 2 greps as a failing check.
-- Playwright visual regression baselines (`e2e/theme/`) as the locked contract.
+### Phase 4 — Enforcement (no regression) ✅ SHIPPED
+- `scripts/check-readability.sh` — fails on numeric inline `fontSize`,
+  pictographic emoji in `.tsx`, or raw px font-size for text in CSS
+  (`*-icon` glyph rules exempt). Wired into the CI `lint` job and exposed as
+  `npm run check:readability`.
+- ESLint (`apps/web`): `no-restricted-syntax` bans numeric `fontSize` literals
+  in inline styles (mobile RN exempt).
+- _Deferred:_ Playwright `e2e/theme/` visual-regression baselines (needs a
+  running stack + seeded auth) — tracked as a follow-up.
 
 ---
 
