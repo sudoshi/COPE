@@ -4,6 +4,8 @@
 // =============================================================================
 
 import { useNavigate } from 'react-router-dom';
+import { X, type LucideIcon } from 'lucide-react';
+import { Icon } from './ui/Icon.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -31,7 +33,7 @@ export interface DrilldownPatient {
 }
 
 export interface DrilldownConfig {
-  icon: string;
+  icon: LucideIcon;
   title: string;
   stats?: DrilldownStat[];
   patients: DrilldownPatient[];
@@ -283,7 +285,7 @@ export function DrilldownModal({ config, onClose }: Props) {
         {/* Header */}
         <div style={S.header}>
           <div style={S.titleWrap}>
-            <span style={S.titleIcon}>{config.icon}</span>
+            <Icon icon={config.icon} size="xl" />
             <span style={S.title}>{config.title}</span>
           </div>
           <button
@@ -299,7 +301,7 @@ export function DrilldownModal({ config, onClose }: Props) {
               e.currentTarget.style.color = 'var(--ink-mid)';
             }}
           >
-            ✕
+            <Icon icon={X} size="sm" title="Close" />
           </button>
         </div>
 

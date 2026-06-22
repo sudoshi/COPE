@@ -189,14 +189,17 @@
 
 .alert-item-icon.critical {
   background: var(--critical-bg);
+  color: var(--critical);
 }
 
 .alert-item-icon.warning {
   background: var(--warning-bg);
+  color: var(--warning);
 }
 
 .alert-item-icon.info {
   background: var(--info-bg);
+  color: var(--info);
 }
 
 .alert-item-content {

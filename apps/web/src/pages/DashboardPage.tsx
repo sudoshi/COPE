@@ -10,6 +10,11 @@ import { useAlertSocket } from '../hooks/useAlertSocket.js';
 import { useAuthStore } from '../stores/auth.js';
 import { DrilldownModal } from '../components/DrilldownModal.js';
 import type { DrilldownConfig } from '../components/DrilldownModal.js';
+import { Icon } from '../components/ui/Icon.js';
+import {
+  BarChart3, Smile, SmilePlus, Meh, Frown, Moon, TrendingUp,
+  Siren, AlertTriangle, Info, ClipboardList, Check, Users, type LucideIcon,
+} from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -106,7 +111,7 @@ function buildActiveTodayDrilldown(caseload: CaseloadRow[]): DrilldownConfig {
   const notLogged = caseload.filter((r) => r.todays_submitted_at === null);
 
   return {
-    icon: '📊',
+    icon: BarChart3,
     title: 'Active Today — Check-ins',
     stats: [
       { value: logged.length, label: 'Logged Today', color: 'var(--safe)' },
@@ -143,7 +148,7 @@ function buildAvgMoodDrilldown(caseload: CaseloadRow[]): DrilldownConfig {
     : '—';
 
   return {
-    icon: '😊',
+    icon: Smile,
     title: `Average Mood — ${avgMood}`,
     stats: [
       { value: lowMood.length, label: 'Low (1-4)', color: 'var(--critical)' },
@@ -187,7 +192,7 @@ function buildAvgSleepDrilldown(caseload: CaseloadRow[]): DrilldownConfig {
   const good = withSleep.filter((r) => r.sleepHrs >= 8);
 
   return {
-    icon: '😴',
+    icon: Moon,
     title: `Average Sleep — ${avgSleep}h`,
     stats: [
       { value: poor.length, label: '< 6 hours', color: 'var(--critical)' },
@@ -221,7 +226,7 @@ function buildCheckInRateDrilldown(caseload: CaseloadRow[]): DrilldownConfig {
   });
 
   return {
-    icon: '📈',
+    icon: TrendingUp,
     title: `Check-In Rate — ${rate}%`,
     stats: [
       { value: logged.length, label: 'Checked In', color: 'var(--safe)' },
@@ -253,15 +258,15 @@ function buildMoodBucketDrilldown(
   const sorted = [...inBucket].sort((a, b) => (a.todays_mood ?? 0) - (b.todays_mood ?? 0));
 
   // Determine icon based on bucket
-  const iconMap: Record<string, string> = {
-    'High (8–10)': '😊',
-    'Good (6–7)': '🙂',
-    'Moderate (4–5)': '😐',
-    'Low (1–3)': '😟',
+  const iconMap: Record<string, LucideIcon> = {
+    'High (8–10)': SmilePlus,
+    'Good (6–7)': Smile,
+    'Moderate (4–5)': Meh,
+    'Low (1–3)': Frown,
   };
 
   return {
-    icon: iconMap[bucket.label] ?? '📊',
+    icon: iconMap[bucket.label] ?? BarChart3,
     title: `${bucket.label} Mood — ${inBucket.length} patients`,
     stats: [
       { value: inBucket.length, label: 'In Range' },
@@ -494,7 +499,7 @@ function ActiveAlertsPanel({ token, onViewAll }: { token: string | null; onViewA
       .catch(() => {});
   }, [token]);
 
-  const severityIcon: Record<string, string> = { critical: '🚨', warning: '⚠️', info: 'ℹ️' };
+  const severityIcon: Record<string, LucideIcon> = { critical: Siren, warning: AlertTriangle, info: Info };
 
   return (
     <div className="panel anim anim-d2" style={{ marginBottom: 14 }}>
@@ -507,7 +512,7 @@ function ActiveAlertsPanel({ token, onViewAll }: { token: string | null; onViewA
       </div>
       {alerts.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">✓</div>
+          <div className="empty-state-icon"><Icon icon={Check} size="2xl" /></div>
           <div className="empty-state-title">No open alerts</div>
           All patients are stable
         </div>
@@ -519,7 +524,7 @@ function ActiveAlertsPanel({ token, onViewAll }: { token: string | null; onViewA
             onClick={() => navigate(`/patients/${a.patient_id}`)}
           >
             <div className={`alert-item-icon ${a.severity}`}>
-              {severityIcon[a.severity] ?? '📋'}
+              <Icon icon={severityIcon[a.severity] ?? ClipboardList} size="sm" />
             </div>
             <div className="alert-item-content">
               <div className="alert-item-title">{a.title}</div>
@@ -683,7 +688,7 @@ export function DashboardPage() {
       ) : caseload.length === 0 ? (
         <div className="panel anim" style={{ marginTop: 8 }}>
           <div className="empty-state" style={{ padding: '56px 24px' }}>
-            <div className="empty-state-icon">👥</div>
+            <div className="empty-state-icon"><Icon icon={Users} size="2xl" /></div>
             <div className="empty-state-title">No patients in your caseload</div>
             <div style={{ color: 'var(--ink-soft)', fontSize: 13, maxWidth: 340, margin: '0 auto' }}>
               Patients will appear here once they are enrolled and assigned to your care team.
