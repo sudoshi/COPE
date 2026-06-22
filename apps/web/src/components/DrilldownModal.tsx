@@ -93,7 +93,7 @@ const S = {
   title: {
     fontSize: 'var(--text-xl)',
     fontWeight: 700,
-    color: 'var(--ink)',
+    color: 'var(--text-primary)',
   },
   closeBtn: {
     width: 32,
@@ -101,7 +101,7 @@ const S = {
     borderRadius: 8,
     border: 'none',
     background: 'rgba(255,255,255,0.06)',
-    color: 'var(--ink-mid)',
+    color: 'var(--text-secondary)',
     fontSize: 'var(--text-md)',
     cursor: 'pointer',
     display: 'flex',
@@ -129,14 +129,14 @@ const S = {
     fontSize: 'var(--text-2xl)',
     fontWeight: 400,
     lineHeight: 1,
-    color: 'var(--ink)',
+    color: 'var(--text-primary)',
   },
   statLabel: {
     fontSize: 'var(--text-sm)',
     fontWeight: 600,
     textTransform: 'uppercase' as const,
     letterSpacing: '0.5px',
-    color: 'var(--ink-soft)',
+    color: 'var(--text-muted)',
     marginTop: 6,
   },
   content: {
@@ -177,11 +177,11 @@ const S = {
   itemName: {
     fontSize: 'var(--text-base)',
     fontWeight: 600,
-    color: 'var(--ink)',
+    color: 'var(--text-primary)',
   },
   itemMeta: {
     fontSize: 'var(--text-sm)',
-    color: 'var(--ink-soft)',
+    color: 'var(--text-muted)',
     marginTop: 2,
   },
   itemValue: {
@@ -190,11 +190,11 @@ const S = {
   itemPrimary: {
     fontSize: 'var(--text-base)',
     fontWeight: 700,
-    color: 'var(--ink)',
+    color: 'var(--text-primary)',
   },
   itemSecondary: {
     fontSize: 'var(--text-sm)',
-    color: 'var(--ink-soft)',
+    color: 'var(--text-muted)',
     marginTop: 2,
   },
   moodDot: {
@@ -211,7 +211,7 @@ const S = {
   empty: {
     padding: '48px 20px',
     textAlign: 'center' as const,
-    color: 'var(--ink-soft)',
+    color: 'var(--text-muted)',
     fontSize: 'var(--text-base)',
   },
   footer: {
@@ -224,7 +224,7 @@ const S = {
   },
   footerCount: {
     fontSize: 'var(--text-sm)',
-    color: 'var(--ink-soft)',
+    color: 'var(--text-muted)',
   },
   footerActions: {
     display: 'flex',
@@ -238,7 +238,7 @@ const S = {
     cursor: 'pointer',
     border: '1px solid rgba(255,255,255,0.12)',
     background: 'rgba(255,255,255,0.06)',
-    color: 'var(--ink-mid)',
+    color: 'var(--text-secondary)',
     transition: 'all 0.15s',
   },
   btnPrimary: {
@@ -298,7 +298,7 @@ export function DrilldownModal({ config, onClose }: Props) {
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
-              e.currentTarget.style.color = 'var(--ink-mid)';
+              e.currentTarget.style.color = 'var(--text-secondary)';
             }}
           >
             <Icon icon={X} size="sm" title="Close" />
@@ -310,7 +310,7 @@ export function DrilldownModal({ config, onClose }: Props) {
           <div style={S.statsRow} data-testid="drilldown-stats">
             {config.stats.map((stat, idx) => (
               <div key={idx} style={S.statCard} data-testid={`drilldown-stat-${idx}`}>
-                <div style={{ ...S.statValue, color: stat.color ?? 'var(--ink)' }}>
+                <div style={{ ...S.statValue, color: stat.color ?? 'var(--text-primary)' }}>
                   {stat.value}
                 </div>
                 <div style={S.statLabel}>{stat.label}</div>
@@ -354,7 +354,7 @@ export function DrilldownModal({ config, onClose }: Props) {
                       </div>
                     ) : patient.value ? (
                       <>
-                        <div style={{ ...S.itemPrimary, color: patient.valueColor ?? 'var(--ink)' }}>
+                        <div style={{ ...S.itemPrimary, color: patient.valueColor ?? 'var(--text-primary)' }}>
                           {patient.value}
                         </div>
                         {patient.valueSecondary && (

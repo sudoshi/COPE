@@ -43,12 +43,12 @@ const S = {
   title: {
     fontSize: 'var(--text-lg)',
     fontWeight: 700,
-    color: 'var(--ink)',
+    color: 'var(--text-primary)',
   },
   closeBtn: {
     background: 'none',
     border: 'none',
-    color: 'var(--ink-soft)',
+    color: 'var(--text-muted)',
     cursor: 'pointer',
     fontSize: 'var(--text-lg)',
     padding: '4px 8px',
@@ -58,13 +58,13 @@ const S = {
     display: 'block',
     fontSize: 'var(--text-sm)',
     fontWeight: 600,
-    color: 'var(--ink-mid)',
+    color: 'var(--text-secondary)',
     marginBottom: 6,
     textTransform: 'uppercase' as const,
     letterSpacing: '0.04em',
   },
   group: { marginBottom: 18 },
-  counter: { textAlign: 'right' as const, fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 4 },
+  counter: { textAlign: 'right' as const, fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginTop: 4 },
   error: {
     background: 'var(--critical-bg)',
     border: '1px solid var(--critical-border)',
@@ -130,7 +130,7 @@ export function InvitePatientModal({ token, onClose, onSuccess }: Props) {
           <div style={S.group}>
             <label style={S.label}>
               Personal Message{' '}
-              <span style={{ color: 'var(--ink-soft)', fontWeight: 400 }}>
+              <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>
                 — optional
               </span>
             </label>

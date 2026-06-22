@@ -67,7 +67,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
   if (loading) {
     return (
       <div className="panel anim" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
-        <span style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-base)' }}>Loading historical data…</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: 'var(--text-base)' }}>Loading historical data…</span>
       </div>
     );
   }
@@ -110,7 +110,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
             <XAxis
               dataKey="date"
-              tick={{ fill: 'var(--ink-soft)', fontSize: 'var(--text-sm)' }}
+              tick={{ fill: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}
               tickLine={false}
               axisLine={{ stroke: 'var(--border)' }}
               tickFormatter={(v: string) => format(parseISO(v), 'MMM d')}
@@ -119,7 +119,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
             <YAxis
               domain={[0, 10]}
               ticks={[2, 4, 6, 8, 10]}
-              tick={{ fill: 'var(--ink-soft)', fontSize: 'var(--text-sm)' }}
+              tick={{ fill: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}
               tickLine={false}
               axisLine={{ stroke: 'var(--border)' }}
               width={24}
@@ -131,7 +131,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
                 borderRadius: 8, fontSize: 'var(--text-sm)',
                 backdropFilter: 'blur(20px)',
               }}
-              labelStyle={{ color: 'var(--ink-soft)' }}
+              labelStyle={{ color: 'var(--text-muted)' }}
               labelFormatter={(v: string) => format(parseISO(v), 'EEE, MMM d')}
               formatter={(v: number, name: string) => [
                 name === 'mood'    ? `${v}/10`         :
@@ -156,7 +156,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
             />
           </LineChart>
         </ResponsiveContainer>
-        <div style={{ display: 'flex', gap: 16, padding: '4px 16px 12px', fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
+        <div style={{ display: 'flex', gap: 16, padding: '4px 16px 12px', fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <span style={{ width: 18, height: 2, background: 'var(--safe)', display: 'inline-block', borderRadius: 1 }} />
             Avg Mood /10
@@ -187,7 +187,7 @@ function StatPanel({
       </div>
       <div className="stat-panel-value" style={{ color: color ?? 'var(--safe)' }}>
         {value}
-        {unit && <span style={{ fontSize: 'var(--text-xl)', color: 'var(--ink-soft)', marginLeft: 4 }}>{unit}</span>}
+        {unit && <span style={{ fontSize: 'var(--text-xl)', color: 'var(--text-muted)', marginLeft: 4 }}>{unit}</span>}
       </div>
       {subtitle && <div className="stat-panel-label">{subtitle}</div>}
     </div>
@@ -204,7 +204,7 @@ function RiskDistributionPanel({ caseload }: { caseload: CaseloadRow[] }) {
     { label: 'High risk', key: 'high', color: 'var(--warning)', count: caseload.filter((r) => r.risk_level === 'high').length },
     { label: 'Moderate risk', key: 'moderate', color: '#c9972a', count: caseload.filter((r) => r.risk_level === 'moderate').length },
     { label: 'Low risk', key: 'low', color: 'var(--safe)', count: caseload.filter((r) => r.risk_level === 'low').length },
-    { label: 'Inactive', key: 'inactive', color: 'var(--ink-soft)', count: caseload.filter((r) => r.status === 'inactive' || r.status === 'discharged').length },
+    { label: 'Inactive', key: 'inactive', color: 'var(--text-muted)', count: caseload.filter((r) => r.status === 'inactive' || r.status === 'discharged').length },
   ].filter((b) => b.count > 0);
 
   return (
@@ -232,9 +232,9 @@ function RiskDistributionPanel({ caseload }: { caseload: CaseloadRow[] }) {
           {buckets.map((b) => (
             <div key={b.key} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 10, height: 10, borderRadius: 2, background: b.color }} />
-              <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
-                {b.label}: <strong style={{ color: 'var(--ink)' }}>{b.count}</strong>
-                <span style={{ color: 'var(--ink-soft)' }}>
+              <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)' }}>
+                {b.label}: <strong style={{ color: 'var(--text-primary)' }}>{b.count}</strong>
+                <span style={{ color: 'var(--text-muted)' }}>
                   {' '}({Math.round((b.count / total) * 100)}%)
                 </span>
               </span>
@@ -297,10 +297,10 @@ function CaseloadSummaryPanel({ caseload, snapshot }: { caseload: CaseloadRow[];
 
   const summaryRows = [
     { label: 'Crisis patients', value: String(crisisCount), color: crisisCount > 0 ? 'var(--critical)' : 'var(--safe)' },
-    { label: 'Active patients', value: String(activeCount), color: 'var(--ink)' },
-    { label: 'Inactive patients', value: String(inactiveCount), color: 'var(--ink-soft)' },
-    { label: 'Critical alerts', value: String(critAlerts), color: critAlerts > 0 ? 'var(--critical)' : 'var(--ink-soft)' },
-    { label: 'Warning alerts', value: String(warnAlerts), color: warnAlerts > 0 ? 'var(--warning)' : 'var(--ink-soft)' },
+    { label: 'Active patients', value: String(activeCount), color: 'var(--text-primary)' },
+    { label: 'Inactive patients', value: String(inactiveCount), color: 'var(--text-muted)' },
+    { label: 'Critical alerts', value: String(critAlerts), color: critAlerts > 0 ? 'var(--critical)' : 'var(--text-muted)' },
+    { label: 'Warning alerts', value: String(warnAlerts), color: warnAlerts > 0 ? 'var(--warning)' : 'var(--text-muted)' },
   ];
 
   return (
@@ -318,7 +318,7 @@ function CaseloadSummaryPanel({ caseload, snapshot }: { caseload: CaseloadRow[];
               padding: '8px 18px', borderBottom: '1px solid var(--border)',
             }}
           >
-            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>{r.label}</span>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)' }}>{r.label}</span>
             <span style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: r.color }}>{r.value}</span>
           </div>
         ))}
@@ -371,13 +371,13 @@ function MoodDistributionBarChart({ data }: { data: PopBreakdown['moodDistributi
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
               <XAxis
                 dataKey="label"
-                tick={{ fill: 'var(--ink-soft)', fontSize: 'var(--text-sm)' }}
+                tick={{ fill: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}
                 tickLine={false}
                 axisLine={{ stroke: 'var(--border)' }}
               />
               <YAxis
                 allowDecimals={false}
-                tick={{ fill: 'var(--ink-soft)', fontSize: 'var(--text-sm)' }}
+                tick={{ fill: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}
                 tickLine={false}
                 axisLine={false}
                 width={24}
@@ -433,7 +433,7 @@ function AdherenceGaugePanel({ adherence, days }: { adherence: PopBreakdown['adh
           {pct > 0 && <path d={arcPath} fill="none" stroke={color} strokeWidth={10} strokeLinecap="round" />}
         </svg>
         <div style={{ fontSize: 'var(--text-3xl)', fontWeight: 800, color, marginTop: -8 }}>{pct}%</div>
-        <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 2 }}>
+        <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginTop: 2 }}>
           {pct >= 80 ? 'Excellent adherence' : pct >= 60 ? 'Moderate adherence' : adherence.total === 0 ? 'No data' : 'Needs attention'}
         </div>
       </div>
@@ -465,7 +465,7 @@ function AssessmentCompletionPanel({ completion, days }: { completion: PopBreakd
         }}>
           <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 4, transition: 'width 0.6s ease' }} />
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>
           <span>{completion.completed} completed</span>
           <span>{completion.total - completion.completed} outstanding</span>
         </div>
@@ -526,7 +526,7 @@ export function TrendsPage() {
   if (loading) {
     return (
       <div className="view-pad">
-        <div style={{ color: 'var(--ink-soft)', textAlign: 'center', padding: 48 }}>Loading trends…</div>
+        <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 48 }}>Loading trends…</div>
       </div>
     );
   }
@@ -542,7 +542,7 @@ export function TrendsPage() {
             style={{
               padding: '5px 14px', borderRadius: 20, fontSize: 'var(--text-sm)', fontWeight: 600,
               background: days === d ? 'var(--safe)' : 'var(--glass-01)',
-              color: days === d ? '#0a0e1a' : 'var(--ink-mid)',
+              color: days === d ? '#0a0e1a' : 'var(--text-secondary)',
               border: `1px solid ${days === d ? 'var(--safe)' : 'var(--border)'}`,
               cursor: 'pointer',
             }}
@@ -570,7 +570,7 @@ export function TrendsPage() {
         <StatPanel
           title="Active Patients"
           value={String(activePatients)}
-          color="var(--ink)"
+          color="var(--text-primary)"
           subtitle={`of ${caseload.length} total in caseload`}
         />
       </div>
@@ -600,7 +600,7 @@ export function TrendsPage() {
 
       {/* Nightly snapshot note */}
       {snapshot?.snapshot_date && (
-        <div style={{ marginTop: 12, fontSize: 'var(--text-sm)', color: 'var(--ink-ghost)', textAlign: 'right' }}>
+        <div style={{ marginTop: 12, fontSize: 'var(--text-sm)', color: 'var(--text-ghost)', textAlign: 'right' }}>
           KPI figures from nightly snapshot ({snapshot.snapshot_date}) · Alert counts are live
         </div>
       )}

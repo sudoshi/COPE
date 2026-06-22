@@ -61,8 +61,8 @@ export interface CohortSnapshot {
 // ---------------------------------------------------------------------------
 
 const BORDER = 'var(--border)';
-const TEXT = 'var(--ink)';
-const SUB = 'var(--ink-mid)';
+const TEXT = 'var(--text-primary)';
+const SUB = 'var(--text-secondary)';
 const PRIMARY = 'var(--safe)';
 const CRITICAL = 'var(--critical)';
 

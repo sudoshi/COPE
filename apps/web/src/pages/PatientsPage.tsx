@@ -89,7 +89,7 @@ function FilterChip({
 }
 
 function RiskBadge({ level }: { level: string | null }) {
-  if (!level) return <span style={{ color: 'var(--ink-soft)' }}>—</span>;
+  if (!level) return <span style={{ color: 'var(--text-muted)' }}>—</span>;
   const cls = `badge badge-risk-${level}`;
   return <span className={cls}>{level}</span>;
 }
@@ -100,7 +100,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function AlertBadge({ count, severity }: { count: number; severity: string | null }) {
-  if (count === 0) return <span style={{ color: 'var(--ink-soft)' }}>—</span>;
+  if (count === 0) return <span style={{ color: 'var(--text-muted)' }}>—</span>;
   const color =
     severity === 'critical' ? 'var(--critical)' :
     severity === 'warning'  ? 'var(--warning)'  : 'var(--info)';
@@ -187,7 +187,7 @@ function InviteActions({
             style={{
               display: 'block', width: '100%', padding: '9px 14px',
               background: 'none', border: 'none', textAlign: 'left',
-              color: invite.resend_count >= 3 ? 'var(--ink-ghost)' : 'var(--ink)',
+              color: invite.resend_count >= 3 ? 'var(--text-ghost)' : 'var(--text-primary)',
               fontSize: 'var(--text-base)', cursor: invite.resend_count >= 3 ? 'not-allowed' : 'pointer',
             }}
           >
@@ -351,7 +351,7 @@ export function PatientsPage() {
 
       {/* Page header */}
       <div style={{ padding: '0 24px 4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }} data-testid="patient-count">
+        <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }} data-testid="patient-count">
           {rows.length} patients on your caseload
           {pendingInvites.length > 0 && (
             <span style={{ marginLeft: 10, color: 'var(--warning)' }}>
@@ -460,9 +460,9 @@ export function PatientsPage() {
               <tbody>
                 {pendingInvites.map((inv) => (
                   <tr key={inv.id} onClick={(e) => e.stopPropagation()}>
-                    <td style={{ fontSize: 'var(--text-base)', color: 'var(--ink)' }}>{inv.email}</td>
-                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>{fmtDate(inv.created_at)}</td>
-                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
+                    <td style={{ fontSize: 'var(--text-base)', color: 'var(--text-primary)' }}>{inv.email}</td>
+                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>{fmtDate(inv.created_at)}</td>
+                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>
                       {new Date(inv.expires_at) < new Date()
                         ? <span style={{ color: 'var(--critical)' }}>Expired</span>
                         : fmtDate(inv.expires_at)}
@@ -492,7 +492,7 @@ export function PatientsPage() {
       {/* Table */}
       <div style={{ padding: '0 24px 40px' }}>
         {loading ? (
-          <div style={{ color: 'var(--ink-soft)', textAlign: 'center', padding: 48 }}>
+          <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 48 }}>
             Loading patients…
           </div>
         ) : sorted.length === 0 ? (
@@ -526,10 +526,10 @@ export function PatientsPage() {
                 >
                   {/* Patient name + MRN */}
                   <td>
-                    <div style={{ fontWeight: 600, fontSize: 'var(--text-base)', color: 'var(--ink)' }}>
+                    <div style={{ fontWeight: 600, fontSize: 'var(--text-base)', color: 'var(--text-primary)' }}>
                       {row.last_name}, {row.first_name}
                     </div>
-                    <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 2 }}>
+                    <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginTop: 2 }}>
                       {row.mrn}
                     </div>
                   </td>
@@ -553,12 +553,12 @@ export function PatientsPage() {
                         </span>
                       </div>
                     ) : (
-                      <span style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-base)' }}>—</span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: 'var(--text-base)' }}>—</span>
                     )}
                   </td>
 
                   {/* Streak */}
-                  <td style={{ fontSize: 'var(--text-base)', color: row.tracking_streak >= 7 ? 'var(--warning)' : 'var(--ink-soft)' }}>
+                  <td style={{ fontSize: 'var(--text-base)', color: row.tracking_streak >= 7 ? 'var(--warning)' : 'var(--text-muted)' }}>
                     {row.tracking_streak > 0 ? (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                         <Icon icon={Flame} size="sm" /> {row.tracking_streak}d
@@ -567,7 +567,7 @@ export function PatientsPage() {
                   </td>
 
                   {/* Last check-in */}
-                  <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
+                  <td style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>
                     {row.todays_submitted_at
                       ? fmtDate(row.todays_submitted_at)
                       : (row.last_checkin_at ? fmtDate(row.last_checkin_at) : '—')}
@@ -588,7 +588,7 @@ export function PatientsPage() {
 
         {/* Showing count */}
         {!loading && sorted.length > 0 && (
-          <div style={{ marginTop: 10, fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', textAlign: 'right' }}>
+          <div style={{ marginTop: 10, fontSize: 'var(--text-sm)', color: 'var(--text-muted)', textAlign: 'right' }}>
             Showing {sorted.length} of {rows.length} patients
           </div>
         )}

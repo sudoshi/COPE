@@ -454,10 +454,10 @@ export function AppShell() {
               padding: '14px 20px', borderBottom: '1px solid var(--border)',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             }}>
-              <div style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink)' }}>Keyboard Shortcuts</div>
+              <div style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-primary)' }}>Keyboard Shortcuts</div>
               <button
                 onClick={() => setShowShortcutsHelp(false)}
-                style={{ background: 'transparent', border: 'none', color: 'var(--ink-soft)', fontSize: 'var(--text-2xl)', cursor: 'pointer', padding: 4 }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: 'var(--text-2xl)', cursor: 'pointer', padding: 4 }}
               >
                 ×
               </button>
@@ -476,11 +476,11 @@ export function AppShell() {
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '7px 20px',
                 }}>
-                  <span style={{ fontSize: 'var(--text-base)', color: 'var(--ink-mid)' }}>{desc}</span>
+                  <span style={{ fontSize: 'var(--text-base)', color: 'var(--text-secondary)' }}>{desc}</span>
                   <kbd style={{
                     background: 'var(--glass-02)', border: '1px solid var(--border)',
                     borderRadius: 5, padding: '2px 8px', fontSize: 'var(--text-sm)',
-                    fontFamily: 'monospace', color: 'var(--ink)',
+                    fontFamily: 'monospace', color: 'var(--text-primary)',
                   }}>
                     {key}
                   </kbd>

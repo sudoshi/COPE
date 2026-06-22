@@ -82,8 +82,8 @@ function getOpsForField(field: string): { value: FilterOp; label: string }[] {
 
 const BORDER = 'var(--border)';
 const CARD = 'var(--glass-01)';
-const TEXT = 'var(--ink)';
-const SUB = 'var(--ink-mid)';
+const TEXT = 'var(--text-primary)';
+const SUB = 'var(--text-secondary)';
 const PRIMARY = 'var(--safe)';
 
 const selectStyle: React.CSSProperties = {
@@ -304,7 +304,7 @@ function FilterRuleRow({ rule, onChange, onRemove }: FilterRuleRowProps) {
       <button
         onClick={onRemove}
         title="Remove rule"
-        style={{ background: 'transparent', border: 'none', color: 'var(--ink-soft)', cursor: 'pointer', fontSize: 'var(--text-md)', padding: '2px 4px', lineHeight: 1 }}
+        style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 'var(--text-md)', padding: '2px 4px', lineHeight: 1 }}
       >
         ×
       </button>
@@ -489,7 +489,7 @@ export function CohortFilterBuilder({
           <div style={{ fontSize: 'var(--text-base)', color: SUB }}>Matching:</div>
           <div style={{
             fontSize: 'var(--text-xl)', fontWeight: 800,
-            color: countLoading ? SUB : liveCount !== null ? PRIMARY : 'var(--ink-soft)',
+            color: countLoading ? SUB : liveCount !== null ? PRIMARY : 'var(--text-muted)',
           }}>
             {countLoading ? '...' : liveCount !== null ? liveCount.toLocaleString() : '--'}
           </div>

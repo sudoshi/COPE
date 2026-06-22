@@ -48,7 +48,7 @@ const GAD7_LEVELS = ['minimal', 'mild', 'moderate', 'severe'];
 
 const CARD = 'var(--glass-01)';
 const BORDER = 'var(--border)';
-const TEXT = 'var(--ink)';
+const TEXT = 'var(--text-primary)';
 
 function selectStyle(): CSSProperties {
   return {
@@ -148,7 +148,7 @@ export function CohortFilterRow({ filter, onChange, onRemove }: CohortFilterRowP
         onClick={onRemove}
         title="Remove filter"
         style={{
-          background: 'transparent', border: 'none', color: 'var(--ink-soft)',
+          background: 'transparent', border: 'none', color: 'var(--text-muted)',
           cursor: 'pointer', fontSize: 'var(--text-lg)', padding: '4px 6px',
           borderRadius: 4, lineHeight: 1,
         }}

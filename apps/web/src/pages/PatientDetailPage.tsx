@@ -231,15 +231,15 @@ interface AiInsightsData {
 const BG = 'var(--bg)';
 const CARD = 'var(--glass-01)';
 const BORDER = 'var(--border)';
-const TEXT = 'var(--ink)';
-const SUB = 'var(--ink-mid)';
+const TEXT = 'var(--text-primary)';
+const SUB = 'var(--text-secondary)';
 const PRIMARY = 'var(--safe)';
 
 const RISK_COLOR: Record<string, string> = {
   critical: 'var(--critical)', high: 'var(--warning)', moderate: '#c9972a', low: 'var(--safe)',
 };
 const STATUS_COLOR: Record<string, string> = {
-  crisis: 'var(--critical)', active: 'var(--safe)', inactive: 'var(--ink-soft)', discharged: 'var(--ink-soft)',
+  crisis: 'var(--critical)', active: 'var(--safe)', inactive: 'var(--text-muted)', discharged: 'var(--text-muted)',
 };
 const SEVERITY_COLOR: Record<string, string> = {
   critical: 'var(--critical)', warning: 'var(--warning)', info: 'var(--info)',
@@ -477,7 +477,7 @@ function OverviewTab({
                   invite.status === 'pending' ? 'var(--warning-bg)' : 'var(--glass-02)',
                 color:
                   invite.status === 'accepted' ? 'var(--safe)' :
-                  invite.status === 'pending' ? 'var(--warning)' : 'var(--ink-soft)',
+                  invite.status === 'pending' ? 'var(--warning)' : 'var(--text-muted)',
               }}>
                 {invite.status === 'pending' ? <><Icon icon={Hourglass} size="sm" /> Pending</> :
                  invite.status === 'accepted' ? <><Icon icon={Check} size="sm" /> Accepted</> :
@@ -567,7 +567,7 @@ function HeatmapTooltip({
       position: 'fixed', left: x + 12, top: y - 10,
       background: 'var(--bg)', border: '1px solid var(--border)',
       borderRadius: 8, padding: '8px 12px', zIndex: 900,
-      fontSize: 'var(--text-sm)', color: 'var(--ink)', boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+      fontSize: 'var(--text-sm)', color: 'var(--text-primary)', boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
       pointerEvents: 'none', minWidth: 140,
     }}>
       <div style={{ fontWeight: 600, marginBottom: 4 }}>
@@ -576,7 +576,7 @@ function HeatmapTooltip({
       {day.mood !== null ? (
         <div>Mood: <span style={{ color: moodColor(day.mood), fontWeight: 700 }}>{day.mood}/10</span></div>
       ) : (
-        <div style={{ color: 'var(--ink-ghost)' }}>No check-in</div>
+        <div style={{ color: 'var(--text-ghost)' }}>No check-in</div>
       )}
       {day.completion_pct !== null && (
         <div>Check-in: <span style={{ fontWeight: 600 }}>{Math.round(day.completion_pct)}%</span></div>
@@ -858,7 +858,7 @@ function MoodTrendsTab({
             <div style={{ width: 13, height: 13, borderRadius: 2, background: 'rgba(255,255,255,0.06)', border: '2px solid var(--critical)', display: 'inline-block' }} />
             Safety flag
           </span>
-          <span style={{ marginLeft: 'auto', color: 'var(--ink-ghost)' }}>← scroll to see older days</span>
+          <span style={{ marginLeft: 'auto', color: 'var(--text-ghost)' }}>← scroll to see older days</span>
         </div>
       </div>
 
@@ -2545,13 +2545,13 @@ export function PatientDetailPage() {
 
         <div className="detail-meta">
           {patientLoading ? (
-            <div style={{ color: 'var(--ink-soft)' }}>Loading patient…</div>
+            <div style={{ color: 'var(--text-muted)' }}>Loading patient…</div>
           ) : patient ? (
             <>
               <div className="detail-name">
                 {name}
                 {patient.preferred_name && patient.preferred_name !== patient.first_name && (
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-base)', color: 'var(--ink-soft)', fontWeight: 400, marginLeft: 8 }}>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-base)', color: 'var(--text-muted)', fontWeight: 400, marginLeft: 8 }}>
                     "{patient.preferred_name}"
                   </span>
                 )}
@@ -2653,7 +2653,7 @@ export function PatientDetailPage() {
       {/* ── Tab content ── */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '24px', paddingBottom: 84 }}>
         {!patient && !patientLoading ? (
-          <div style={{ textAlign: 'center', color: 'var(--ink-soft)', padding: 60 }}>
+          <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 60 }}>
             Patient not found or you don't have access.
           </div>
         ) : tab === 'overview' && patient ? (
@@ -2723,7 +2723,7 @@ export function PatientDetailPage() {
           display: 'flex', alignItems: 'center', gap: 10,
           zIndex: 100,
         }}>
-          <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginRight: 4 }}>
+          <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginRight: 4 }}>
             Quick Actions
           </span>
           <button
@@ -2767,7 +2767,7 @@ export function PatientDetailPage() {
             <Icon icon={Siren} size="sm" /> Escalate Alert
           </button>
           <div style={{ flex: 1 }} />
-          <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-ghost)' }}>
+          <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-ghost)' }}>
             {patient.first_name} {patient.last_name} · MRN {patient.mrn}
           </span>
         </div>

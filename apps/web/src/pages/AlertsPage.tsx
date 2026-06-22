@@ -114,7 +114,7 @@ function AlertCard({ alert, token, onRefresh }: { alert: Alert; token: string | 
           </span>
 
           {/* Title */}
-          <div style={{ color: 'var(--ink)', fontSize: 'var(--text-base)', fontWeight: 600, marginBottom: 3 }}>
+          <div style={{ color: 'var(--text-primary)', fontSize: 'var(--text-base)', fontWeight: 600, marginBottom: 3 }}>
             {alert.title}
           </div>
 
@@ -133,7 +133,7 @@ function AlertCard({ alert, token, onRefresh }: { alert: Alert; token: string | 
           )}
 
           {/* Footer */}
-          <div style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-sm)' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>
             {alert.rule_key} · {STATUS_LABEL[alert.status]} · {fmtRelative(alert.created_at)}
           </div>
         </div>
@@ -166,7 +166,7 @@ function AlertCard({ alert, token, onRefresh }: { alert: Alert; token: string | 
             </button>
           </div>
         ) : (
-          <div style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-sm)', flexShrink: 0 }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', flexShrink: 0 }}>
             {STATUS_LABEL[alert.status]}
           </div>
         )}
@@ -194,13 +194,13 @@ function LiveToast({ alerts, onDismiss }: { alerts: LiveAlert[]; onDismiss: () =
         </span>
         <button
           onClick={onDismiss}
-          style={{ background: 'none', border: 'none', color: 'var(--ink-soft)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', padding: 0 }}
+          style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', padding: 0 }}
         >
           <Icon icon={X} size="md" title="Dismiss" />
         </button>
       </div>
-      <div style={{ color: 'var(--ink)', fontSize: 'var(--text-base)' }}>{latest.title}</div>
-      <div style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-sm)', marginTop: 4 }}>{latest.ruleKey}</div>
+      <div style={{ color: 'var(--text-primary)', fontSize: 'var(--text-base)' }}>{latest.title}</div>
+      <div style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', marginTop: 4 }}>{latest.ruleKey}</div>
     </div>
   );
 }
@@ -333,7 +333,7 @@ export function AlertsPage() {
       {/* Alert list */}
       <div style={{ padding: '0 24px 40px' }}>
         {loading ? (
-          <div style={{ color: 'var(--ink-soft)', textAlign: 'center', padding: 48 }}>Loading…</div>
+          <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 48 }}>Loading…</div>
         ) : alerts.length === 0 ? (
           <div className="panel">
             <div className="empty-state">

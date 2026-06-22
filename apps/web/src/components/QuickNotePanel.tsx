@@ -114,16 +114,16 @@ export function QuickNotePanel({ open, onClose }: QuickNotePanelProps) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink)' }}>Quick Note</div>
+            <div style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-primary)' }}>Quick Note</div>
             {patientName ? (
               <div style={{ fontSize: 'var(--text-sm)', color: 'var(--safe)', marginTop: 2 }}>{patientName}</div>
             ) : (
-              <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 2 }}>Navigate to a patient first</div>
+              <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginTop: 2 }}>Navigate to a patient first</div>
             )}
           </div>
           <button
             onClick={onClose}
-            style={{ background: 'transparent', border: 'none', color: 'var(--ink-soft)', cursor: 'pointer', padding: '4px 8px', borderRadius: 4, display: 'inline-flex', alignItems: 'center' }}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px 8px', borderRadius: 4, display: 'inline-flex', alignItems: 'center' }}
           >
             <Icon icon={X} size="md" title="Close" />
           </button>
@@ -133,14 +133,14 @@ export function QuickNotePanel({ open, onClose }: QuickNotePanelProps) {
         <div style={{ flex: 1, padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12, overflowY: 'auto' }}>
           {/* Note type */}
           <div>
-            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginBottom: 6 }}>Note Type</div>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginBottom: 6 }}>Note Type</div>
             <select
               value={noteType}
               onChange={(e) => setNoteType(e.target.value)}
               data-testid="quick-note-type"
               style={{
                 width: '100%', background: 'var(--glass-01)', border: '1px solid var(--border)',
-                color: 'var(--ink)', borderRadius: 6, padding: '8px 12px', fontSize: 'var(--text-base)', outline: 'none',
+                color: 'var(--text-primary)', borderRadius: 6, padding: '8px 12px', fontSize: 'var(--text-base)', outline: 'none',
               }}
             >
               {NOTE_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -149,8 +149,8 @@ export function QuickNotePanel({ open, onClose }: QuickNotePanelProps) {
 
           {/* Text area */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginBottom: 6 }}>
-              Note Content <span style={{ color: 'var(--ink-ghost)', fontWeight: 400 }}>Cmd+Enter to save</span>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginBottom: 6 }}>
+              Note Content <span style={{ color: 'var(--text-ghost)', fontWeight: 400 }}>Cmd+Enter to save</span>
             </div>
             <textarea
               ref={textareaRef}
@@ -161,11 +161,11 @@ export function QuickNotePanel({ open, onClose }: QuickNotePanelProps) {
               style={{
                 flex: 1, minHeight: 220, resize: 'vertical',
                 background: 'var(--glass-01)', border: '1px solid var(--border)',
-                color: 'var(--ink)', borderRadius: 8, padding: '12px 14px',
+                color: 'var(--text-primary)', borderRadius: 8, padding: '12px 14px',
                 fontSize: 'var(--text-base)', lineHeight: 1.6, outline: 'none', fontFamily: 'inherit',
               }}
             />
-            <div style={{ textAlign: 'right', fontSize: 'var(--text-sm)', color: 'var(--ink-ghost)', marginTop: 4 }}>
+            <div style={{ textAlign: 'right', fontSize: 'var(--text-sm)', color: 'var(--text-ghost)', marginTop: 4 }}>
               {body.length} chars
             </div>
           </div>
@@ -177,7 +177,7 @@ export function QuickNotePanel({ open, onClose }: QuickNotePanelProps) {
               checked={isPrivate}
               onChange={(e) => setIsPrivate(e.target.checked)}
             />
-            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>Private note (only visible to me)</span>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)' }}>Private note (only visible to me)</span>
           </label>
 
           {/* Error */}
@@ -201,7 +201,7 @@ export function QuickNotePanel({ open, onClose }: QuickNotePanelProps) {
             onClick={onClose}
             style={{
               flex: 1, background: 'transparent', border: '1px solid var(--border)',
-              color: 'var(--ink-mid)', borderRadius: 6, padding: '9px', fontSize: 'var(--text-base)',
+              color: 'var(--text-secondary)', borderRadius: 6, padding: '9px', fontSize: 'var(--text-base)',
               cursor: 'pointer',
             }}
           >
@@ -213,7 +213,7 @@ export function QuickNotePanel({ open, onClose }: QuickNotePanelProps) {
             data-testid="quick-note-save"
             style={{
               flex: 2, background: canSave ? 'var(--safe)' : 'var(--glass-02)',
-              border: 'none', color: canSave ? '#0a0e1a' : 'var(--ink-soft)',
+              border: 'none', color: canSave ? '#0a0e1a' : 'var(--text-muted)',
               borderRadius: 6, padding: '9px', fontSize: 'var(--text-base)', fontWeight: 600,
               cursor: canSave ? 'pointer' : 'not-allowed',
             }}

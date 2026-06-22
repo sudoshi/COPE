@@ -75,12 +75,12 @@ export function AssessmentRequestModal({
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink)' }}>Request Assessment</div>
-            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 2 }}>{patientName}</div>
+            <div style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-primary)' }}>Request Assessment</div>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginTop: 2 }}>{patientName}</div>
           </div>
           <button
             onClick={onClose}
-            style={{ background: 'transparent', border: 'none', color: 'var(--ink-soft)', fontSize: 'var(--text-2xl)', cursor: 'pointer', padding: 4 }}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: 'var(--text-2xl)', cursor: 'pointer', padding: 4 }}
           >
             ×
           </button>
@@ -90,7 +90,7 @@ export function AssessmentRequestModal({
         <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Scale selector */}
           <div>
-            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginBottom: 8, fontWeight: 600 }}>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginBottom: 8, fontWeight: 600 }}>
               SELECT SCALE
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -114,8 +114,8 @@ export function AssessmentRequestModal({
                     style={{ accentColor: 'var(--safe)' }}
                   />
                   <div>
-                    <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>{s.label}</div>
-                    <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>{s.description}</div>
+                    <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--text-primary)' }}>{s.label}</div>
+                    <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>{s.description}</div>
                   </div>
                 </label>
               ))}
@@ -124,8 +124,8 @@ export function AssessmentRequestModal({
 
           {/* Optional message */}
           <div>
-            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginBottom: 6 }}>
-              Custom message <span style={{ color: 'var(--ink-ghost)' }}>(optional, max 200 chars)</span>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginBottom: 6 }}>
+              Custom message <span style={{ color: 'var(--text-ghost)' }}>(optional, max 200 chars)</span>
             </div>
             <textarea
               value={customMessage}
@@ -134,12 +134,12 @@ export function AssessmentRequestModal({
               rows={2}
               style={{
                 width: '100%', background: 'var(--glass-01)', border: '1px solid var(--border)',
-                color: 'var(--ink)', borderRadius: 8, padding: '8px 10px',
+                color: 'var(--text-primary)', borderRadius: 8, padding: '8px 10px',
                 fontSize: 'var(--text-sm)', outline: 'none', resize: 'none', fontFamily: 'inherit',
                 boxSizing: 'border-box',
               }}
             />
-            <div style={{ textAlign: 'right', fontSize: 'var(--text-sm)', color: 'var(--ink-ghost)' }}>
+            <div style={{ textAlign: 'right', fontSize: 'var(--text-sm)', color: 'var(--text-ghost)' }}>
               {customMessage.length}/200
             </div>
           </div>
@@ -158,7 +158,7 @@ export function AssessmentRequestModal({
             onClick={onClose}
             style={{
               flex: 1, background: 'transparent', border: '1px solid var(--border)',
-              color: 'var(--ink-mid)', borderRadius: 8, padding: '9px', fontSize: 'var(--text-base)', cursor: 'pointer',
+              color: 'var(--text-secondary)', borderRadius: 8, padding: '9px', fontSize: 'var(--text-base)', cursor: 'pointer',
             }}
           >
             Cancel

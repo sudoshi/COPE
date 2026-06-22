@@ -59,7 +59,7 @@ const RISK_COLORS: Record<string, string> = {
   critical: 'var(--critical)', high: 'var(--warning)', moderate: '#c9972a', low: 'var(--safe)',
 };
 const STATUS_COLORS: Record<string, string> = {
-  crisis: 'var(--critical)', active: 'var(--safe)', inactive: 'var(--ink-soft)',
+  crisis: 'var(--critical)', active: 'var(--safe)', inactive: 'var(--text-muted)',
 };
 
 function flattenResults(results: SearchResults): FlatResult[] {
@@ -72,7 +72,7 @@ function flattenResults(results: SearchResults): FlatResult[] {
       label: `${p.last_name}, ${p.first_name}`,
       sublabel: p.mrn,
       badge: p.status,
-      badgeColor: STATUS_COLORS[p.status] ?? 'var(--ink-soft)',
+      badgeColor: STATUS_COLORS[p.status] ?? 'var(--text-muted)',
     });
   }
   for (const n of results.notes) {
@@ -83,7 +83,7 @@ function flattenResults(results: SearchResults): FlatResult[] {
       label: n.body_excerpt.slice(0, 80) + (n.body_excerpt.length > 80 ? '…' : ''),
       sublabel: `${n.patient_last_name}, ${n.patient_first_name} · ${n.note_type}`,
       badge: n.note_type,
-      badgeColor: 'var(--ink-soft)',
+      badgeColor: 'var(--text-muted)',
     });
   }
   return flat;
@@ -190,7 +190,7 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
       }} data-testid="global-search">
         {/* Search input */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', gap: 10, borderBottom: '1px solid var(--border)' }}>
-          <span style={{ color: 'var(--ink-soft)', display: 'flex' }}><Icon icon={Search} size="md" /></span>
+          <span style={{ color: 'var(--text-muted)', display: 'flex' }}><Icon icon={Search} size="md" /></span>
           <input
             ref={inputRef}
             value={query}
@@ -200,13 +200,13 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
             data-testid="global-search-input"
             style={{
               flex: 1, background: 'transparent', border: 'none', outline: 'none',
-              color: 'var(--ink)', fontSize: 'var(--text-md)', caretColor: 'var(--safe)',
+              color: 'var(--text-primary)', fontSize: 'var(--text-md)', caretColor: 'var(--safe)',
             }}
           />
           {loading && (
-            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>Searching…</span>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>Searching…</span>
           )}
-          <kbd style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', background: 'var(--glass-02)', padding: '2px 6px', borderRadius: 4, border: '1px solid var(--border)' }}>
+          <kbd style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', background: 'var(--glass-02)', padding: '2px 6px', borderRadius: 4, border: '1px solid var(--border)' }}>
             ESC
           </kbd>
         </div>
@@ -214,11 +214,11 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
         {/* Results */}
         <div style={{ maxHeight: 400, overflowY: 'auto' }} data-testid="global-search-results">
           {query.trim().length < 2 ? (
-            <div style={{ padding: '24px', textAlign: 'center', color: 'var(--ink-soft)', fontSize: 'var(--text-base)' }}>
+            <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 'var(--text-base)' }}>
               Type at least 2 characters to search
             </div>
           ) : totalResults === 0 && !loading ? (
-            <div style={{ padding: '24px', textAlign: 'center', color: 'var(--ink-soft)', fontSize: 'var(--text-base)' }}>
+            <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 'var(--text-base)' }}>
               No results found for "{query}"
             </div>
           ) : (
@@ -226,7 +226,7 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
               {/* Patients section */}
               {results.patients.length > 0 && (
                 <>
-                  <div style={{ padding: '8px 16px 4px', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink-soft)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  <div style={{ padding: '8px 16px 4px', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     Patients
                   </div>
                   {results.patients.map((p, i) => {
@@ -253,17 +253,17 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
                           {p.first_name.charAt(0)}{p.last_name.charAt(0)}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>
+                          <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--text-primary)' }}>
                             {p.last_name}, {p.first_name}
                           </div>
-                          <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>MRN: {p.mrn}</div>
+                          <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>MRN: {p.mrn}</div>
                         </div>
                         <div style={{ display: 'flex', gap: 6 }}>
-                          <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600, padding: '2px 7px', borderRadius: 4, background: `${STATUS_COLORS[p.status] ?? 'var(--ink-soft)'}22`, color: STATUS_COLORS[p.status] ?? 'var(--ink-soft)' }}>
+                          <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600, padding: '2px 7px', borderRadius: 4, background: `${STATUS_COLORS[p.status] ?? 'var(--text-muted)'}22`, color: STATUS_COLORS[p.status] ?? 'var(--text-muted)' }}>
                             {p.status}
                           </span>
                           {p.risk_level && (
-                            <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600, padding: '2px 7px', borderRadius: 4, background: `${RISK_COLORS[p.risk_level] ?? 'var(--ink-soft)'}22`, color: RISK_COLORS[p.risk_level] ?? 'var(--ink-soft)' }}>
+                            <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600, padding: '2px 7px', borderRadius: 4, background: `${RISK_COLORS[p.risk_level] ?? 'var(--text-muted)'}22`, color: RISK_COLORS[p.risk_level] ?? 'var(--text-muted)' }}>
                               {p.risk_level}
                             </span>
                           )}
@@ -277,7 +277,7 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
               {/* Notes section */}
               {results.notes.length > 0 && (
                 <>
-                  <div style={{ padding: '8px 16px 4px', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink-soft)', textTransform: 'uppercase', letterSpacing: '0.08em', borderTop: results.patients.length > 0 ? '1px solid var(--border)' : undefined }}>
+                  <div style={{ padding: '8px 16px 4px', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', borderTop: results.patients.length > 0 ? '1px solid var(--border)' : undefined }}>
                     Clinical Notes
                   </div>
                   {results.notes.map((n, i) => {
@@ -294,10 +294,10 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
                         onMouseEnter={() => setActiveIdx(flatIdx)}
                         data-testid={`global-search-result-note-${n.id}`}
                       >
-                        <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink-mid)', marginBottom: 2 }}>
-                          {n.patient_last_name}, {n.patient_first_name} · <span style={{ color: 'var(--ink-soft)', fontWeight: 400 }}>{n.note_type}</span>
+                        <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 2 }}>
+                          {n.patient_last_name}, {n.patient_first_name} · <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>{n.note_type}</span>
                         </div>
-                        <div style={{ fontSize: 'var(--text-base)', color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: 'var(--text-base)', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {n.body_excerpt}
                         </div>
                       </div>
@@ -310,7 +310,7 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
         </div>
 
         {/* Footer */}
-        <div style={{ padding: '6px 16px', borderTop: '1px solid var(--border)', display: 'flex', gap: 16, fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
+        <div style={{ padding: '6px 16px', borderTop: '1px solid var(--border)', display: 'flex', gap: 16, fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>
           <span>↑↓ Navigate</span>
           <span>↵ Open patient</span>
           <span>ESC Close</span>

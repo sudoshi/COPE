@@ -41,8 +41,8 @@ interface SavedCohort {
 // ---------------------------------------------------------------------------
 
 const BORDER = 'var(--border)';
-const TEXT = 'var(--ink)';
-const SUB = 'var(--ink-mid)';
+const TEXT = 'var(--text-primary)';
+const SUB = 'var(--text-secondary)';
 const PRIMARY = 'var(--safe)';
 const CARD = 'var(--glass-01)';
 
@@ -61,11 +61,11 @@ export function CohortPage() {
     return (
       <div className="view-pad">
         <div className="panel" style={{ padding: 48, textAlign: 'center' }}>
-          <div style={{ marginBottom: 16, color: 'var(--ink-mid)' }}><Icon icon={Lock} size="2xl" /></div>
-          <div style={{ fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
+          <div style={{ marginBottom: 16, color: 'var(--text-secondary)' }}><Icon icon={Lock} size="2xl" /></div>
+          <div style={{ fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>
             Access Restricted
           </div>
-          <div style={{ fontSize: 'var(--text-base)', color: 'var(--ink-mid)' }}>
+          <div style={{ fontSize: 'var(--text-base)', color: 'var(--text-secondary)' }}>
             The Cohort Builder is available to administrators only.
             Contact your system administrator for access.
           </div>
@@ -390,7 +390,7 @@ export function CohortPage() {
                       title="Delete cohort"
                       style={{
                         background: 'transparent', border: 'none', cursor: 'pointer',
-                        padding: '2px 4px', color: 'var(--ink-soft)', display: 'inline-flex',
+                        padding: '2px 4px', color: 'var(--text-muted)', display: 'inline-flex',
                       }}
                     >
                       <Icon icon={Trash2} size="sm" title="Delete cohort" />

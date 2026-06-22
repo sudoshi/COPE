@@ -374,12 +374,12 @@ function CaseloadMoodPanel({ caseload }: { caseload: CaseloadRow[] }) {
               {[1,3,5,7,9].map((m) => (
                 <div key={m} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                   <div style={{ width: 10, height: 10, borderRadius: 2, background: moodColor(m) }} />
-                  <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>{m}</span>
+                  <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>{m}</span>
                 </div>
               ))}
               <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }} />
-                <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>Not logged</span>
+                <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>Not logged</span>
               </div>
             </>
           ) : (
@@ -387,12 +387,12 @@ function CaseloadMoodPanel({ caseload }: { caseload: CaseloadRow[] }) {
               {(['critical', 'high', 'moderate', 'low'] as const).map((level) => (
                 <div key={level} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                   <div style={{ width: 10, height: 10, borderRadius: 2, background: RISK_COLORS[level] }} />
-                  <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', textTransform: 'capitalize' }}>{level}</span>
+                  <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', textTransform: 'capitalize' }}>{level}</span>
                 </div>
               ))}
               <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.15)' }} />
-                <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>Unknown</span>
+                <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>Unknown</span>
               </div>
             </>
           )}
@@ -682,7 +682,7 @@ export function DashboardPage() {
 
       {/* ── Two-column layout ── */}
       {loading ? (
-        <div style={{ color: 'var(--ink-soft)', textAlign: 'center', padding: 48 }}>
+        <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 48 }}>
           Loading caseload…
         </div>
       ) : caseload.length === 0 ? (
@@ -690,7 +690,7 @@ export function DashboardPage() {
           <div className="empty-state" style={{ padding: '56px 24px' }}>
             <div className="empty-state-icon"><Icon icon={Users} size="2xl" /></div>
             <div className="empty-state-title">No patients in your caseload</div>
-            <div style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-base)', maxWidth: 340, margin: '0 auto' }}>
+            <div style={{ color: 'var(--text-muted)', fontSize: 'var(--text-base)', maxWidth: 340, margin: '0 auto' }}>
               Patients will appear here once they are enrolled and assigned to your care team.
             </div>
           </div>
@@ -715,7 +715,7 @@ export function DashboardPage() {
 
       {/* Snapshot age footnote */}
       {snapshot && !snapshot.is_live && snapshot.snapshot_date && (
-        <div style={{ marginTop: 10, fontSize: 'var(--text-sm)', color: 'var(--ink-ghost)', textAlign: 'right' }}>
+        <div style={{ marginTop: 10, fontSize: 'var(--text-sm)', color: 'var(--text-ghost)', textAlign: 'right' }}>
           KPI figures from nightly snapshot ({snapshot.snapshot_date}). Alert counts are live.
         </div>
       )}
