@@ -1,6 +1,6 @@
 # COPE Web UI — Typography & Iconography Remediation Plan
 
-**Status:** Phase 0 in progress · **Owner:** design system · **Created:** 2026-06-21
+**Status:** Phases 0–2 shipped · Phase 3–4 pending · **Owner:** design system · **Created:** 2026-06-21
 **North stars:** Medgnosis (`apps/web`, lucide-react + Tailwind tokens), MediCosts (`client/`, icon factory + CSS tokens)
 
 ---
@@ -93,7 +93,7 @@ icons inherit `currentColor`, meaning never carried by glyph/hue alone.**
       inline-style ban, 12px floor)
 - Verify: `tsc --noEmit` + `vite build` green.
 
-### Phase 1 — Icon migration (kills the emoji)
+### Phase 1 — Icon migration (kills the emoji) ✅ SHIPPED & DEPLOYED
 Replace 102 emoji + 15 ad-hoc SVGs with `<Icon>`/lucide, file by file:
 1. `AppShell.tsx` nav (highest visibility): 🌐→`Globe`, 👥→`Users`, 🔔→`Bell`,
    📈→`TrendingUp`, 📄→`FileText`, 🔬→`Microscope`, ⚙️→`Settings`, 🔍→`Search`,
@@ -103,11 +103,17 @@ Replace 102 emoji + 15 ad-hoc SVGs with `<Icon>`/lucide, file by file:
    `GlobalSearch`, modals.
 - Verify per file: build green + Playwright screenshot diff reviewed.
 
-### Phase 2 — Typography normalization
-- Convert 491 inline `fontSize:` → `.text-*` utilities/tokens (codemod + review).
-- Fix 37 hardcoded CSS px → `var(--text-*)`; raise nav/badges `10px` to floor.
-- Bring `login.css` onto tokens.
-- Verify: grep gate for `fontSize: <n>` and `font-size:…px` returns zero.
+### Phase 2 — Typography normalization ✅ SHIPPED & DEPLOYED
+- **2a** (CSS): six `10px` floor violators (badges/nav) → `var(--text-xs)`;
+  all 15 off-scale `login.css` sizes → tokens.
+- **2b** (inline): all **472** inline `style={{ fontSize: <number> }}` →
+  `fontSize: 'var(--text-*)'` via the floor-honoring map
+  (9/10/11/12→sm, 13/14→base, 15→md, 16→lg, 17/18→xl, 20/22/24→2xl,
+  26/28→3xl, 48→5xl). Sub-12px text raised to the 12px floor (mostly +1px).
+- Verified: zero numeric inline `fontSize`, zero raw px text font-sizes in
+  components/pages (only `*-icon` glyph-size rules remain); tsc/eslint/build green.
+- Note: used `var(--text-*)` on the existing inline styles (lowest-risk) rather
+  than extracting `.text-*` classes; the `--ink-*` colour vocabulary is Phase 3.
 
 ### Phase 3 — Token unification & dead-CSS removal
 - Migrate inline `--ink-*` → classes/new vocab; shrink `compat.css` to a shim.
