@@ -75,12 +75,12 @@ export function AssessmentRequestModal({
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Request Assessment</div>
-            <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginTop: 2 }}>{patientName}</div>
+            <div style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink)' }}>Request Assessment</div>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 2 }}>{patientName}</div>
           </div>
           <button
             onClick={onClose}
-            style={{ background: 'transparent', border: 'none', color: 'var(--ink-soft)', fontSize: 20, cursor: 'pointer', padding: 4 }}
+            style={{ background: 'transparent', border: 'none', color: 'var(--ink-soft)', fontSize: 'var(--text-2xl)', cursor: 'pointer', padding: 4 }}
           >
             ×
           </button>
@@ -90,7 +90,7 @@ export function AssessmentRequestModal({
         <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Scale selector */}
           <div>
-            <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginBottom: 8, fontWeight: 600 }}>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginBottom: 8, fontWeight: 600 }}>
               SELECT SCALE
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -114,8 +114,8 @@ export function AssessmentRequestModal({
                     style={{ accentColor: 'var(--safe)' }}
                   />
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{s.label}</div>
-                    <div style={{ fontSize: 11, color: 'var(--ink-soft)' }}>{s.description}</div>
+                    <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>{s.label}</div>
+                    <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>{s.description}</div>
                   </div>
                 </label>
               ))}
@@ -124,7 +124,7 @@ export function AssessmentRequestModal({
 
           {/* Optional message */}
           <div>
-            <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginBottom: 6 }}>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginBottom: 6 }}>
               Custom message <span style={{ color: 'var(--ink-ghost)' }}>(optional, max 200 chars)</span>
             </div>
             <textarea
@@ -135,18 +135,18 @@ export function AssessmentRequestModal({
               style={{
                 width: '100%', background: 'var(--glass-01)', border: '1px solid var(--border)',
                 color: 'var(--ink)', borderRadius: 8, padding: '8px 10px',
-                fontSize: 12, outline: 'none', resize: 'none', fontFamily: 'inherit',
+                fontSize: 'var(--text-sm)', outline: 'none', resize: 'none', fontFamily: 'inherit',
                 boxSizing: 'border-box',
               }}
             />
-            <div style={{ textAlign: 'right', fontSize: 10, color: 'var(--ink-ghost)' }}>
+            <div style={{ textAlign: 'right', fontSize: 'var(--text-sm)', color: 'var(--ink-ghost)' }}>
               {customMessage.length}/200
             </div>
           </div>
 
           {/* Error */}
           {error && (
-            <div style={{ fontSize: 12, color: 'var(--critical)', background: 'rgba(214,40,40,0.1)', padding: '8px 12px', borderRadius: 6 }}>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--critical)', background: 'rgba(214,40,40,0.1)', padding: '8px 12px', borderRadius: 6 }}>
               {error}
             </div>
           )}
@@ -158,7 +158,7 @@ export function AssessmentRequestModal({
             onClick={onClose}
             style={{
               flex: 1, background: 'transparent', border: '1px solid var(--border)',
-              color: 'var(--ink-mid)', borderRadius: 8, padding: '9px', fontSize: 13, cursor: 'pointer',
+              color: 'var(--ink-mid)', borderRadius: 8, padding: '9px', fontSize: 'var(--text-base)', cursor: 'pointer',
             }}
           >
             Cancel
@@ -168,7 +168,7 @@ export function AssessmentRequestModal({
             disabled={sending}
             style={{
               flex: 2, background: 'var(--safe)', border: 'none',
-              color: '#0a0e1a', borderRadius: 8, padding: '9px', fontSize: 13, fontWeight: 700,
+              color: '#0a0e1a', borderRadius: 8, padding: '9px', fontSize: 'var(--text-base)', fontWeight: 700,
               cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.8 : 1,
             }}
           >

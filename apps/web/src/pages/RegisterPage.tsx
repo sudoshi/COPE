@@ -287,7 +287,7 @@ export function RegisterPage() {
                 marginTop: 24,
               }}>
                 <p style={{
-                  fontSize: 14,
+                  fontSize: 'var(--text-base)',
                   color: 'var(--text-muted, #8A857D)',
                   margin: 0,
                 }}>

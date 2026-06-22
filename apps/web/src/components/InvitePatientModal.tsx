@@ -41,7 +41,7 @@ const S = {
     marginBottom: 24,
   },
   title: {
-    fontSize: 16,
+    fontSize: 'var(--text-lg)',
     fontWeight: 700,
     color: 'var(--ink)',
   },
@@ -50,13 +50,13 @@ const S = {
     border: 'none',
     color: 'var(--ink-soft)',
     cursor: 'pointer',
-    fontSize: 16,
+    fontSize: 'var(--text-lg)',
     padding: '4px 8px',
     borderRadius: 6,
   },
   label: {
     display: 'block',
-    fontSize: 12,
+    fontSize: 'var(--text-sm)',
     fontWeight: 600,
     color: 'var(--ink-mid)',
     marginBottom: 6,
@@ -64,14 +64,14 @@ const S = {
     letterSpacing: '0.04em',
   },
   group: { marginBottom: 18 },
-  counter: { textAlign: 'right' as const, fontSize: 11, color: 'var(--ink-soft)', marginTop: 4 },
+  counter: { textAlign: 'right' as const, fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 4 },
   error: {
     background: 'var(--critical-bg)',
     border: '1px solid var(--critical-border)',
     color: 'var(--critical)',
     borderRadius: 8,
     padding: '10px 14px',
-    fontSize: 13,
+    fontSize: 'var(--text-base)',
     marginBottom: 16,
   },
   footer: { display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 },
@@ -140,7 +140,7 @@ export function InvitePatientModal({ token, onClose, onSuccess }: Props) {
               onChange={(e) => setMessage(e.target.value.slice(0, MAX_MSG))}
               placeholder="e.g. I look forward to seeing you at our appointment on Thursday…"
               rows={4}
-              style={{ resize: 'vertical', fontFamily: 'inherit', fontSize: 13, width: '100%' }}
+              style={{ resize: 'vertical', fontFamily: 'inherit', fontSize: 'var(--text-base)', width: '100%' }}
               data-testid="invite-message"
             />
             <div style={S.counter}>{message.length} / {MAX_MSG}</div>

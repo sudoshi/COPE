@@ -106,7 +106,7 @@ function AlertCard({ alert, token, onRefresh }: { alert: Alert; token: string | 
             display: 'inline-flex', alignItems: 'center', gap: 4,
             background: `${borderColor}1a`,
             color: borderColor,
-            fontSize: 9, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: 1,
+            fontSize: 'var(--text-sm)', fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: 1,
             padding: '2px 8px', borderRadius: 'var(--r-xs)', marginBottom: 6,
             border: `1px solid ${borderColor}40`,
           }}>
@@ -114,7 +114,7 @@ function AlertCard({ alert, token, onRefresh }: { alert: Alert; token: string | 
           </span>
 
           {/* Title */}
-          <div style={{ color: 'var(--ink)', fontSize: 14, fontWeight: 600, marginBottom: 3 }}>
+          <div style={{ color: 'var(--ink)', fontSize: 'var(--text-base)', fontWeight: 600, marginBottom: 3 }}>
             {alert.title}
           </div>
 
@@ -124,7 +124,7 @@ function AlertCard({ alert, token, onRefresh }: { alert: Alert; token: string | 
               onClick={() => navigate(`/patients/${alert.patient_id}`)}
               style={{
                 background: 'none', border: 'none', padding: 0,
-                color: 'var(--info)', fontSize: 12, cursor: 'pointer',
+                color: 'var(--info)', fontSize: 'var(--text-sm)', cursor: 'pointer',
                 textDecoration: 'underline', marginBottom: 4, display: 'block',
               }}
             >
@@ -133,7 +133,7 @@ function AlertCard({ alert, token, onRefresh }: { alert: Alert; token: string | 
           )}
 
           {/* Footer */}
-          <div style={{ color: 'var(--ink-soft)', fontSize: 11 }}>
+          <div style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-sm)' }}>
             {alert.rule_key} · {STATUS_LABEL[alert.status]} · {fmtRelative(alert.created_at)}
           </div>
         </div>
@@ -166,7 +166,7 @@ function AlertCard({ alert, token, onRefresh }: { alert: Alert; token: string | 
             </button>
           </div>
         ) : (
-          <div style={{ color: 'var(--ink-soft)', fontSize: 12, flexShrink: 0 }}>
+          <div style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-sm)', flexShrink: 0 }}>
             {STATUS_LABEL[alert.status]}
           </div>
         )}
@@ -189,7 +189,7 @@ function LiveToast({ alerts, onDismiss }: { alerts: LiveAlert[]; onDismiss: () =
   return (
     <div className="live-toast" style={{ borderColor }} data-testid="live-toast">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-        <span style={{ color: borderColor, fontSize: 11, fontWeight: 700, textTransform: 'uppercase' }}>
+        <span style={{ color: borderColor, fontSize: 'var(--text-sm)', fontWeight: 700, textTransform: 'uppercase' }}>
           {alerts.length > 1 ? `${alerts.length} new alerts` : 'New alert'}
         </span>
         <button
@@ -199,8 +199,8 @@ function LiveToast({ alerts, onDismiss }: { alerts: LiveAlert[]; onDismiss: () =
           <Icon icon={X} size="md" title="Dismiss" />
         </button>
       </div>
-      <div style={{ color: 'var(--ink)', fontSize: 13 }}>{latest.title}</div>
-      <div style={{ color: 'var(--ink-soft)', fontSize: 11, marginTop: 4 }}>{latest.ruleKey}</div>
+      <div style={{ color: 'var(--ink)', fontSize: 'var(--text-base)' }}>{latest.title}</div>
+      <div style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-sm)', marginTop: 4 }}>{latest.ruleKey}</div>
     </div>
   );
 }

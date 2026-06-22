@@ -88,10 +88,10 @@ const S = {
     gap: 10,
   },
   titleIcon: {
-    fontSize: 22,
+    fontSize: 'var(--text-2xl)',
   },
   title: {
-    fontSize: 17,
+    fontSize: 'var(--text-xl)',
     fontWeight: 700,
     color: 'var(--ink)',
   },
@@ -102,7 +102,7 @@ const S = {
     border: 'none',
     background: 'rgba(255,255,255,0.06)',
     color: 'var(--ink-mid)',
-    fontSize: 15,
+    fontSize: 'var(--text-md)',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
@@ -126,13 +126,13 @@ const S = {
   },
   statValue: {
     fontFamily: 'var(--font-display)',
-    fontSize: 22,
+    fontSize: 'var(--text-2xl)',
     fontWeight: 400,
     lineHeight: 1,
     color: 'var(--ink)',
   },
   statLabel: {
-    fontSize: 10,
+    fontSize: 'var(--text-sm)',
     fontWeight: 600,
     textTransform: 'uppercase' as const,
     letterSpacing: '0.5px',
@@ -165,7 +165,7 @@ const S = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: 13,
+    fontSize: 'var(--text-base)',
     fontWeight: 700,
     color: 'white',
     flexShrink: 0,
@@ -175,12 +175,12 @@ const S = {
     minWidth: 0,
   },
   itemName: {
-    fontSize: 14,
+    fontSize: 'var(--text-base)',
     fontWeight: 600,
     color: 'var(--ink)',
   },
   itemMeta: {
-    fontSize: 12,
+    fontSize: 'var(--text-sm)',
     color: 'var(--ink-soft)',
     marginTop: 2,
   },
@@ -188,12 +188,12 @@ const S = {
     textAlign: 'right' as const,
   },
   itemPrimary: {
-    fontSize: 14,
+    fontSize: 'var(--text-base)',
     fontWeight: 700,
     color: 'var(--ink)',
   },
   itemSecondary: {
-    fontSize: 11,
+    fontSize: 'var(--text-sm)',
     color: 'var(--ink-soft)',
     marginTop: 2,
   },
@@ -204,7 +204,7 @@ const S = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: 12,
+    fontSize: 'var(--text-sm)',
     fontWeight: 700,
     color: 'white',
   },
@@ -212,7 +212,7 @@ const S = {
     padding: '48px 20px',
     textAlign: 'center' as const,
     color: 'var(--ink-soft)',
-    fontSize: 14,
+    fontSize: 'var(--text-base)',
   },
   footer: {
     padding: '12px 20px',
@@ -223,7 +223,7 @@ const S = {
     alignItems: 'center',
   },
   footerCount: {
-    fontSize: 12,
+    fontSize: 'var(--text-sm)',
     color: 'var(--ink-soft)',
   },
   footerActions: {
@@ -233,7 +233,7 @@ const S = {
   btn: {
     padding: '8px 16px',
     borderRadius: 8,
-    fontSize: 13,
+    fontSize: 'var(--text-base)',
     fontWeight: 600,
     cursor: 'pointer',
     border: '1px solid rgba(255,255,255,0.12)',

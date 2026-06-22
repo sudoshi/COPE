@@ -53,14 +53,14 @@ const TEXT = 'var(--ink)';
 function selectStyle(): CSSProperties {
   return {
     background: CARD, border: `1px solid ${BORDER}`, color: TEXT,
-    borderRadius: 6, padding: '6px 10px', fontSize: 12, cursor: 'pointer', outline: 'none',
+    borderRadius: 6, padding: '6px 10px', fontSize: 'var(--text-sm)', cursor: 'pointer', outline: 'none',
   };
 }
 
 function inputStyle(): CSSProperties {
   return {
     background: CARD, border: `1px solid ${BORDER}`, color: TEXT,
-    borderRadius: 6, padding: '6px 10px', fontSize: 12, outline: 'none', width: '100%',
+    borderRadius: 6, padding: '6px 10px', fontSize: 'var(--text-sm)', outline: 'none', width: '100%',
   };
 }
 
@@ -149,7 +149,7 @@ export function CohortFilterRow({ filter, onChange, onRemove }: CohortFilterRowP
         title="Remove filter"
         style={{
           background: 'transparent', border: 'none', color: 'var(--ink-soft)',
-          cursor: 'pointer', fontSize: 16, padding: '4px 6px',
+          cursor: 'pointer', fontSize: 'var(--text-lg)', padding: '4px 6px',
           borderRadius: 4, lineHeight: 1,
         }}
       >

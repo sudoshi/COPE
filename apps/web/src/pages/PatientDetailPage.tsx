@@ -328,7 +328,7 @@ function Badge({ label, color }: { label: string; color: string }) {
   return (
     <span style={{
       background: `${color}22`, color, borderRadius: 4, padding: '2px 8px',
-      fontSize: 11, fontWeight: 600, textTransform: 'capitalize',
+      fontSize: 'var(--text-sm)', fontWeight: 600, textTransform: 'capitalize',
     }}>
       {label}
     </span>
@@ -343,7 +343,7 @@ function ActionBtn({
       onClick={onClick} disabled={disabled}
       style={{
         background: `${color}22`, border: `1px solid ${color}55`, color,
-        borderRadius: 6, padding: '5px 10px', fontSize: 11, fontWeight: 600,
+        borderRadius: 6, padding: '5px 10px', fontSize: 'var(--text-sm)', fontWeight: 600,
         cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.5 : 1,
       }}
     >
@@ -361,16 +361,16 @@ function PaginationBar({
     <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginTop: 20 }}>
       <button
         onClick={() => onPage(page - 1)} disabled={page === 1}
-        style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: page === 1 ? '#4a5568' : TEXT, padding: '6px 12px', fontSize: 13, cursor: page === 1 ? 'not-allowed' : 'pointer' }}
+        style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: page === 1 ? '#4a5568' : TEXT, padding: '6px 12px', fontSize: 'var(--text-base)', cursor: page === 1 ? 'not-allowed' : 'pointer' }}
       >
         ← Prev
       </button>
-      <span style={{ color: SUB, fontSize: 13, alignSelf: 'center' }}>
+      <span style={{ color: SUB, fontSize: 'var(--text-base)', alignSelf: 'center' }}>
         Page {page} of {totalPages}
       </span>
       <button
         onClick={() => onPage(page + 1)} disabled={page >= totalPages}
-        style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: page >= totalPages ? '#4a5568' : TEXT, padding: '6px 12px', fontSize: 13, cursor: page >= totalPages ? 'not-allowed' : 'pointer' }}
+        style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: page >= totalPages ? '#4a5568' : TEXT, padding: '6px 12px', fontSize: 'var(--text-base)', cursor: page >= totalPages ? 'not-allowed' : 'pointer' }}
       >
         Next →
       </button>
@@ -412,8 +412,8 @@ function OverviewTab({
             ['Enrolled', format(parseISO(patient.created_at), 'MMM d, yyyy')],
           ] as [string, string][]).map(([label, value]) => (
             <div key={label}>
-              <dt style={{ fontSize: 11, color: SUB, marginBottom: 2 }}>{label}</dt>
-              <dd style={{ fontSize: 13, color: TEXT, margin: 0, wordBreak: 'break-all' }}>{value}</dd>
+              <dt style={{ fontSize: 'var(--text-sm)', color: SUB, marginBottom: 2 }}>{label}</dt>
+              <dd style={{ fontSize: 'var(--text-base)', color: TEXT, margin: 0, wordBreak: 'break-all' }}>{value}</dd>
             </div>
           ))}
         </dl>
@@ -438,14 +438,14 @@ function OverviewTab({
             <div className="tab-stat-label">Longest Streak (days)</div>
           </div>
         </div>
-        <div style={{ marginTop: 14, fontSize: 13, color: SUB }}>
+        <div style={{ marginTop: 14, fontSize: 'var(--text-base)', color: SUB }}>
           Last check-in:{' '}
           <span style={{ color: patient.last_checkin_at ? 'var(--success)' : '#4a5568' }}>
             {patient.last_checkin_at ? formatRelative(patient.last_checkin_at) : 'Never'}
           </span>
         </div>
         {patient.risk_reviewed_at && (
-          <div style={{ marginTop: 6, fontSize: 13, color: SUB }}>
+          <div style={{ marginTop: 6, fontSize: 'var(--text-base)', color: SUB }}>
             Risk reviewed:{' '}
             <span style={{ color: TEXT }}>{format(parseISO(patient.risk_reviewed_at), 'MMM d, yyyy')}</span>
           </div>
@@ -455,7 +455,7 @@ function OverviewTab({
           style={{
             marginTop: 20, width: '100%', background: `${PRIMARY}22`,
             border: `1px solid ${PRIMARY}55`, color: PRIMARY,
-            borderRadius: 8, padding: '9px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            borderRadius: 8, padding: '9px 16px', fontSize: 'var(--text-base)', fontWeight: 600, cursor: 'pointer',
           }}
         >
           Generate Clinical Report
@@ -468,9 +468,9 @@ function OverviewTab({
           <h3 className="tab-section-title">Invite Status</h3>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 11, color: SUB, marginBottom: 2 }}>Status</div>
+              <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginBottom: 2 }}>Status</div>
               <span style={{
-                fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 6,
+                fontSize: 'var(--text-sm)', fontWeight: 700, padding: '3px 10px', borderRadius: 6,
                 display: 'inline-flex', alignItems: 'center', gap: 5,
                 background:
                   invite.status === 'accepted' ? 'var(--safe-bg)' :
@@ -485,20 +485,20 @@ function OverviewTab({
               </span>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: SUB, marginBottom: 2 }}>Sent to</div>
-              <div style={{ fontSize: 13, color: TEXT }}>{invite.email}</div>
+              <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginBottom: 2 }}>Sent to</div>
+              <div style={{ fontSize: 'var(--text-base)', color: TEXT }}>{invite.email}</div>
             </div>
             {invite.status === 'accepted' && invite.accepted_at ? (
               <div>
-                <div style={{ fontSize: 11, color: SUB, marginBottom: 2 }}>Accepted</div>
-                <div style={{ fontSize: 13, color: TEXT }}>
+                <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginBottom: 2 }}>Accepted</div>
+                <div style={{ fontSize: 'var(--text-base)', color: TEXT }}>
                   {format(parseISO(invite.accepted_at), 'MMM d, yyyy')}
                 </div>
               </div>
             ) : (
               <div>
-                <div style={{ fontSize: 11, color: SUB, marginBottom: 2 }}>Expires</div>
-                <div style={{ fontSize: 13, color: TEXT }}>
+                <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginBottom: 2 }}>Expires</div>
+                <div style={{ fontSize: 'var(--text-base)', color: TEXT }}>
                   {format(parseISO(invite.expires_at), 'MMM d, yyyy')}
                 </div>
               </div>
@@ -526,15 +526,15 @@ function OverviewTab({
       <div className="tab-card span-full">
         <h3 className="tab-section-title">Care Team ({careTeam.length})</h3>
         {careTeam.length === 0 ? (
-          <p style={{ color: SUB, fontSize: 13, margin: 0 }}>No care team members assigned.</p>
+          <p style={{ color: SUB, fontSize: 'var(--text-base)', margin: 0 }}>No care team members assigned.</p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
             {careTeam.map((m) => (
               <div key={m.clinician_id} className="tab-inner-card">
-                <div style={{ fontWeight: 600, fontSize: 14, color: TEXT }}>
+                <div style={{ fontWeight: 600, fontSize: 'var(--text-base)', color: TEXT }}>
                   {m.title ? `${m.title} ` : ''}{m.first_name} {m.last_name}
                 </div>
-                <div style={{ fontSize: 12, color: SUB, marginTop: 2 }}>{m.email}</div>
+                <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginTop: 2 }}>{m.email}</div>
                 <div style={{ marginTop: 8, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                   <Badge
                     label={CARE_TEAM_ROLE_LABELS[m.care_team_role] ?? m.care_team_role}
@@ -567,7 +567,7 @@ function HeatmapTooltip({
       position: 'fixed', left: x + 12, top: y - 10,
       background: 'var(--bg)', border: '1px solid var(--border)',
       borderRadius: 8, padding: '8px 12px', zIndex: 900,
-      fontSize: 12, color: 'var(--ink)', boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+      fontSize: 'var(--text-sm)', color: 'var(--ink)', boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
       pointerEvents: 'none', minWidth: 140,
     }}>
       <div style={{ fontWeight: 600, marginBottom: 4 }}>
@@ -654,7 +654,7 @@ function MoodTrendsTab({
       <div className="tab-card" style={{ marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <h3 className="tab-section-title" style={{ margin: 0 }}>Mood Score — Last 30 Days</h3>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: SUB, cursor: 'pointer' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 'var(--text-sm)', color: SUB, cursor: 'pointer' }}>
             <input
               type="checkbox"
               checked={comparePrev}
@@ -676,7 +676,7 @@ function MoodTrendsTab({
                 dataKey="date"
                 type="category"
                 allowDuplicatedCategory={false}
-                tick={{ fill: SUB, fontSize: 11 }}
+                tick={{ fill: SUB, fontSize: 'var(--text-sm)' }}
                 tickLine={false}
                 axisLine={{ stroke: BORDER }}
                 tickFormatter={(v: string) => format(parseISO(v), 'MMM d')}
@@ -685,13 +685,13 @@ function MoodTrendsTab({
               <YAxis
                 domain={[0, 10]}
                 ticks={[2, 4, 6, 8, 10]}
-                tick={{ fill: SUB, fontSize: 11 }}
+                tick={{ fill: SUB, fontSize: 'var(--text-sm)' }}
                 tickLine={false}
                 axisLine={{ stroke: BORDER }}
                 width={28}
               />
               <RechartsTooltip
-                contentStyle={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: 13 }}
+                contentStyle={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: 'var(--text-base)' }}
                 labelStyle={{ color: SUB }}
                 itemStyle={{ color: TEXT }}
                 labelFormatter={(v: string) => format(parseISO(v), 'EEE, MMM d')}
@@ -735,7 +735,7 @@ function MoodTrendsTab({
                   key={scale}
                   onClick={() => toggleScale(scale)}
                   style={{
-                    padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 600,
+                    padding: '3px 10px', borderRadius: 20, fontSize: 'var(--text-sm)', fontWeight: 600,
                     background: activeScales.has(scale) ? `${SCALE_COLORS[scale] ?? PRIMARY}22` : 'var(--glass-01)',
                     color: activeScales.has(scale) ? (SCALE_COLORS[scale] ?? PRIMARY) : SUB,
                     border: `1px solid ${activeScales.has(scale) ? (SCALE_COLORS[scale] ?? PRIMARY) : BORDER}`,
@@ -748,7 +748,7 @@ function MoodTrendsTab({
             </div>
           </div>
           {assessmentChartData.length < 2 ? (
-            <div style={{ color: SUB, textAlign: 'center', padding: 32, fontSize: 13 }}>
+            <div style={{ color: SUB, textAlign: 'center', padding: 32, fontSize: 'var(--text-base)' }}>
               Not enough assessment data for the selected scales.
             </div>
           ) : (
@@ -757,25 +757,25 @@ function MoodTrendsTab({
                 <CartesianGrid strokeDasharray="3 3" stroke={BORDER} />
                 <XAxis
                   dataKey="date"
-                  tick={{ fill: SUB, fontSize: 11 }}
+                  tick={{ fill: SUB, fontSize: 'var(--text-sm)' }}
                   tickLine={false}
                   axisLine={{ stroke: BORDER }}
                   tickFormatter={(v: string) => format(parseISO(v), 'MMM d')}
                   interval="preserveStartEnd"
                 />
                 <YAxis
-                  tick={{ fill: SUB, fontSize: 11 }}
+                  tick={{ fill: SUB, fontSize: 'var(--text-sm)' }}
                   tickLine={false}
                   axisLine={{ stroke: BORDER }}
                   width={28}
                 />
                 <RechartsTooltip
-                  contentStyle={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: 13 }}
+                  contentStyle={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: 'var(--text-base)' }}
                   labelStyle={{ color: SUB }}
                   labelFormatter={(v: string) => format(parseISO(v), 'EEE, MMM d')}
                 />
                 <Legend
-                  wrapperStyle={{ fontSize: 11, color: SUB, paddingTop: 8 }}
+                  wrapperStyle={{ fontSize: 'var(--text-sm)', color: SUB, paddingTop: 8 }}
                 />
                 {/* Reference lines for clinical cut-offs */}
                 {[...activeScales].flatMap((scale) =>
@@ -786,7 +786,7 @@ function MoodTrendsTab({
                       stroke={cutoff.color}
                       strokeDasharray="3 3"
                       strokeOpacity={0.6}
-                      label={{ value: `${scale} ${cutoff.label}`, fill: cutoff.color, fontSize: 9, position: 'right' }}
+                      label={{ value: `${scale} ${cutoff.label}`, fill: cutoff.color, fontSize: 'var(--text-sm)', position: 'right' }}
                     />
                   ))
                 )}
@@ -842,7 +842,7 @@ function MoodTrendsTab({
             ))}
           </div>
         </div>
-        <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: SUB, flexWrap: 'wrap' }}>
+        <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8, fontSize: 'var(--text-sm)', color: SUB, flexWrap: 'wrap' }}>
           <span>Low mood</span>
           <div style={{ display: 'flex', gap: 3 }}>
             {[1, 3, 5, 7, 9, 10].map((v) => (
@@ -892,7 +892,7 @@ function JournalTab({
       <div className="tab-empty">
         <div className="empty-state-icon"><Icon icon={NotebookPen} size="2xl" /></div>
         <div className="empty-state-title">No shared journal entries</div>
-        <div style={{ color: SUB, fontSize: 13 }}>
+        <div style={{ color: SUB, fontSize: 'var(--text-base)' }}>
           The patient hasn't shared any journal entries with the care team.
         </div>
       </div>
@@ -908,10 +908,10 @@ function JournalTab({
           <div key={e.id} className="tab-entry-row">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
               <div>
-                <span style={{ fontSize: 14, fontWeight: 600, color: TEXT }}>
+                <span style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: TEXT }}>
                   {format(parseISO(e.entry_date), 'EEEE, MMMM d, yyyy')}
                 </span>
-                <span style={{ fontSize: 11, color: SUB, marginLeft: 10 }}>
+                <span style={{ fontSize: 'var(--text-sm)', color: SUB, marginLeft: 10 }}>
                   {e.word_count} words · shared {formatRelative(e.shared_at)}
                 </span>
               </div>
@@ -919,7 +919,7 @@ function JournalTab({
                 onClick={() => setExpanded(isOpen ? null : e.id)}
                 style={{
                   background: 'none', border: `1px solid ${BORDER}`, borderRadius: 6,
-                  color: SUB, padding: '4px 10px', fontSize: 11, cursor: 'pointer', flexShrink: 0,
+                  color: SUB, padding: '4px 10px', fontSize: 'var(--text-sm)', cursor: 'pointer', flexShrink: 0,
                 }}
               >
                 {isOpen ? 'Collapse' : 'Read'}
@@ -927,13 +927,13 @@ function JournalTab({
             </div>
             {isOpen ? (
               <div style={{
-                fontSize: 14, color: TEXT, lineHeight: 1.7, whiteSpace: 'pre-wrap',
+                fontSize: 'var(--text-base)', color: TEXT, lineHeight: 1.7, whiteSpace: 'pre-wrap',
                 marginTop: 12, borderTop: `1px solid ${BORDER}`, paddingTop: 12,
               }}>
                 {e.body}
               </div>
             ) : (
-              <div style={{ fontSize: 13, color: SUB, marginTop: 8 }}>{preview}</div>
+              <div style={{ fontSize: 'var(--text-base)', color: SUB, marginTop: 8 }}>{preview}</div>
             )}
           </div>
         );
@@ -978,7 +978,7 @@ function NotesTab({
           rows={4}
           style={{
             width: '100%', background: BG, border: `1px solid ${BORDER}`, borderRadius: 8,
-            color: TEXT, padding: '10px 12px', fontSize: 13,
+            color: TEXT, padding: '10px 12px', fontSize: 'var(--text-base)',
             fontFamily: 'Figtree, system-ui, sans-serif', resize: 'vertical',
             boxSizing: 'border-box',
           }}
@@ -989,14 +989,14 @@ function NotesTab({
             onChange={(e) => setNoteType(e.target.value)}
             style={{
               background: BG, border: `1px solid ${BORDER}`, borderRadius: 6,
-              color: TEXT, padding: '6px 10px', fontSize: 13, cursor: 'pointer',
+              color: TEXT, padding: '6px 10px', fontSize: 'var(--text-base)', cursor: 'pointer',
             }}
           >
             {Object.entries(NOTE_TYPE_LABELS).map(([v, l]) => (
               <option key={v} value={v}>{l}</option>
             ))}
           </select>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: SUB, cursor: 'pointer' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-base)', color: SUB, cursor: 'pointer' }}>
             <input
               type="checkbox"
               checked={notePrivate}
@@ -1010,7 +1010,7 @@ function NotesTab({
             disabled={noteSubmitting || !noteBody.trim()}
             style={{
               marginLeft: 'auto', background: PRIMARY, border: 'none', borderRadius: 8,
-              color: '#fff', padding: '8px 20px', fontSize: 13, fontWeight: 600,
+              color: '#fff', padding: '8px 20px', fontSize: 'var(--text-base)', fontWeight: 600,
               cursor: noteSubmitting || !noteBody.trim() ? 'not-allowed' : 'pointer',
               opacity: noteSubmitting || !noteBody.trim() ? 0.6 : 1,
             }}
@@ -1027,7 +1027,7 @@ function NotesTab({
         <div className="tab-empty">
           <div className="empty-state-icon"><Icon icon={ClipboardList} size="2xl" /></div>
           <div className="empty-state-title">No clinical notes yet</div>
-          <div style={{ color: SUB, fontSize: 13 }}>Add the first note above.</div>
+          <div style={{ color: SUB, fontSize: 'var(--text-base)' }}>Add the first note above.</div>
         </div>
       ) : (
         <>
@@ -1035,17 +1035,17 @@ function NotesTab({
             <div key={n.id} className="tab-entry-row">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                 <div>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: TEXT }}>
+                  <span style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: TEXT }}>
                     {n.clinician_first_name} {n.clinician_last_name}
                   </span>
-                  <span style={{ fontSize: 11, color: SUB, marginLeft: 10 }}>{formatRelative(n.created_at)}</span>
+                  <span style={{ fontSize: 'var(--text-sm)', color: SUB, marginLeft: 10 }}>{formatRelative(n.created_at)}</span>
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                   <Badge label={NOTE_TYPE_LABELS[n.note_type] ?? n.note_type} color={PRIMARY} />
                   {n.is_private && <Badge label="Private" color="#faa307" />}
                 </div>
               </div>
-              <div style={{ fontSize: 14, color: TEXT, lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>
+              <div style={{ fontSize: 'var(--text-base)', color: TEXT, lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>
                 {n.body}
               </div>
             </div>
@@ -1095,7 +1095,7 @@ function AlertsTab({
       <div className="tab-empty">
         <div className="empty-state-icon"><Icon icon={Check} size="2xl" /></div>
         <div className="empty-state-title">No alerts</div>
-        <div style={{ color: SUB, fontSize: 13 }}>This patient has no clinical alerts.</div>
+        <div style={{ color: SUB, fontSize: 'var(--text-base)' }}>This patient has no clinical alerts.</div>
       </div>
     );
   }
@@ -1119,15 +1119,15 @@ function AlertsTab({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
               <div style={{ flex: 1 }}>
                 <Badge label={a.severity} color={sc} />
-                <div style={{ color: TEXT, fontSize: 15, fontWeight: 600, marginTop: 6, marginBottom: 4 }}>{a.title}</div>
-                <div style={{ color: SUB, fontSize: 12 }}>
+                <div style={{ color: TEXT, fontSize: 'var(--text-md)', fontWeight: 600, marginTop: 6, marginBottom: 4 }}>{a.title}</div>
+                <div style={{ color: SUB, fontSize: 'var(--text-sm)' }}>
                   {a.rule_key ?? a.alert_type} · {formatRelative(a.created_at)}
                   {a.acknowledged_at && ` · Ack'd ${formatRelative(a.acknowledged_at)}`}
                   {a.auto_resolved && ' · Resolved'}
                 </div>
                 {a.body && (
                   <div style={{
-                    color: TEXT, fontSize: 13, marginTop: 8,
+                    color: TEXT, fontSize: 'var(--text-base)', marginTop: 8,
                     background: BG, borderRadius: 6, padding: '8px 12px',
                   }}>
                     {a.body}
@@ -1142,7 +1142,7 @@ function AlertsTab({
                   <ActionBtn label="Resolve" color="var(--success)" disabled={isBusy} onClick={() => void act(a.id, 'resolve')} />
                 </div>
               ) : (
-                <div style={{ color: '#4a5568', fontSize: 12, flexShrink: 0 }}>
+                <div style={{ color: '#4a5568', fontSize: 'var(--text-sm)', flexShrink: 0 }}>
                   {a.auto_resolved ? 'Resolved' : 'Acknowledged'}
                 </div>
               )}
@@ -1178,10 +1178,10 @@ function MedicationsTab({
     <div>
       {/* Medication list header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-        <h3 style={{ fontSize: 13, color: SUB, fontWeight: 600, margin: 0, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+        <h3 style={{ fontSize: 'var(--text-base)', color: SUB, fontWeight: 600, margin: 0, textTransform: 'uppercase', letterSpacing: 0.5 }}>
           Medications ({medications.length})
         </h3>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: SUB, cursor: 'pointer' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 'var(--text-base)', color: SUB, cursor: 'pointer' }}>
           <input
             type="checkbox"
             checked={showDiscontinued}
@@ -1202,7 +1202,7 @@ function MedicationsTab({
         <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 48, textAlign: 'center' }}>
           <div style={{ marginBottom: 12, color: SUB }}><Icon icon={Pill} size="2xl" /></div>
           <div style={{ color: TEXT, fontWeight: 600 }}>No medications on file</div>
-          <div style={{ color: SUB, fontSize: 13, marginTop: 4 }}>
+          <div style={{ color: SUB, fontSize: 'var(--text-base)', marginTop: 4 }}>
             Add the patient's first medication above.
           </div>
         </div>
@@ -1227,11 +1227,11 @@ function MedicationsTab({
               {/* Left: med info */}
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
-                  <span style={{ fontSize: 15, fontWeight: 700, color: TEXT }}>
+                  <span style={{ fontSize: 'var(--text-md)', fontWeight: 700, color: TEXT }}>
                     {med.medication_name}
                   </span>
                   {med.dose != null && (
-                    <span style={{ fontSize: 12, color: SUB }}>
+                    <span style={{ fontSize: 'var(--text-sm)', color: SUB }}>
                       {med.dose} {med.dose_unit}
                     </span>
                   )}
@@ -1242,11 +1242,11 @@ function MedicationsTab({
                   {isDiscontinued && <Badge label="Discontinued" color="#d62828" />}
                 </div>
                 {med.instructions && (
-                  <div style={{ fontSize: 12, color: SUB, fontStyle: 'italic', marginBottom: 6 }}>
+                  <div style={{ fontSize: 'var(--text-sm)', color: SUB, fontStyle: 'italic', marginBottom: 6 }}>
                     {med.instructions}
                   </div>
                 )}
-                <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontSize: 12, color: SUB }}>
+                <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontSize: 'var(--text-sm)', color: SUB }}>
                   <span>
                     Adherence: {rate !== null ? (
                       <span style={{ color: rate >= 80 ? 'var(--success)' : rate >= 50 ? '#faa307' : '#d62828', fontWeight: 600 }}>
@@ -1278,7 +1278,7 @@ function MedicationsTab({
                   style={{
                     background: `${'#d62828'}22`, border: `1px solid ${'#d62828'}55`,
                     color: '#d62828', borderRadius: 6, padding: '5px 10px',
-                    fontSize: 11, fontWeight: 600, cursor: 'pointer', flexShrink: 0,
+                    fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer', flexShrink: 0,
                   }}
                 >
                   Discontinue
@@ -1330,7 +1330,7 @@ function riskScoreBand(score: number | null): string {
 // RiskGaugeArc — SVG semicircular arc gauge
 // ---------------------------------------------------------------------------
 function RiskGaugeArc({ score, delta }: { score: number | null; delta?: number | null }) {
-  if (score === null) return <span style={{ color: SUB, fontSize: 13 }}>Not yet computed</span>;
+  if (score === null) return <span style={{ color: SUB, fontSize: 'var(--text-base)' }}>Not yet computed</span>;
 
   const band = riskScoreBand(score);
   const color = RISK_BAND_COLOR[band]!;
@@ -1413,7 +1413,7 @@ function RiskFactorBars({ factors }: { factors: RiskFactorItem[] | null }) {
 
   return (
     <div style={{ marginTop: 4 }}>
-      <div style={{ fontSize: 12, color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>
+      <div style={{ fontSize: 'var(--text-sm)', color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>
         Risk Factors by Domain
       </div>
       {domainOrder.filter(d => grouped[d]?.length).map((domain) => {
@@ -1434,11 +1434,11 @@ function RiskFactorBars({ factors }: { factors: RiskFactorItem[] | null }) {
               }}
             >
               <span style={{ display: 'inline-flex', color: meta.color }}><Icon icon={meta.icon} size="md" /></span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: meta.color, flex: 1, textAlign: 'left' }}>{meta.label}</span>
-              <span style={{ fontSize: 12, fontWeight: 700, color: domainTotal > 0 ? TEXT : SUB }}>
+              <span style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: meta.color, flex: 1, textAlign: 'left' }}>{meta.label}</span>
+              <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: domainTotal > 0 ? TEXT : SUB }}>
                 {domainTotal}/{domainMax}
               </span>
-              <span style={{ fontSize: 10, color: SUB, transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s' }}>▼</span>
+              <span style={{ fontSize: 'var(--text-sm)', color: SUB, transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s' }}>▼</span>
             </button>
 
             {/* Factors */}
@@ -1451,10 +1451,10 @@ function RiskFactorBars({ factors }: { factors: RiskFactorItem[] | null }) {
                   return (
                     <div key={factor.rule} style={{ marginBottom: 6 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
-                        <span style={{ fontSize: 12, color: factor.contribution > 0 ? TEXT : SUB, fontWeight: factor.contribution > 0 ? 600 : 400 }}>
+                        <span style={{ fontSize: 'var(--text-sm)', color: factor.contribution > 0 ? TEXT : SUB, fontWeight: factor.contribution > 0 ? 600 : 400 }}>
                           {factor.label}
                         </span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: factor.contribution > 0 ? meta.color : SUB, minWidth: 36, textAlign: 'right' }}>
+                        <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: factor.contribution > 0 ? meta.color : SUB, minWidth: 36, textAlign: 'right' }}>
                           {factor.contribution}/{factor.weight}
                         </span>
                       </div>
@@ -1464,7 +1464,7 @@ function RiskFactorBars({ factors }: { factors: RiskFactorItem[] | null }) {
                       </div>
                       {/* Detail text */}
                       {factor.contribution > 0 && factor.detail && (
-                        <div style={{ fontSize: 11, color: SUB, marginTop: 2, lineHeight: 1.4 }}>{factor.detail}</div>
+                        <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginTop: 2, lineHeight: 1.4 }}>{factor.detail}</div>
                       )}
                     </div>
                   );
@@ -1515,14 +1515,14 @@ function TrajectorySparklines({ riskHistory }: {
 
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-        <div style={{ width: 56, fontSize: 11, color: SUB, fontWeight: 600 }}>{label}</div>
+        <div style={{ width: 56, fontSize: 'var(--text-sm)', color: SUB, fontWeight: 600 }}>{label}</div>
         <svg width={w} height={h} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 4 }}>
           <polyline points={points} fill="none" stroke={color} strokeWidth={1.5} opacity={0.7} />
           <circle cx={lastX} cy={lastY} r={3} fill={color} />
         </svg>
-        <div style={{ fontSize: 12, fontWeight: 700, color, minWidth: 28 }}>{last.value}</div>
+        <div style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color, minWidth: 28 }}>{last.value}</div>
         {delta !== 0 && (
-          <span style={{ fontSize: 11, color: delta > 0 ? 'var(--critical)' : 'var(--safe)', fontWeight: 600 }}>
+          <span style={{ fontSize: 'var(--text-sm)', color: delta > 0 ? 'var(--critical)' : 'var(--safe)', fontWeight: 600 }}>
             {delta > 0 ? '↑' : '↓'}{Math.abs(delta)}
           </span>
         )}
@@ -1534,7 +1534,7 @@ function TrajectorySparklines({ riskHistory }: {
 
   return (
     <div className="tab-card" style={{ marginBottom: 16 }}>
-      <div style={{ fontSize: 12, color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>
+      <div style={{ fontSize: 'var(--text-sm)', color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>
         Trends
       </div>
       {renderSparkline('Risk', riskData, RISK_BAND_COLOR[riskScoreBand(riskData[riskData.length - 1]?.value ?? 0)]!, 100)}
@@ -1564,7 +1564,7 @@ function EarlyWarningSignals({ warnings }: {
 
   return (
     <div className="tab-card" style={{ marginBottom: 16 }}>
-      <div style={{ fontSize: 12, color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>
+      <div style={{ fontSize: 'var(--text-sm)', color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>
         Early Warning Signals
       </div>
       {sorted.map((w, i) => {
@@ -1576,11 +1576,11 @@ function EarlyWarningSignals({ warnings }: {
           }}>
             <span style={{ flexShrink: 0, display: 'inline-flex', color: s.color, marginTop: 1 }}><Icon icon={s.icon} size="sm" /></span>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12, color: s.color, fontWeight: 600, lineHeight: 1.5 }}>{w.signal}</div>
-              <div style={{ fontSize: 11, color: SUB, marginTop: 2 }}>
+              <div style={{ fontSize: 'var(--text-sm)', color: s.color, fontWeight: 600, lineHeight: 1.5 }}>{w.signal}</div>
+              <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginTop: 2 }}>
                 <span style={{
                   display: 'inline-block', background: `${s.color}22`, border: `1px solid ${s.color}33`,
-                  borderRadius: 4, padding: '1px 6px', fontSize: 10, fontWeight: 600, color: s.color,
+                  borderRadius: 4, padding: '1px 6px', fontSize: 'var(--text-sm)', fontWeight: 600, color: s.color,
                   textTransform: 'uppercase', letterSpacing: 0.3, marginRight: 6,
                 }}>
                   {w.domain}
@@ -1608,33 +1608,33 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
     return (
       <div className="tab-card" style={{ marginBottom: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <h3 className="tab-section-title" style={{ margin: 0, fontSize: 13 }}>
+          <h3 className="tab-section-title" style={{ margin: 0, fontSize: 'var(--text-base)' }}>
             {insight.insight_type === 'weekly_summary' ? 'Weekly Summary' :
              insight.insight_type === 'detect_anomaly' ? 'Anomaly Detection' :
              insight.insight_type === 'nightly_deep_analysis' ? 'Deep Analysis' :
              'Trend Narrative'}
           </h3>
-          <span style={{ background: `${PRIMARY}22`, border: `1px solid ${PRIMARY}44`, borderRadius: 6, padding: '2px 8px', fontSize: 10, fontWeight: 800, color: PRIMARY, letterSpacing: 0.5 }}>AI</span>
+          <span style={{ background: `${PRIMARY}22`, border: `1px solid ${PRIMARY}44`, borderRadius: 6, padding: '2px 8px', fontSize: 'var(--text-sm)', fontWeight: 800, color: PRIMARY, letterSpacing: 0.5 }}>AI</span>
         </div>
-        <div style={{ fontSize: 11, color: SUB, marginBottom: 10 }}>{format(parseISO(insight.generated_at), 'MMM d, yyyy \'at\' h:mm a')}</div>
+        <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginBottom: 10 }}>{format(parseISO(insight.generated_at), 'MMM d, yyyy \'at\' h:mm a')}</div>
         {insight.key_findings.length > 0 && (
           <div style={{ marginBottom: 10 }}>
             {insight.key_findings.map((f, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}>
                 <div style={{ width: 5, height: 5, borderRadius: 3, background: PRIMARY, marginTop: 5, flexShrink: 0 }} />
-                <span style={{ fontSize: 12, color: TEXT, lineHeight: 1.5 }}>{f}</span>
+                <span style={{ fontSize: 'var(--text-sm)', color: TEXT, lineHeight: 1.5 }}>{f}</span>
               </div>
             ))}
           </div>
         )}
         <button
           onClick={() => setShowNarrative(v => !v)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: PRIMARY, fontSize: 12, fontWeight: 600, padding: 0 }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: PRIMARY, fontSize: 'var(--text-sm)', fontWeight: 600, padding: 0 }}
         >
           {showNarrative ? '▲ Hide narrative' : '▼ Show full narrative'}
         </button>
         {showNarrative && (
-          <p style={{ fontSize: 13, color: TEXT, lineHeight: 1.6, margin: '8px 0 0', whiteSpace: 'pre-wrap' }}>{insight.narrative}</p>
+          <p style={{ fontSize: 'var(--text-base)', color: TEXT, lineHeight: 1.6, margin: '8px 0 0', whiteSpace: 'pre-wrap' }}>{insight.narrative}</p>
         )}
       </div>
     );
@@ -1648,11 +1648,11 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <h3 className="tab-section-title" style={{ margin: 0, fontSize: 14 }}>Deep Analysis</h3>
+          <h3 className="tab-section-title" style={{ margin: 0, fontSize: 'var(--text-base)' }}>Deep Analysis</h3>
           {trajMeta && (
             <span style={{
               background: `${trajMeta.color}18`, border: `1px solid ${trajMeta.color}44`,
-              borderRadius: 6, padding: '2px 10px', fontSize: 12, fontWeight: 700,
+              borderRadius: 6, padding: '2px 10px', fontSize: 'var(--text-sm)', fontWeight: 700,
               color: trajMeta.color, letterSpacing: 0.3,
               display: 'inline-flex', alignItems: 'center', gap: 5,
             }}>
@@ -1660,14 +1660,14 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
             </span>
           )}
         </div>
-        <div style={{ fontSize: 11, color: SUB }}>{format(parseISO(insight.generated_at), 'MMM d, yyyy \'at\' h:mm a')}</div>
+        <div style={{ fontSize: 'var(--text-sm)', color: SUB }}>{format(parseISO(insight.generated_at), 'MMM d, yyyy \'at\' h:mm a')}</div>
       </div>
 
       {/* Trajectory rationale */}
       {sf.trajectory_rationale && (
         <div style={{
           background: `${trajMeta?.color ?? PRIMARY}0a`, border: `1px solid ${trajMeta?.color ?? PRIMARY}22`,
-          borderRadius: 8, padding: '8px 12px', marginBottom: 14, fontSize: 13, color: TEXT, lineHeight: 1.6,
+          borderRadius: 8, padding: '8px 12px', marginBottom: 14, fontSize: 'var(--text-base)', color: TEXT, lineHeight: 1.6,
         }}>
           {sf.trajectory_rationale}
         </div>
@@ -1676,11 +1676,11 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
       {/* Key Findings */}
       {insight.key_findings.length > 0 && (
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Key Findings</div>
+          <div style={{ fontSize: 'var(--text-sm)', color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Key Findings</div>
           {insight.key_findings.map((f, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}>
               <div style={{ width: 5, height: 5, borderRadius: 3, background: PRIMARY, marginTop: 6, flexShrink: 0 }} />
-              <span style={{ fontSize: 13, color: TEXT, lineHeight: 1.5 }}>{f}</span>
+              <span style={{ fontSize: 'var(--text-base)', color: TEXT, lineHeight: 1.5 }}>{f}</span>
             </div>
           ))}
         </div>
@@ -1689,7 +1689,7 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
       {/* Domain Findings */}
       {sf.domain_findings && (
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Domain Analysis</div>
+          <div style={{ fontSize: 'var(--text-sm)', color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Domain Analysis</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             {(Object.entries(sf.domain_findings) as Array<[string, string | undefined]>).filter(([, v]) => v).map(([domain, text]) => {
               const dKey = domain === 'anxiety' ? 'mood' : domain === 'sleep' ? 'physical' : domain as RiskDomain;
@@ -1699,10 +1699,10 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
                   background: 'var(--glass-01)', border: `1px solid ${BORDER}`, borderRadius: 8,
                   padding: '10px 12px', borderLeft: `3px solid ${meta.color}`,
                 }}>
-                  <div style={{ fontSize: 11, color: meta.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <div style={{ fontSize: 'var(--text-sm)', color: meta.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 5 }}>
                     <Icon icon={meta.icon} size="sm" /> {domain}
                   </div>
-                  <div style={{ fontSize: 12, color: TEXT, lineHeight: 1.5 }}>{text}</div>
+                  <div style={{ fontSize: 'var(--text-sm)', color: TEXT, lineHeight: 1.5 }}>{text}</div>
                 </div>
               );
             })}
@@ -1713,27 +1713,27 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
       {/* Treatment Response */}
       {sf.treatment_response && (
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Treatment Response</div>
-          <p style={{ fontSize: 13, color: TEXT, lineHeight: 1.6, margin: 0 }}>{sf.treatment_response}</p>
+          <div style={{ fontSize: 'var(--text-sm)', color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Treatment Response</div>
+          <p style={{ fontSize: 'var(--text-base)', color: TEXT, lineHeight: 1.6, margin: 0 }}>{sf.treatment_response}</p>
         </div>
       )}
 
       {/* Recommended Focus Areas */}
       {sf.recommended_focus && sf.recommended_focus.length > 0 && (
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Recommended Focus</div>
+          <div style={{ fontSize: 'var(--text-sm)', color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Recommended Focus</div>
           {sf.recommended_focus.sort((a, b) => a.priority - b.priority).map((f, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 6 }}>
               <span style={{
                 background: `${PRIMARY}22`, border: `1px solid ${PRIMARY}33`, borderRadius: '50%',
                 width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 11, fontWeight: 800, color: PRIMARY, flexShrink: 0,
+                fontSize: 'var(--text-sm)', fontWeight: 800, color: PRIMARY, flexShrink: 0,
               }}>
                 {f.priority}
               </span>
               <div>
-                <div style={{ fontSize: 13, color: TEXT, fontWeight: 600 }}>{f.area}</div>
-                <div style={{ fontSize: 12, color: SUB, lineHeight: 1.4 }}>{f.rationale}</div>
+                <div style={{ fontSize: 'var(--text-base)', color: TEXT, fontWeight: 600 }}>{f.area}</div>
+                <div style={{ fontSize: 'var(--text-sm)', color: SUB, lineHeight: 1.4 }}>{f.rationale}</div>
               </div>
             </div>
           ))}
@@ -1743,11 +1743,11 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
       {/* Cross-Domain Patterns */}
       {sf.cross_domain_patterns && sf.cross_domain_patterns.length > 0 && (
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Cross-Domain Patterns</div>
+          <div style={{ fontSize: 'var(--text-sm)', color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Cross-Domain Patterns</div>
           {sf.cross_domain_patterns.map((p, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}>
-              <span style={{ color: '#a78bfa', fontSize: 12, flexShrink: 0 }}>⟡</span>
-              <span style={{ fontSize: 12, color: TEXT, lineHeight: 1.5 }}>{p}</span>
+              <span style={{ color: '#a78bfa', fontSize: 'var(--text-sm)', flexShrink: 0 }}>⟡</span>
+              <span style={{ fontSize: 'var(--text-sm)', color: TEXT, lineHeight: 1.5 }}>{p}</span>
             </div>
           ))}
         </div>
@@ -1756,12 +1756,12 @@ function DeepInsightPanel({ insight }: { insight: AiInsight }) {
       {/* Expandable full narrative */}
       <button
         onClick={() => setShowNarrative(v => !v)}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', color: PRIMARY, fontSize: 12, fontWeight: 600, padding: 0 }}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', color: PRIMARY, fontSize: 'var(--text-sm)', fontWeight: 600, padding: 0 }}
       >
         {showNarrative ? '▲ Hide full narrative' : '▼ Show full narrative'}
       </button>
       {showNarrative && (
-        <p style={{ fontSize: 13, color: TEXT, lineHeight: 1.7, margin: '8px 0 0', whiteSpace: 'pre-wrap' }}>{insight.narrative}</p>
+        <p style={{ fontSize: 'var(--text-base)', color: TEXT, lineHeight: 1.7, margin: '8px 0 0', whiteSpace: 'pre-wrap' }}>{insight.narrative}</p>
       )}
     </div>
   );
@@ -1934,7 +1934,7 @@ function AiInsightsTab({
       <div className="tab-card" style={{ textAlign: 'center', padding: 48 }}>
         <div style={{ marginBottom: 12, color: SUB }}><Icon icon={Lock} size="2xl" /></div>
         <h3 style={{ color: TEXT, margin: '0 0 8px' }}>AI Insights Not Available</h3>
-        <p style={{ color: SUB, maxWidth: 440, margin: '0 auto 16px', fontSize: 14, lineHeight: 1.6 }}>
+        <p style={{ color: SUB, maxWidth: 440, margin: '0 auto 16px', fontSize: 'var(--text-base)', lineHeight: 1.6 }}>
           AI-powered clinical insights require either a signed Business Associate Agreement with Anthropic
           or a local Ollama installation, plus <code>AI_INSIGHTS_ENABLED=true</code>. Contact your COPE
           administrator to enable this feature.
@@ -1967,8 +1967,8 @@ function AiInsightsTab({
         <div className="tab-card" style={{ marginBottom: 16 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
             <div>
-              <h3 className="tab-section-title" style={{ margin: 0, marginBottom: 4, fontSize: 14 }}>Composite Risk Score</h3>
-              {updatedAt && <div style={{ fontSize: 11, color: SUB }}>Last computed {updatedAt}</div>}
+              <h3 className="tab-section-title" style={{ margin: 0, marginBottom: 4, fontSize: 'var(--text-base)' }}>Composite Risk Score</h3>
+              {updatedAt && <div style={{ fontSize: 'var(--text-sm)', color: SUB }}>Last computed {updatedAt}</div>}
             </div>
           </div>
           <RiskGaugeArc score={data?.risk_score ?? null} delta={riskDelta} />
@@ -1978,7 +1978,7 @@ function AiInsightsTab({
         <div className="tab-card" style={{ marginBottom: 16 }}>
           <RiskFactorBars factors={data?.risk_score_factors ?? null} />
           {(!data?.risk_score_factors || data.risk_score_factors.length === 0) && (
-            <div style={{ textAlign: 'center', color: SUB, fontSize: 12, padding: 12 }}>No risk factors computed yet</div>
+            <div style={{ textAlign: 'center', color: SUB, fontSize: 'var(--text-sm)', padding: 12 }}>No risk factors computed yet</div>
           )}
         </div>
 
@@ -1995,7 +1995,7 @@ function AiInsightsTab({
               value={triggerType}
               onChange={(e) => setTriggerType(e.target.value as typeof triggerType)}
               className="sort-select"
-              style={{ fontSize: 12, flex: 1 }}
+              style={{ fontSize: 'var(--text-sm)', flex: 1 }}
             >
               <option value="nightly_deep_analysis">Deep Analysis (30-day)</option>
               <option value="weekly_summary">Weekly Summary (7-day)</option>
@@ -2007,7 +2007,7 @@ function AiInsightsTab({
             style={{
               width: '100%', background: `${PRIMARY}22`, border: `1px solid ${PRIMARY}55`,
               color: PRIMARY, borderRadius: 8, padding: '10px 14px',
-              fontSize: 13, fontWeight: 600, cursor: triggering ? 'not-allowed' : 'pointer',
+              fontSize: 'var(--text-base)', fontWeight: 600, cursor: triggering ? 'not-allowed' : 'pointer',
               opacity: triggering ? 0.6 : 1,
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
             }}
@@ -2016,7 +2016,7 @@ function AiInsightsTab({
           </button>
           {triggerMsg && (
             <div style={{
-              marginTop: 10, borderRadius: 6, padding: '6px 10px', fontSize: 12,
+              marginTop: 10, borderRadius: 6, padding: '6px 10px', fontSize: 'var(--text-sm)',
               background: triggerMsg.startsWith('Failed') ? 'var(--critical-bg)' : 'var(--safe-bg)',
               color: triggerMsg.startsWith('Failed') ? 'var(--critical)' : 'var(--safe)',
             }}>
@@ -2027,7 +2027,7 @@ function AiInsightsTab({
 
         {/* HIPAA disclaimer */}
         <div style={{ background: 'var(--glass-01)', border: `1px solid ${BORDER}`, borderRadius: 8, padding: '10px 12px' }}>
-          <p style={{ fontSize: 11, color: SUB, margin: 0, lineHeight: 1.6, fontStyle: 'italic', display: 'flex', alignItems: 'flex-start', gap: 5 }}>
+          <p style={{ fontSize: 'var(--text-sm)', color: SUB, margin: 0, lineHeight: 1.6, fontStyle: 'italic', display: 'flex', alignItems: 'flex-start', gap: 5 }}>
             <span style={{ flexShrink: 0, marginTop: 1, display: 'inline-flex' }}><Icon icon={Stethoscope} size="sm" /></span>
             <span>{data?.disclaimer ?? 'AI-generated content is for clinical decision support only. It does not constitute a diagnosis or replace clinical assessment.'}</span>
           </p>
@@ -2035,7 +2035,7 @@ function AiInsightsTab({
 
         {/* Empty state */}
         {!loading && (!data || data.insights.length === 0) && (
-          <div style={{ textAlign: 'center', color: SUB, padding: '24px 0', fontSize: 12 }}>
+          <div style={{ textAlign: 'center', color: SUB, padding: '24px 0', fontSize: 'var(--text-sm)' }}>
             No AI insights generated yet. Click "Generate Insight" to create the first analysis.
           </div>
         )}
@@ -2051,7 +2051,7 @@ function AiInsightsTab({
         {/* Insight History Timeline */}
         {olderInsights.length > 0 && (
           <div className="tab-card" style={{ marginBottom: 0 }}>
-            <div style={{ fontSize: 12, color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>
+            <div style={{ fontSize: 'var(--text-sm)', color: SUB, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>
               Insight History
             </div>
             {olderInsights.map((insight) => {
@@ -2078,14 +2078,14 @@ function AiInsightsTab({
                       width: 8, height: 8, borderRadius: '50%', background: PRIMARY, marginLeft: -17,
                       border: '2px solid var(--bg)', flexShrink: 0,
                     }} />
-                    <span style={{ fontSize: 12, fontWeight: 600, color: TEXT, flex: 1 }}>{typeLabel}</span>
+                    <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: TEXT, flex: 1 }}>{typeLabel}</span>
                     {trajMeta && (
-                      <span style={{ fontSize: 11, color: trajMeta.color, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <span style={{ fontSize: 'var(--text-sm)', color: trajMeta.color, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                         <Icon icon={trajMeta.icon} size="sm" /> {trajMeta.label}
                       </span>
                     )}
-                    <span style={{ fontSize: 11, color: SUB }}>{format(parseISO(insight.generated_at), 'MMM d')}</span>
-                    <span style={{ fontSize: 10, color: SUB, transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
+                    <span style={{ fontSize: 'var(--text-sm)', color: SUB }}>{format(parseISO(insight.generated_at), 'MMM d')}</span>
+                    <span style={{ fontSize: 'var(--text-sm)', color: SUB, transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
                   </button>
                   {isExpanded && (
                     <div style={{ marginTop: 8 }}>
@@ -2094,12 +2094,12 @@ function AiInsightsTab({
                           {insight.key_findings.slice(0, 4).map((f, i) => (
                             <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 3 }}>
                               <div style={{ width: 4, height: 4, borderRadius: 2, background: PRIMARY, marginTop: 5, flexShrink: 0 }} />
-                              <span style={{ fontSize: 12, color: TEXT, lineHeight: 1.4 }}>{f}</span>
+                              <span style={{ fontSize: 'var(--text-sm)', color: TEXT, lineHeight: 1.4 }}>{f}</span>
                             </div>
                           ))}
                         </div>
                       )}
-                      <p style={{ fontSize: 12, color: TEXT, lineHeight: 1.5, margin: 0, whiteSpace: 'pre-wrap', maxHeight: 200, overflow: 'auto' }}>
+                      <p style={{ fontSize: 'var(--text-sm)', color: TEXT, lineHeight: 1.5, margin: 0, whiteSpace: 'pre-wrap', maxHeight: 200, overflow: 'auto' }}>
                         {insight.narrative.length > 500 ? insight.narrative.substring(0, 500) + '…' : insight.narrative}
                       </p>
                     </div>
@@ -2121,7 +2121,7 @@ function AiInsightsTab({
             padding: '12px 16px', borderBottom: `1px solid ${BORDER}`,
             display: 'flex', alignItems: 'center', gap: 10,
           }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: TEXT, flex: 1 }}>AI Assistant</span>
+            <span style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: TEXT, flex: 1 }}>AI Assistant</span>
             <select
               value={activeDiscussionId ?? ''}
               onChange={(e) => {
@@ -2130,7 +2130,7 @@ function AiInsightsTab({
                 else setActiveDiscussionId(val);
               }}
               className="sort-select"
-              style={{ maxWidth: 200, fontSize: 12 }}
+              style={{ maxWidth: 200, fontSize: 'var(--text-sm)' }}
             >
               <option value="">New Discussion</option>
               {discussions.map((d) => (
@@ -2143,7 +2143,7 @@ function AiInsightsTab({
               onClick={startNewDiscussion}
               style={{
                 background: `${PRIMARY}22`, border: `1px solid ${PRIMARY}44`,
-                borderRadius: 6, padding: '4px 10px', fontSize: 12,
+                borderRadius: 6, padding: '4px 10px', fontSize: 'var(--text-sm)',
                 color: PRIMARY, fontWeight: 600, cursor: 'pointer',
               }}
             >
@@ -2163,7 +2163,7 @@ function AiInsightsTab({
                 justifyContent: 'center', flex: 1, color: SUB, gap: 8, padding: 32,
               }}>
                 <span style={{ opacity: 0.5, display: 'inline-flex' }}><Icon icon={Sparkles} size="2xl" /></span>
-                <span style={{ fontSize: 13, textAlign: 'center', maxWidth: 300, lineHeight: 1.6 }}>
+                <span style={{ fontSize: 'var(--text-base)', textAlign: 'center', maxWidth: 300, lineHeight: 1.6 }}>
                   Ask questions about this patient's clinical data, trends, and trajectory.
                 </span>
               </div>
@@ -2178,8 +2178,8 @@ function AiInsightsTab({
                   borderLeft: msg.role === 'assistant' ? `3px solid ${PRIMARY}` : 'none',
                   border: msg.role === 'clinician' ? `1px solid ${BORDER}` : `1px solid ${PRIMARY}33`,
                 }}>
-                  <div style={{ fontSize: 13, color: TEXT, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{msg.content}</div>
-                  <div style={{ fontSize: 10, color: SUB, marginTop: 4, textAlign: msg.role === 'clinician' ? 'right' : 'left' }}>
+                  <div style={{ fontSize: 'var(--text-base)', color: TEXT, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{msg.content}</div>
+                  <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginTop: 4, textAlign: msg.role === 'clinician' ? 'right' : 'left' }}>
                     {format(parseISO(msg.created_at), 'h:mm a')}
                   </div>
                 </div>
@@ -2194,8 +2194,8 @@ function AiInsightsTab({
                   border: `1px solid ${PRIMARY}33`,
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <span style={{ color: PRIMARY, fontSize: 13, fontWeight: 600 }}>Thinking</span>
-                    <span style={{ color: PRIMARY, fontSize: 18, animation: 'pulse 1.5s ease-in-out infinite' }}>...</span>
+                    <span style={{ color: PRIMARY, fontSize: 'var(--text-base)', fontWeight: 600 }}>Thinking</span>
+                    <span style={{ color: PRIMARY, fontSize: 'var(--text-xl)', animation: 'pulse 1.5s ease-in-out infinite' }}>...</span>
                   </div>
                 </div>
               </div>
@@ -2205,7 +2205,7 @@ function AiInsightsTab({
 
           {chatError && (
             <div style={{
-              margin: '0 16px', padding: '6px 10px', borderRadius: 6, fontSize: 12,
+              margin: '0 16px', padding: '6px 10px', borderRadius: 6, fontSize: 'var(--text-sm)',
               background: 'var(--critical-bg)', color: 'var(--critical)',
             }}>
               {chatError}
@@ -2225,7 +2225,7 @@ function AiInsightsTab({
               style={{
                 flex: 1, resize: 'none', background: 'var(--glass-02)',
                 border: `1px solid ${BORDER}`, borderRadius: 8,
-                padding: '8px 12px', fontSize: 13, color: TEXT,
+                padding: '8px 12px', fontSize: 'var(--text-base)', color: TEXT,
                 lineHeight: 1.5, maxHeight: 96, overflow: 'auto',
                 outline: 'none', fontFamily: 'inherit',
               }}
@@ -2242,7 +2242,7 @@ function AiInsightsTab({
                 background: chatSending || !chatInput.trim() ? `${PRIMARY}33` : PRIMARY,
                 border: 'none', borderRadius: 8, padding: '8px 16px',
                 color: chatSending || !chatInput.trim() ? `${PRIMARY}88` : '#fff',
-                fontSize: 13, fontWeight: 600,
+                fontSize: 'var(--text-base)', fontWeight: 600,
                 cursor: chatSending || !chatInput.trim() ? 'not-allowed' : 'pointer',
               }}
             >
@@ -2251,7 +2251,7 @@ function AiInsightsTab({
           </div>
 
           <div style={{ padding: '6px 16px 10px', borderTop: `1px solid ${BORDER}22` }}>
-            <p style={{ fontSize: 10, color: SUB, margin: 0, fontStyle: 'italic', opacity: 0.7, display: 'flex', alignItems: 'center', gap: 5 }}>
+            <p style={{ fontSize: 'var(--text-sm)', color: SUB, margin: 0, fontStyle: 'italic', opacity: 0.7, display: 'flex', alignItems: 'center', gap: 5 }}>
               <Icon icon={Stethoscope} size="xs" /> AI-generated · For clinical decision support only · Always apply clinical judgment
             </p>
           </div>
@@ -2551,7 +2551,7 @@ export function PatientDetailPage() {
               <div className="detail-name">
                 {name}
                 {patient.preferred_name && patient.preferred_name !== patient.first_name && (
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--ink-soft)', fontWeight: 400, marginLeft: 8 }}>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-base)', color: 'var(--ink-soft)', fontWeight: 400, marginLeft: 8 }}>
                     "{patient.preferred_name}"
                   </span>
                 )}
@@ -2723,7 +2723,7 @@ export function PatientDetailPage() {
           display: 'flex', alignItems: 'center', gap: 10,
           zIndex: 100,
         }}>
-          <span style={{ fontSize: 11, color: 'var(--ink-soft)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginRight: 4 }}>
+          <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginRight: 4 }}>
             Quick Actions
           </span>
           <button
@@ -2767,7 +2767,7 @@ export function PatientDetailPage() {
             <Icon icon={Siren} size="sm" /> Escalate Alert
           </button>
           <div style={{ flex: 1 }} />
-          <span style={{ fontSize: 11, color: 'var(--ink-ghost)' }}>
+          <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-ghost)' }}>
             {patient.first_name} {patient.last_name} · MRN {patient.mrn}
           </span>
         </div>
@@ -2793,7 +2793,7 @@ export function PatientDetailPage() {
           position: 'fixed', bottom: 80, right: 24,
           background: 'var(--safe-bg)', border: '1px solid var(--safe)',
           color: 'var(--safe)', padding: '10px 18px', borderRadius: 10,
-          fontSize: 13, fontWeight: 600, zIndex: 1200,
+          fontSize: 'var(--text-base)', fontWeight: 600, zIndex: 1200,
           boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
           display: 'inline-flex', alignItems: 'center', gap: 6,
         }}>

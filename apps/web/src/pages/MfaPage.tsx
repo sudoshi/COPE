@@ -106,19 +106,19 @@ export function MfaPage() {
           style={{
             fontFamily: 'Fraunces, serif',
             color: DESIGN_TOKENS.COLOR_PRIMARY,
-            fontSize: 26,
+            fontSize: 'var(--text-3xl)',
             margin: '0 0 8px',
             textAlign: 'center',
           }}
         >
           Two-factor authentication
         </h1>
-        <p style={{ color: '#8b9cb0', margin: '0 0 32px', fontSize: 14, textAlign: 'center' }}>
+        <p style={{ color: '#8b9cb0', margin: '0 0 32px', fontSize: 'var(--text-base)', textAlign: 'center' }}>
           Enter the 6-digit code from your authenticator app to complete sign in.
         </p>
 
         <form onSubmit={(e) => void handleSubmit(e)}>
-          <label style={{ display: 'block', color: '#c5ccd6', fontSize: 13, marginBottom: 8 }}>
+          <label style={{ display: 'block', color: '#c5ccd6', fontSize: 'var(--text-base)', marginBottom: 8 }}>
             Authenticator code
           </label>
           <input
@@ -134,7 +134,7 @@ export function MfaPage() {
             disabled={loading}
             style={{
               ...inputStyle,
-              fontSize: 28,
+              fontSize: 'var(--text-3xl)',
               fontWeight: 700,
               letterSpacing: 12,
               textAlign: 'center',
@@ -144,7 +144,7 @@ export function MfaPage() {
           />
 
           {error && (
-            <p style={{ color: DESIGN_TOKENS.COLOR_DANGER, fontSize: 13, marginTop: 12 }}>
+            <p style={{ color: DESIGN_TOKENS.COLOR_DANGER, fontSize: 'var(--text-base)', marginTop: 12 }}>
               {error}
             </p>
           )}
@@ -162,7 +162,7 @@ export function MfaPage() {
               color: '#fff',
               border: 'none',
               borderRadius: 8,
-              fontSize: 15,
+              fontSize: 'var(--text-md)',
               fontWeight: 600,
               cursor: loading || code.length !== 6 ? 'not-allowed' : 'pointer',
             }}
@@ -181,7 +181,7 @@ export function MfaPage() {
             background: 'transparent',
             color: '#8b9cb0',
             border: 'none',
-            fontSize: 13,
+            fontSize: 'var(--text-base)',
             cursor: 'pointer',
           }}
         >
@@ -197,7 +197,7 @@ export function MfaPage() {
             background: '#1a0a0a',
           }}
         >
-          <p style={{ color: '#fc8181', fontSize: 12, margin: 0, textAlign: 'center' }}>
+          <p style={{ color: '#fc8181', fontSize: 'var(--text-sm)', margin: 0, textAlign: 'center' }}>
             In crisis? Call or text <strong>988</strong> now.
           </p>
         </div>
@@ -214,6 +214,6 @@ const inputStyle: React.CSSProperties = {
   border: '1px solid #2d3748',
   borderRadius: 6,
   color: '#e2e8f0',
-  fontSize: 14,
+  fontSize: 'var(--text-base)',
   boxSizing: 'border-box',
 };

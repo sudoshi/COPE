@@ -38,10 +38,10 @@ function AccessDenied() {
         }}>
           <Icon icon={Lock} size="2xl" />
         </div>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>
+        <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>
           Admin Access Required
         </h1>
-        <p style={{ fontSize: 14, color: 'var(--ink-mid)', margin: '0 0 24px', lineHeight: 1.5 }}>
+        <p style={{ fontSize: 'var(--text-base)', color: 'var(--ink-mid)', margin: '0 0 24px', lineHeight: 1.5 }}>
           This section is restricted to system administrators. If you believe you should have access, please contact your organization's admin.
         </p>
         <button
@@ -53,7 +53,7 @@ function AccessDenied() {
             color: '#fff',
             border: 'none',
             borderRadius: 8,
-            fontSize: 14,
+            fontSize: 'var(--text-base)',
             fontWeight: 600,
             cursor: 'pointer',
           }}
@@ -193,7 +193,7 @@ function StatusBadge({ status }: { status: string }) {
       gap: 5,
       padding: '2px 10px',
       borderRadius: 20,
-      fontSize: 11,
+      fontSize: 'var(--text-sm)',
       fontWeight: 600,
       background: c.bg,
       color: c.color,
@@ -220,9 +220,9 @@ function MetricCard({ label, value, sublabel, accent = '#2563EB' }: {
       flex: 1,
       minWidth: 180,
     }}>
-      <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1 }}>{value}</div>
-      <div style={{ fontSize: 12, color: 'var(--ink-mid)', marginTop: 4 }}>{label}</div>
-      {sublabel && <div style={{ fontSize: 11, color: accent, marginTop: 2 }}>{sublabel}</div>}
+      <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1 }}>{value}</div>
+      <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)', marginTop: 4 }}>{label}</div>
+      {sublabel && <div style={{ fontSize: 'var(--text-sm)', color: accent, marginTop: 2 }}>{sublabel}</div>}
     </div>
   );
 }
@@ -238,7 +238,7 @@ function NavTab({ label, active, onClick, testId }: { label: string; active: boo
         color: active ? '#fff' : 'var(--ink-mid)',
         border: active ? 'none' : '1px solid var(--border2)',
         borderRadius: 8,
-        fontSize: 13,
+        fontSize: 'var(--text-base)',
         fontWeight: active ? 600 : 400,
         cursor: 'pointer',
         transition: 'all 0.15s',
@@ -308,7 +308,7 @@ function DashboardSection() {
 
   if (error) {
     return (
-      <div style={{ padding: 20, background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: 8, color: '#DC2626', fontSize: 13 }}>
+      <div style={{ padding: 20, background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: 8, color: '#DC2626', fontSize: 'var(--text-base)' }}>
         {error}
       </div>
     );
@@ -344,9 +344,9 @@ function DashboardSection() {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <div className="panel" style={{ padding: 20 }}>
-          <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Recent Activity</h3>
+          <h3 style={{ margin: '0 0 14px', fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink)' }}>Recent Activity</h3>
           {recentActivity.length === 0 ? (
-            <div style={{ padding: 20, textAlign: 'center', color: 'var(--ink-mid)', fontSize: 13 }}>
+            <div style={{ padding: 20, textAlign: 'center', color: 'var(--ink-mid)', fontSize: 'var(--text-base)' }}>
               No recent activity
             </div>
           ) : (
@@ -360,8 +360,8 @@ function DashboardSection() {
                   flexShrink: 0,
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, color: 'var(--ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{formatActivityDetail(entry)}</div>
-                  <div style={{ fontSize: 11, color: 'var(--ink-soft)' }}>{entry.actor_email} · {timeAgo(entry.occurred_at)}</div>
+                  <div style={{ fontSize: 'var(--text-base)', color: 'var(--ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{formatActivityDetail(entry)}</div>
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>{entry.actor_email} · {timeAgo(entry.occurred_at)}</div>
                 </div>
                 <StatusBadge status={getActivityStatus(entry.action)} />
               </div>
@@ -369,15 +369,15 @@ function DashboardSection() {
           )}
         </div>
         <div className="panel" style={{ padding: 20 }}>
-          <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>System Status</h3>
+          <h3 style={{ margin: '0 0 14px', fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink)' }}>System Status</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--border1)' }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>Patients in Crisis</div>
-                <div style={{ fontSize: 11, color: 'var(--ink-soft)' }}>Require immediate attention</div>
+                <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>Patients in Crisis</div>
+                <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>Require immediate attention</div>
               </div>
               <span style={{
-                fontSize: 18,
+                fontSize: 'var(--text-xl)',
                 fontWeight: 700,
                 color: (stats?.patients.crisis ?? 0) > 0 ? '#DC2626' : '#0D9488',
               }}>
@@ -386,29 +386,29 @@ function DashboardSection() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--border1)' }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>Active Clinicians</div>
-                <div style={{ fontSize: 11, color: 'var(--ink-soft)' }}>Users with active accounts</div>
+                <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>Active Clinicians</div>
+                <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>Users with active accounts</div>
               </div>
-              <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>
+              <span style={{ fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)' }}>
                 {stats?.clinicians.active ?? 0}
               </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--border1)' }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>Alerts (24h)</div>
-                <div style={{ fontSize: 11, color: 'var(--ink-soft)' }}>Total alerts generated</div>
+                <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>Alerts (24h)</div>
+                <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>Total alerts generated</div>
               </div>
-              <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>
+              <span style={{ fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)' }}>
                 {stats?.alerts.total ?? 0}
               </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0' }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>Audit Errors (24h)</div>
-                <div style={{ fontSize: 11, color: 'var(--ink-soft)' }}>System error events</div>
+                <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>Audit Errors (24h)</div>
+                <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>System error events</div>
               </div>
               <span style={{
-                fontSize: 18,
+                fontSize: 'var(--text-xl)',
                 fontWeight: 700,
                 color: (stats?.audit.errors ?? 0) > 0 ? '#D97706' : '#0D9488',
               }}>
@@ -429,10 +429,10 @@ function FhirEndpointsSection() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>FHIR R4 Endpoint Configuration</h2>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--ink-mid)' }}>Manage bidirectional SMART on FHIR v2 connections to EHR systems</p>
+          <h2 style={{ margin: 0, fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)' }}>FHIR R4 Endpoint Configuration</h2>
+          <p style={{ margin: '4px 0 0', fontSize: 'var(--text-base)', color: 'var(--ink-mid)' }}>Manage bidirectional SMART on FHIR v2 connections to EHR systems</p>
         </div>
-        <button style={{ padding: '8px 18px', background: 'var(--safe)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>+ Add Endpoint</button>
+        <button style={{ padding: '8px 18px', background: 'var(--safe)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 'var(--text-base)', fontWeight: 600, cursor: 'pointer' }}>+ Add Endpoint</button>
       </div>
       {MOCK_FHIR_ENDPOINTS.map((ep) => (
         <div
@@ -456,7 +456,7 @@ function FhirEndpointsSection() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 13,
+                fontSize: 'var(--text-base)',
                 fontWeight: 800,
                 color: ep.type === 'epic' ? '#2563EB' : '#EA580C',
                 border: `1px solid ${ep.type === 'epic' ? '#BFDBFE' : '#FED7AA'}`,
@@ -464,9 +464,9 @@ function FhirEndpointsSection() {
                 {ep.type === 'epic' ? 'Epic' : 'OH'}
               </div>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>{ep.name}</div>
-                <code style={{ fontSize: 11, color: 'var(--ink-mid)', background: 'var(--glass-01)', padding: '2px 6px', borderRadius: 4 }}>{ep.baseUrl}</code>
-                <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 12, color: 'var(--ink-mid)' }}>
+                <div style={{ fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink)' }}>{ep.name}</div>
+                <code style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)', background: 'var(--glass-01)', padding: '2px 6px', borderRadius: 4 }}>{ep.baseUrl}</code>
+                <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
                   <span>Auth: <strong>{ep.authType}</strong></span>
                   <span>Version: <strong>{ep.version}</strong></span>
                   <span>Patients: <strong>{ep.patientsLinked}</strong></span>
@@ -476,7 +476,7 @@ function FhirEndpointsSection() {
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <StatusBadge status={ep.status} />
-              <button style={{ padding: '6px 12px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 6, fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, color: 'var(--ink-mid)' }}>
+              <button style={{ padding: '6px 12px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 6, fontSize: 'var(--text-sm)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, color: 'var(--ink-mid)' }}>
                 Sync Now
               </button>
             </div>
@@ -485,22 +485,22 @@ function FhirEndpointsSection() {
             <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--border1)' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
                 <div style={{ background: 'var(--glass-01)', padding: 12, borderRadius: 8 }}>
-                  <div style={{ fontSize: 11, color: 'var(--ink-mid)', marginBottom: 4 }}>Token Expiry</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: ep.tokenExpiry ? 'var(--ink)' : 'var(--ink-soft)' }}>{ep.tokenExpiry ? formatDateTime(ep.tokenExpiry) : 'No active token'}</div>
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)', marginBottom: 4 }}>Token Expiry</div>
+                  <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: ep.tokenExpiry ? 'var(--ink)' : 'var(--ink-soft)' }}>{ep.tokenExpiry ? formatDateTime(ep.tokenExpiry) : 'No active token'}</div>
                 </div>
                 <div style={{ background: 'var(--glass-01)', padding: 12, borderRadius: 8 }}>
-                  <div style={{ fontSize: 11, color: 'var(--ink-mid)', marginBottom: 4 }}>OAuth Scopes</div>
-                  <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ink)' }}>patient/Patient.r, patient/Observation.rw</div>
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)', marginBottom: 4 }}>OAuth Scopes</div>
+                  <div style={{ fontSize: 'var(--text-sm)', fontWeight: 500, color: 'var(--ink)' }}>patient/Patient.r, patient/Observation.rw</div>
                 </div>
                 <div style={{ background: 'var(--glass-01)', padding: 12, borderRadius: 8 }}>
-                  <div style={{ fontSize: 11, color: 'var(--ink-mid)', marginBottom: 4 }}>PKCE</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0D9488' }}>S256 Enabled</div>
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)', marginBottom: 4 }}>PKCE</div>
+                  <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: '#0D9488' }}>S256 Enabled</div>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-                <button style={{ padding: '6px 14px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 6, fontSize: 12, cursor: 'pointer', color: 'var(--ink-mid)' }}>Edit Configuration</button>
-                <button style={{ padding: '6px 14px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 6, fontSize: 12, cursor: 'pointer', color: 'var(--ink-mid)' }}>Test Connection</button>
-                <button style={{ padding: '6px 14px', background: 'var(--glass-01)', border: '1px solid #FECACA', borderRadius: 6, fontSize: 12, cursor: 'pointer', color: '#DC2626' }}>Disconnect</button>
+                <button style={{ padding: '6px 14px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 6, fontSize: 'var(--text-sm)', cursor: 'pointer', color: 'var(--ink-mid)' }}>Edit Configuration</button>
+                <button style={{ padding: '6px 14px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 6, fontSize: 'var(--text-sm)', cursor: 'pointer', color: 'var(--ink-mid)' }}>Test Connection</button>
+                <button style={{ padding: '6px 14px', background: 'var(--glass-01)', border: '1px solid #FECACA', borderRadius: 6, fontSize: 'var(--text-sm)', cursor: 'pointer', color: '#DC2626' }}>Disconnect</button>
               </div>
             </div>
           )}
@@ -556,17 +556,17 @@ function UsersSection() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>User Management</h2>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--ink-mid)' }}>HIPAA-compliant user lifecycle with RBAC and MFA enforcement</p>
+          <h2 style={{ margin: 0, fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)' }}>User Management</h2>
+          <p style={{ margin: '4px 0 0', fontSize: 'var(--text-base)', color: 'var(--ink-mid)' }}>HIPAA-compliant user lifecycle with RBAC and MFA enforcement</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button style={{ padding: '8px 16px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 8, fontSize: 13, cursor: 'pointer', color: 'var(--ink-mid)' }}>Import from LDAP</button>
-          <button style={{ padding: '8px 16px', background: 'var(--safe)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>+ Add Manual User</button>
+          <button style={{ padding: '8px 16px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 8, fontSize: 'var(--text-base)', cursor: 'pointer', color: 'var(--ink-mid)' }}>Import from LDAP</button>
+          <button style={{ padding: '8px 16px', background: 'var(--safe)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 'var(--text-base)', fontWeight: 600, cursor: 'pointer' }}>+ Add Manual User</button>
         </div>
       </div>
 
       {error && (
-        <div style={{ padding: 16, background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: 8, marginBottom: 16, color: '#DC2626', fontSize: 13 }}>
+        <div style={{ padding: 16, background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: 8, marginBottom: 16, color: '#DC2626', fontSize: 'var(--text-base)' }}>
           {error}
         </div>
       )}
@@ -597,11 +597,11 @@ function UsersSection() {
                     <tr key={u.id}>
                       <td>
                         <div style={{ fontWeight: 600, color: 'var(--ink)' }}>{u.first_name} {u.last_name}</div>
-                        <div style={{ fontSize: 11, color: 'var(--ink-soft)' }}>{u.email}</div>
+                        <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>{u.email}</div>
                       </td>
                       <td>
                         <span style={{
-                          fontSize: 11,
+                          fontSize: 'var(--text-sm)',
                           padding: '2px 10px',
                           borderRadius: 20,
                           background: `${roleConfig.color}15`,
@@ -610,20 +610,20 @@ function UsersSection() {
                           border: `1px solid ${roleConfig.color}30`,
                         }}>{u.role}</span>
                       </td>
-                      <td style={{ fontSize: 12, color: 'var(--ink-mid)' }}>{u.title ?? '—'}</td>
-                      <td style={{ fontSize: 11, color: 'var(--ink-mid)', fontFamily: 'monospace' }}>{u.npi ?? '—'}</td>
+                      <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>{u.title ?? '—'}</td>
+                      <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)', fontFamily: 'monospace' }}>{u.npi ?? '—'}</td>
                       <td>
                         {u.mfa_enabled ? (
                           <span style={{ color: '#0D9488', display: 'inline-flex' }}><Icon icon={Check} size="sm" title="MFA enabled" /></span>
                         ) : (
-                          <span style={{ fontSize: 11, color: '#DC2626', fontWeight: 600 }}>REQUIRED</span>
+                          <span style={{ fontSize: 'var(--text-sm)', color: '#DC2626', fontWeight: 600 }}>REQUIRED</span>
                         )}
                       </td>
-                      <td style={{ fontSize: 13, color: 'var(--ink)' }}>{u.patients_assigned}</td>
-                      <td style={{ fontSize: 12, color: 'var(--ink-mid)' }}>{timeAgo(u.last_login_at)}</td>
+                      <td style={{ fontSize: 'var(--text-base)', color: 'var(--ink)' }}>{u.patients_assigned}</td>
+                      <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>{timeAgo(u.last_login_at)}</td>
                       <td><StatusBadge status={u.is_active ? 'active' : 'suspended'} /></td>
                       <td>
-                        <button style={{ padding: '4px 10px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 4, fontSize: 11, cursor: 'pointer', color: 'var(--ink-mid)' }}>Edit</button>
+                        <button style={{ padding: '4px 10px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 4, fontSize: 'var(--text-sm)', cursor: 'pointer', color: 'var(--ink-mid)' }}>Edit</button>
                       </td>
                     </tr>
                   );
@@ -632,7 +632,7 @@ function UsersSection() {
             </table>
 
             {/* Pagination */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderTop: '1px solid var(--border1)', fontSize: 12, color: 'var(--ink-mid)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderTop: '1px solid var(--border1)', fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
               <span>Showing {users.length} of {pagination.total} users</span>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
@@ -702,8 +702,8 @@ function RolesSection() {
 
   return (
     <div>
-      <h2 style={{ margin: '0 0 4px', fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>Role-Based Access Control (RBAC)</h2>
-      <p style={{ margin: '0 0 18px', fontSize: 13, color: 'var(--ink-mid)' }}>HIPAA §164.312(a)(1) compliant access control with minimum necessary principle enforcement</p>
+      <h2 style={{ margin: '0 0 4px', fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)' }}>Role-Based Access Control (RBAC)</h2>
+      <p style={{ margin: '0 0 18px', fontSize: 'var(--text-base)', color: 'var(--ink-mid)' }}>HIPAA §164.312(a)(1) compliant access control with minimum necessary principle enforcement</p>
       {ROLES_CONFIG.map((role) => (
         <div key={role.id} className="panel" style={{ padding: '16px 20px', marginBottom: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -722,21 +722,21 @@ function RolesSection() {
                 <Icon icon={KeyRound} size="lg" />
               </div>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>{role.label}</div>
-                <div style={{ fontSize: 12, color: 'var(--ink-mid)' }}>{role.description}</div>
+                <div style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink)' }}>{role.label}</div>
+                <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>{role.description}</div>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 12, color: 'var(--ink-mid)' }}>
+              <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
                 {loading ? '...' : `${userCounts[role.id] ?? 0} users`}
               </span>
-              <button style={{ padding: '4px 12px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 6, fontSize: 11, cursor: 'pointer', color: 'var(--ink-mid)' }}>Edit</button>
+              <button style={{ padding: '4px 12px', background: 'var(--glass-01)', border: '1px solid var(--border2)', borderRadius: 6, fontSize: 'var(--text-sm)', cursor: 'pointer', color: 'var(--ink-mid)' }}>Edit</button>
             </div>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 10 }}>
             {role.permissions.map((p) => (
               <span key={p} style={{
-                fontSize: 10,
+                fontSize: 'var(--text-sm)',
                 padding: '2px 8px',
                 background: `${role.color}10`,
                 color: role.color,
@@ -866,8 +866,8 @@ function AuditLogSection() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>Audit Log</h2>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--ink-mid)' }}>HIPAA §164.312(b) compliant audit controls — immutable, 6-year retention, AES-256 encrypted</p>
+          <h2 style={{ margin: 0, fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)' }}>Audit Log</h2>
+          <p style={{ margin: '4px 0 0', fontSize: 'var(--text-base)', color: 'var(--ink-mid)' }}>HIPAA §164.312(b) compliant audit controls — immutable, 6-year retention, AES-256 encrypted</p>
         </div>
         <button
           onClick={handleExportCsv}
@@ -877,7 +877,7 @@ function AuditLogSection() {
             background: 'var(--glass-01)',
             border: '1px solid var(--border2)',
             borderRadius: 8,
-            fontSize: 13,
+            fontSize: 'var(--text-base)',
             cursor: exporting ? 'not-allowed' : 'pointer',
             color: 'var(--ink-mid)',
             opacity: exporting ? 0.6 : 1,
@@ -898,7 +898,7 @@ function AuditLogSection() {
               color: (f.key === 'all' && !filter.action) || filter.action === f.key ? '#fff' : 'var(--ink-mid)',
               border: `1px solid ${(f.key === 'all' && !filter.action) || filter.action === f.key ? 'var(--safe)' : 'var(--border2)'}`,
               borderRadius: 20,
-              fontSize: 12,
+              fontSize: 'var(--text-sm)',
               cursor: 'pointer',
             }}
           >
@@ -908,7 +908,7 @@ function AuditLogSection() {
       </div>
 
       {error && (
-        <div style={{ padding: 16, background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: 8, marginBottom: 16, color: '#DC2626', fontSize: 13 }}>
+        <div style={{ padding: 16, background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: 8, marginBottom: 16, color: '#DC2626', fontSize: 'var(--text-base)' }}>
           {error}
         </div>
       )}
@@ -942,10 +942,10 @@ function AuditLogSection() {
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{formatDetail(entry)}</span>
+                    <span style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>{formatDetail(entry)}</span>
                     <StatusBadge status={getActionStatus(entry.action)} />
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginTop: 3, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 3, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                     <span>User: <strong style={{ color: 'var(--ink-mid)' }}>{entry.actor_email}</strong></span>
                     <span>Action: <strong style={{ color: 'var(--ink-mid)' }}>{entry.action}</strong></span>
                     <span>Resource: <strong style={{ color: 'var(--ink-mid)' }}>{entry.resource_type}</strong></span>
@@ -957,7 +957,7 @@ function AuditLogSection() {
             ))}
 
             {/* Pagination */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderTop: '1px solid var(--border1)', fontSize: 12, color: 'var(--ink-mid)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderTop: '1px solid var(--border1)', fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
               <span>Showing {entries.length} of {pagination.total} entries</span>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
@@ -1030,19 +1030,19 @@ function SecuritySection() {
 
   return (
     <div>
-      <h2 style={{ margin: '0 0 4px', fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>Security & Compliance Settings</h2>
-      <p style={{ margin: '0 0 18px', fontSize: 13, color: 'var(--ink-mid)' }}>HIPAA Technical Safeguards (45 CFR §164.312) configuration</p>
+      <h2 style={{ margin: '0 0 4px', fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)' }}>Security & Compliance Settings</h2>
+      <p style={{ margin: '0 0 18px', fontSize: 'var(--text-base)', color: 'var(--ink-mid)' }}>HIPAA Technical Safeguards (45 CFR §164.312) configuration</p>
       {sections.map((section) => (
         <div key={section.title} className="panel" style={{ padding: 20, marginBottom: 12 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)', marginBottom: 14 }}>{section.title}</div>
+          <div style={{ fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink)', marginBottom: 14 }}>{section.title}</div>
           {section.items.map((item) => (
             <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--border1)' }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{item.label}</div>
-                <div style={{ fontSize: 12, color: 'var(--ink-mid)' }}>{item.value}</div>
+                <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>{item.label}</div>
+                <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>{item.value}</div>
               </div>
               <span style={{
-                fontSize: 11,
+                fontSize: 'var(--text-sm)',
                 padding: '2px 10px',
                 borderRadius: 20,
                 background: item.status === 'enabled' ? '#F0FDFA' : 'var(--glass-01)',
@@ -1133,10 +1133,10 @@ function PaletteSwatch({ palette, isActive, onSelect }: {
       </div>
 
       {/* Name & description */}
-      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>
+      <div style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>
         {palette.name}
       </div>
-      <div style={{ fontSize: 12, color: 'var(--ink-mid)', lineHeight: 1.4 }}>
+      <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)', lineHeight: 1.4 }}>
         {palette.description}
       </div>
     </div>
@@ -1148,8 +1148,8 @@ function AppearanceSection() {
 
   return (
     <div>
-      <h2 style={{ margin: '0 0 4px', fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>Appearance</h2>
-      <p style={{ margin: '0 0 20px', fontSize: 13, color: 'var(--ink-mid)' }}>
+      <h2 style={{ margin: '0 0 4px', fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)' }}>Appearance</h2>
+      <p style={{ margin: '0 0 20px', fontSize: 'var(--text-base)', color: 'var(--ink-mid)' }}>
         Choose a color palette for the dashboard. Changes apply immediately and persist across sessions.
       </p>
 
@@ -1174,7 +1174,7 @@ function AppearanceSection() {
         display: 'flex',
         gap: 10,
         alignItems: 'flex-start',
-        fontSize: 12,
+        fontSize: 'var(--text-sm)',
         color: 'var(--ink-mid)',
         lineHeight: 1.5,
       }}>
@@ -1506,15 +1506,15 @@ function OmopSection() {
       {/* ===== Section 1: Export Management ===== */}
       <div style={{ background: 'var(--panel)', borderRadius: 12, border: '1px solid var(--border2)', overflow: 'hidden' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border1)' }}>
-          <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Export Management</h3>
-          <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--ink-mid)' }}>
+          <h3 style={{ margin: 0, fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink)' }}>Export Management</h3>
+          <p style={{ margin: '4px 0 0', fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
             Trigger and monitor OMOP CDM v5.4 exports
           </p>
         </div>
 
         {/* Trigger area */}
         <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 16, borderBottom: '1px solid var(--border1)' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--ink)', cursor: 'pointer' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-base)', color: 'var(--ink)', cursor: 'pointer' }}>
             <input
               type="checkbox"
               checked={fullRefresh}
@@ -1532,7 +1532,7 @@ function OmopSection() {
               color: '#fff',
               border: 'none',
               borderRadius: 8,
-              fontSize: 13,
+              fontSize: 'var(--text-base)',
               fontWeight: 600,
               cursor: triggerLoading || activeExportId ? 'not-allowed' : 'pointer',
               opacity: triggerLoading || activeExportId ? 0.6 : 1,
@@ -1541,7 +1541,7 @@ function OmopSection() {
             {triggerLoading ? 'Queuing...' : 'Run OMOP Export'}
           </button>
           {fullRefresh && (
-            <span style={{ fontSize: 11, color: 'var(--ink-soft)' }}>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
               Ignores watermarks — re-exports all data
             </span>
           )}
@@ -1554,7 +1554,7 @@ function OmopSection() {
               width: 16, height: 16, border: '2px solid var(--safe)', borderTopColor: 'transparent',
               borderRadius: '50%', animation: 'spin 0.8s linear infinite',
             }} />
-            <span style={{ fontSize: 13, color: 'var(--ink)' }}>
+            <span style={{ fontSize: 'var(--text-base)', color: 'var(--ink)' }}>
               Export {activeExport.id.slice(0, 8)}... is <strong>{activeExport.status}</strong>
             </span>
             <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
@@ -1564,7 +1564,7 @@ function OmopSection() {
         {/* Completed active export summary */}
         {activeExport && activeExport.status === 'completed' && (
           <div style={{ padding: '12px 20px', background: 'rgba(13,148,136,0.06)', borderBottom: '1px solid var(--border1)' }}>
-            <div style={{ fontSize: 13, color: 'var(--ink)', marginBottom: 6 }}>
+            <div style={{ fontSize: 'var(--text-base)', color: 'var(--ink)', marginBottom: 6 }}>
               Export completed — <strong>{totalRecords(activeExport.record_counts).toLocaleString()}</strong> records
             </div>
             {activeExport.file_urls && (
@@ -1572,7 +1572,7 @@ function OmopSection() {
                 {Object.entries(activeExport.file_urls).map(([table, url]) => (
                   <a key={table} href={url} target="_blank" rel="noopener noreferrer" style={{
                     padding: '3px 10px', background: 'var(--glass-01)', border: '1px solid var(--border2)',
-                    borderRadius: 4, fontSize: 11, color: 'var(--safe)', textDecoration: 'none',
+                    borderRadius: 4, fontSize: 'var(--text-sm)', color: 'var(--safe)', textDecoration: 'none',
                   }}>
                     {table}.tsv
                   </a>
@@ -1585,7 +1585,7 @@ function OmopSection() {
         {/* Failed active export */}
         {activeExport && activeExport.status === 'failed' && (
           <div style={{ padding: '12px 20px', background: 'var(--critical-bg)', borderBottom: '1px solid var(--border1)' }}>
-            <div style={{ fontSize: 13, color: 'var(--critical, #DC2626)' }}>
+            <div style={{ fontSize: 'var(--text-base)', color: 'var(--critical, #DC2626)' }}>
               Export failed: {activeExport.error_message ?? 'Unknown error'}
             </div>
           </div>
@@ -1595,7 +1595,7 @@ function OmopSection() {
         {exportsLoading ? (
           <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-mid)' }}>Loading exports...</div>
         ) : exports.length === 0 ? (
-          <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-mid)', fontSize: 13 }}>
+          <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-mid)', fontSize: 'var(--text-base)' }}>
             No OMOP exports yet. Run one above to get started.
           </div>
         ) : (
@@ -1614,21 +1614,21 @@ function OmopSection() {
               <tbody>
                 {exports.map((row) => (
                   <tr key={row.id}>
-                    <td style={{ fontSize: 12, color: 'var(--ink)' }}>{formatDateTime(row.created_at)}</td>
+                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink)' }}>{formatDateTime(row.created_at)}</td>
                     <td>
                       <span style={{
-                        padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 600,
+                        padding: '2px 8px', borderRadius: 4, fontSize: 'var(--text-sm)', fontWeight: 600,
                         background: row.triggered_by === 'nightly' ? 'rgba(37,99,235,0.1)' : 'rgba(107,114,128,0.1)',
                         color: row.triggered_by === 'nightly' ? '#2563EB' : '#6B7280',
                       }}>
                         {row.triggered_by}
                       </span>
                       {row.full_refresh && (
-                        <span style={{ marginLeft: 4, fontSize: 10, color: 'var(--ink-soft)' }}>(full)</span>
+                        <span style={{ marginLeft: 4, fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>(full)</span>
                       )}
                     </td>
                     <td><StatusBadge status={exportStatusKey(row.status)} /></td>
-                    <td style={{ fontSize: 12, color: 'var(--ink)' }}>
+                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink)' }}>
                       {row.record_counts ? (
                         <span
                           style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted' }}
@@ -1641,7 +1641,7 @@ function OmopSection() {
                         <div style={{
                           position: 'absolute', zIndex: 10, background: 'var(--panel)',
                           border: '1px solid var(--border2)', borderRadius: 8, padding: 12, marginTop: 4,
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: 11, minWidth: 180,
+                          boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: 'var(--text-sm)', minWidth: 180,
                         }}>
                           {Object.entries(row.record_counts).map(([t, c]) => (
                             <div key={t} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '2px 0' }}>
@@ -1657,7 +1657,7 @@ function OmopSection() {
                         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                           {Object.entries(row.file_urls).map(([table, url]) => (
                             <a key={table} href={url} target="_blank" rel="noopener noreferrer" style={{
-                              fontSize: 11, color: 'var(--safe)', textDecoration: 'none',
+                              fontSize: 'var(--text-sm)', color: 'var(--safe)', textDecoration: 'none',
                             }}>
                               {table}.tsv
                             </a>
@@ -1665,7 +1665,7 @@ function OmopSection() {
                         </div>
                       ) : '—'}
                     </td>
-                    <td style={{ fontSize: 12, color: 'var(--ink-mid)' }}>
+                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
                       {formatDuration(row.started_at, row.completed_at)}
                     </td>
                   </tr>
@@ -1674,7 +1674,7 @@ function OmopSection() {
             </table>
 
             {/* Pagination */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderTop: '1px solid var(--border1)', fontSize: 12, color: 'var(--ink-mid)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderTop: '1px solid var(--border1)', fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
               <span>Showing {exports.length} of {exportsTotal} exports</span>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
@@ -1708,25 +1708,25 @@ function OmopSection() {
       {/* ===== Section 2: Schedule Configuration ===== */}
       <div style={{ background: 'var(--panel)', borderRadius: 12, border: '1px solid var(--border2)', overflow: 'hidden' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border1)' }}>
-          <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Schedule Configuration</h3>
+          <h3 style={{ margin: 0, fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink)' }}>Schedule Configuration</h3>
         </div>
 
         <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           {/* Static info */}
-          <div style={{ fontSize: 13, color: 'var(--ink)', display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ fontSize: 'var(--text-base)', color: 'var(--ink)', display: 'flex', gap: 8, alignItems: 'center' }}>
             <span style={{ display: 'flex', color: 'var(--ink-mid)' }}><Icon icon={Clock} size="md" /></span>
             Nightly export runs at <strong>02:00 EST</strong> (Step 6 of nightly batch)
           </div>
 
           {/* Last / Next run */}
           <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-            <div style={{ fontSize: 12, color: 'var(--ink-mid)' }}>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
               <strong style={{ color: 'var(--ink)' }}>Last nightly:</strong>{' '}
               {lastNightly
                 ? `${formatDateTime(lastNightly.created_at)} — ${lastNightly.status} (${totalRecords(lastNightly.record_counts).toLocaleString()} records)`
                 : 'No nightly runs yet'}
             </div>
-            <div style={{ fontSize: 12, color: 'var(--ink-mid)' }}>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
               <strong style={{ color: 'var(--ink)' }}>Next run:</strong> {nextNightlyRun}
             </div>
           </div>
@@ -1734,9 +1734,9 @@ function OmopSection() {
 
         {/* HWM table */}
         <div style={{ padding: '0 20px 16px' }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', marginBottom: 8 }}>High-Water Marks</div>
+          <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)', marginBottom: 8 }}>High-Water Marks</div>
           {hwmLoading ? (
-            <div style={{ padding: 20, textAlign: 'center', color: 'var(--ink-mid)', fontSize: 12 }}>Loading...</div>
+            <div style={{ padding: 20, textAlign: 'center', color: 'var(--ink-mid)', fontSize: 'var(--text-sm)' }}>Loading...</div>
           ) : hwm ? (
             <table className="patient-table" style={{ width: '100%' }}>
               <thead>
@@ -1748,8 +1748,8 @@ function OmopSection() {
               <tbody>
                 {HWM_COLUMNS.map(({ key, label }) => (
                   <tr key={key}>
-                    <td style={{ fontSize: 12, color: 'var(--ink)', fontFamily: 'monospace' }}>{label}</td>
-                    <td style={{ fontSize: 12, color: 'var(--ink-mid)' }}>
+                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink)', fontFamily: 'monospace' }}>{label}</td>
+                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
                       {formatDateTime(hwm[key as keyof OmopHwm])}
                     </td>
                   </tr>
@@ -1757,7 +1757,7 @@ function OmopSection() {
               </tbody>
             </table>
           ) : (
-            <div style={{ fontSize: 12, color: 'var(--ink-mid)' }}>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
               HWM data unavailable — ensure migration 016 has been applied.
             </div>
           )}
@@ -1770,7 +1770,7 @@ function OmopSection() {
                 style={{
                   padding: '6px 16px', background: 'transparent', color: 'var(--critical, #DC2626)',
                   border: '1px solid var(--critical-border, #FECACA)', borderRadius: 6,
-                  fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                  fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer',
                 }}
               >
                 Reset Watermarks
@@ -1780,10 +1780,10 @@ function OmopSection() {
                 padding: 16, background: 'var(--critical-bg)', border: '1px solid var(--critical-border)',
                 borderRadius: 8, display: 'flex', flexDirection: 'column', gap: 10,
               }}>
-                <div style={{ fontSize: 13, color: 'var(--critical, #DC2626)', fontWeight: 600 }}>
+                <div style={{ fontSize: 'var(--text-base)', color: 'var(--critical, #DC2626)', fontWeight: 600 }}>
                   Reset all watermarks to epoch?
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--ink-mid)' }}>
+                <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
                   This will force a full re-export of all data on the next nightly run. This cannot be undone.
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
@@ -1792,7 +1792,7 @@ function OmopSection() {
                     disabled={resetLoading}
                     style={{
                       padding: '6px 16px', background: 'var(--critical, #DC2626)', color: '#fff',
-                      border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600,
+                      border: 'none', borderRadius: 6, fontSize: 'var(--text-sm)', fontWeight: 600,
                       cursor: resetLoading ? 'not-allowed' : 'pointer', opacity: resetLoading ? 0.6 : 1,
                     }}
                   >
@@ -1802,7 +1802,7 @@ function OmopSection() {
                     onClick={() => setResetConfirm(false)}
                     style={{
                       padding: '6px 16px', background: 'var(--glass-01)', color: 'var(--ink-mid)',
-                      border: '1px solid var(--border2)', borderRadius: 6, fontSize: 12, cursor: 'pointer',
+                      border: '1px solid var(--border2)', borderRadius: 6, fontSize: 'var(--text-sm)', cursor: 'pointer',
                     }}
                   >
                     Cancel
@@ -1817,8 +1817,8 @@ function OmopSection() {
       {/* ===== Section 3: Concept Mapping Browser ===== */}
       <div style={{ background: 'var(--panel)', borderRadius: 12, border: '1px solid var(--border2)', overflow: 'hidden' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border1)' }}>
-          <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Concept Mapping Browser</h3>
-          <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--ink-mid)' }}>
+          <h3 style={{ margin: 0, fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink)' }}>Concept Mapping Browser</h3>
+          <p style={{ margin: '4px 0 0', fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
             OMOP CDM v5.4 concept mappings for COPE clinical data
           </p>
         </div>
@@ -1832,7 +1832,7 @@ function OmopSection() {
             onChange={(e) => setConceptSearch(e.target.value)}
             style={{
               flex: 1, minWidth: 200, padding: '8px 12px', background: 'var(--glass-01)',
-              border: '1px solid var(--border2)', borderRadius: 6, fontSize: 13, color: 'var(--ink)',
+              border: '1px solid var(--border2)', borderRadius: 6, fontSize: 'var(--text-base)', color: 'var(--ink)',
               outline: 'none',
             }}
           />
@@ -1841,7 +1841,7 @@ function OmopSection() {
             onChange={(e) => setConceptDomain(e.target.value)}
             style={{
               padding: '8px 12px', background: 'var(--glass-01)', border: '1px solid var(--border2)',
-              borderRadius: 6, fontSize: 13, color: 'var(--ink)', cursor: 'pointer',
+              borderRadius: 6, fontSize: 'var(--text-base)', color: 'var(--ink)', cursor: 'pointer',
             }}
           >
             {OMOP_DOMAINS.map((d) => (
@@ -1853,7 +1853,7 @@ function OmopSection() {
         {/* Grouped concept tables */}
         <div style={{ maxHeight: 500, overflowY: 'auto' }}>
           {Object.keys(groupedConcepts).length === 0 ? (
-            <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-mid)', fontSize: 13 }}>
+            <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-mid)', fontSize: 'var(--text-base)' }}>
               No concepts match your search.
             </div>
           ) : (
@@ -1869,8 +1869,8 @@ function OmopSection() {
                   <span style={{ display: 'flex', color: 'var(--ink-mid)', transform: collapsedDomains.has(domain) ? 'rotate(-90deg)' : 'rotate(0)', transition: 'transform 0.15s' }}>
                     <Icon icon={ChevronDown} size="sm" />
                   </span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{domain}</span>
-                  <span style={{ fontSize: 11, color: 'var(--ink-soft)' }}>({entries.length})</span>
+                  <span style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>{domain}</span>
+                  <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>({entries.length})</span>
                 </div>
                 {!collapsedDomains.has(domain) && (
                   <table className="patient-table" style={{ width: '100%' }}>
@@ -1886,15 +1886,15 @@ function OmopSection() {
                     <tbody>
                       {entries.map((c, i) => (
                         <tr key={i}>
-                          <td style={{ fontSize: 12, color: 'var(--ink)', fontFamily: 'monospace' }}>{c.source_field}</td>
-                          <td style={{ fontSize: 11, color: 'var(--ink-mid)' }}>
+                          <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink)', fontFamily: 'monospace' }}>{c.source_field}</td>
+                          <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
                             {c.code ? `${c.code_system}:${c.code}` : '—'}
                           </td>
-                          <td style={{ fontSize: 12, color: c.concept_id === 0 ? 'var(--ink-soft)' : 'var(--safe)', fontWeight: 600 }}>
+                          <td style={{ fontSize: 'var(--text-sm)', color: c.concept_id === 0 ? 'var(--ink-soft)' : 'var(--safe)', fontWeight: 600 }}>
                             {c.concept_id}
                           </td>
-                          <td style={{ fontSize: 12, color: 'var(--ink)' }}>{c.concept_name}</td>
-                          <td style={{ fontSize: 11, color: 'var(--ink-mid)' }}>{c.unit || '—'}</td>
+                          <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink)' }}>{c.concept_name}</td>
+                          <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>{c.unit || '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1906,7 +1906,7 @@ function OmopSection() {
         </div>
 
         {/* Footer */}
-        <div style={{ padding: '12px 20px', borderTop: '1px solid var(--border1)', fontSize: 11, color: 'var(--ink-soft)' }}>
+        <div style={{ padding: '12px 20px', borderTop: '1px solid var(--border1)', fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
           Concept IDs from OMOP CDM v5.4 / Athena. concept_id=0 indicates no standard mapping.
         </div>
       </div>
@@ -1967,13 +1967,13 @@ export function AdminPage() {
             justifyContent: 'center',
             color: '#fff',
             fontWeight: 800,
-            fontSize: 16,
+            fontSize: 'var(--text-lg)',
           }}>
             M
           </div>
           <div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>COPE Admin Console</div>
-            <div style={{ fontSize: 12, color: 'var(--ink-mid)' }}>HIPAA-Compliant Administration</div>
+            <div style={{ fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)' }}>COPE Admin Console</div>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>HIPAA-Compliant Administration</div>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }} data-testid="admin-tabs">

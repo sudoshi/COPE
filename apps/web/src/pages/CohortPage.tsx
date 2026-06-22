@@ -62,10 +62,10 @@ export function CohortPage() {
       <div className="view-pad">
         <div className="panel" style={{ padding: 48, textAlign: 'center' }}>
           <div style={{ marginBottom: 16, color: 'var(--ink-mid)' }}><Icon icon={Lock} size="2xl" /></div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
+          <div style={{ fontSize: 'var(--text-xl)', fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
             Access Restricted
           </div>
-          <div style={{ fontSize: 14, color: 'var(--ink-mid)' }}>
+          <div style={{ fontSize: 'var(--text-base)', color: 'var(--ink-mid)' }}>
             The Cohort Builder is available to administrators only.
             Contact your system administrator for access.
           </div>
@@ -289,7 +289,7 @@ export function CohortPage() {
                     onChange={(e) => setCohortName(e.target.value)}
                     style={{
                       flex: 1, background: CARD, border: `1px solid ${BORDER}`, color: TEXT,
-                      borderRadius: 6, padding: '7px 10px', fontSize: 13, outline: 'none',
+                      borderRadius: 6, padding: '7px 10px', fontSize: 'var(--text-base)', outline: 'none',
                     }}
                   />
                   <input
@@ -310,7 +310,7 @@ export function CohortPage() {
                     disabled={savingCohort || !cohortName.trim()}
                     style={{
                       flex: 1, background: `${PRIMARY}22`, border: `1px solid ${PRIMARY}55`, color: PRIMARY,
-                      borderRadius: 6, padding: '7px 14px', fontSize: 12, fontWeight: 600,
+                      borderRadius: 6, padding: '7px 14px', fontSize: 'var(--text-sm)', fontWeight: 600,
                       cursor: savingCohort || !cohortName.trim() ? 'not-allowed' : 'pointer',
                       opacity: !cohortName.trim() ? 0.5 : 1,
                     }}
@@ -322,7 +322,7 @@ export function CohortPage() {
                       onClick={() => { setEditingCohortId(null); setCohortName(''); setFilterGroup(EMPTY_FILTER); }}
                       style={{
                         background: 'transparent', border: `1px solid ${BORDER}`, color: SUB,
-                        borderRadius: 6, padding: '7px 14px', fontSize: 12, cursor: 'pointer',
+                        borderRadius: 6, padding: '7px 14px', fontSize: 'var(--text-sm)', cursor: 'pointer',
                       }}
                     >
                       Cancel
@@ -358,14 +358,14 @@ export function CohortPage() {
                     style={{ flex: 1, cursor: 'pointer' }}
                     onClick={() => loadCohort(c)}
                   >
-                    <div style={{ fontSize: 13, fontWeight: 600, color: TEXT }}>
+                    <div style={{ fontSize: 'var(--text-base)', fontWeight: 600, color: TEXT }}>
                       {c.name}
                       {c.filter_version === 2 && (
-                        <span style={{ fontSize: 9, color: PRIMARY, marginLeft: 6, fontWeight: 400 }}>v2</span>
+                        <span style={{ fontSize: 'var(--text-sm)', color: PRIMARY, marginLeft: 6, fontWeight: 400 }}>v2</span>
                       )}
                     </div>
                     {c.last_count != null && (
-                      <div style={{ fontSize: 11, color: SUB, marginTop: 2 }}>
+                      <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginTop: 2 }}>
                         {c.last_count} patients
                         {c.last_run_at ? ` \u00B7 ${new Date(c.last_run_at).toLocaleDateString()}` : ''}
                       </div>
@@ -422,7 +422,7 @@ export function CohortPage() {
           position: 'fixed', bottom: 24, right: 24,
           background: 'var(--glass-02)', border: `1px solid ${BORDER}`,
           color: TEXT, padding: '10px 18px', borderRadius: 10,
-          fontSize: 13, fontWeight: 600, zIndex: 1100,
+          fontSize: 'var(--text-base)', fontWeight: 600, zIndex: 1100,
           boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
         }}>
           {toast}

@@ -113,7 +113,7 @@ function StatusBadge({ status }: { status: ReportItem['status'] }) {
     <span style={{
       background: cfg.bg, color: cfg.color,
       borderRadius: 'var(--r-xs)', padding: '2px 8px',
-      fontSize: 11, fontWeight: 600,
+      fontSize: 'var(--text-sm)', fontWeight: 600,
       display: 'inline-flex', alignItems: 'center', gap: 4,
     }}>
       {status === 'generating' && <Icon icon={RefreshCw} size="xs" />}{cfg.label}
@@ -278,7 +278,7 @@ export function ReportsPage() {
                 {/* Patient — only for individual patient reports */}
                 {activeType === 'weekly_summary' && (
                   <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: 0.5, color: 'var(--ink-mid)', marginBottom: 4 }}>
+                    <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: 0.5, color: 'var(--ink-mid)', marginBottom: 4 }}>
                       Patient
                     </label>
                     <select
@@ -299,7 +299,7 @@ export function ReportsPage() {
 
                 {/* Period start */}
                 <div>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: 0.5, color: 'var(--ink-mid)', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: 0.5, color: 'var(--ink-mid)', marginBottom: 4 }}>
                     Period Start
                   </label>
                   <input
@@ -312,7 +312,7 @@ export function ReportsPage() {
 
                 {/* Period end */}
                 <div>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: 0.5, color: 'var(--ink-mid)', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: 0.5, color: 'var(--ink-mid)', marginBottom: 4 }}>
                     Period End
                   </label>
                   <input
@@ -333,7 +333,7 @@ export function ReportsPage() {
                       background: 'rgba(110,168,254,0.13)',
                       border: '1px solid rgba(110,168,254,0.35)',
                       borderRadius: 'var(--r-sm)',
-                      color: 'var(--info)', fontSize: 13, fontWeight: 700,
+                      color: 'var(--info)', fontSize: 'var(--text-base)', fontWeight: 700,
                       cursor: submitting || (activeType === 'weekly_summary' && !formPatient) ? 'not-allowed' : 'pointer',
                       opacity: submitting || (activeType === 'weekly_summary' && !formPatient) ? 0.5 : 1,
                       fontFamily: 'var(--font-body)',
@@ -351,7 +351,7 @@ export function ReportsPage() {
                   background: 'var(--critical-bg)',
                   border: '1px solid var(--critical-border)',
                   borderRadius: 'var(--r-sm)', padding: '8px 12px',
-                  color: 'var(--critical)', fontSize: 13,
+                  color: 'var(--critical)', fontSize: 'var(--text-base)',
                 }}>
                   {formError}
                 </div>
@@ -398,8 +398,8 @@ export function ReportsPage() {
                   return (
                     <tr key={r.id} style={{ opacity: r.status === 'failed' ? 0.6 : 1 }}>
                       <td>
-                        <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--ink)' }}>{r.title}</div>
-                        <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginTop: 2, textTransform: 'capitalize' }}>
+                        <div style={{ fontWeight: 600, fontSize: 'var(--text-base)', color: 'var(--ink)' }}>{r.title}</div>
+                        <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 2, textTransform: 'capitalize' }}>
                           {String(subtype).replace(/_/g, ' ')}
                         </div>
                       </td>
@@ -409,7 +409,7 @@ export function ReportsPage() {
                             onClick={() => r.patient_id && navigate(`/patients/${r.patient_id}`)}
                             style={{
                               background: 'none', border: 'none', color: 'var(--info)',
-                              fontSize: 13, cursor: 'pointer', padding: 0, textDecoration: 'underline',
+                              fontSize: 'var(--text-base)', cursor: 'pointer', padding: 0, textDecoration: 'underline',
                             }}
                           >
                             {r.patient_last_name}, {r.patient_first_name}
@@ -418,19 +418,19 @@ export function ReportsPage() {
                           <span style={{ color: 'var(--ink-soft)' }}>—</span>
                         )}
                       </td>
-                      <td style={{ fontSize: 12, color: 'var(--ink-soft)', whiteSpace: 'nowrap' }}>
+                      <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', whiteSpace: 'nowrap' }}>
                         {fmtDate(r.date_range_start)}<br />
-                        <span style={{ fontSize: 11 }}>→ {fmtDate(r.date_range_end)}</span>
+                        <span style={{ fontSize: 'var(--text-sm)' }}>→ {fmtDate(r.date_range_end)}</span>
                       </td>
                       <td>
                         <StatusBadge status={r.status} />
                         {r.generated_at && (
-                          <div style={{ fontSize: 10, color: 'var(--ink-soft)', marginTop: 4 }}>
+                          <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 4 }}>
                             {fmtDate(r.generated_at)}
                           </div>
                         )}
                       </td>
-                      <td style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
+                      <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
                         {r.file_size_bytes ? fmtBytes(r.file_size_bytes) : '—'}
                       </td>
                       <td>
@@ -443,13 +443,13 @@ export function ReportsPage() {
                             ↓ PDF
                           </a>
                         ) : r.status === 'ready' && expired ? (
-                          <span style={{ color: 'var(--warning)', fontSize: 11 }}>Link expired</span>
+                          <span style={{ color: 'var(--warning)', fontSize: 'var(--text-sm)' }}>Link expired</span>
                         ) : r.status === 'pending' || r.status === 'generating' ? (
-                          <span style={{ color: 'var(--ink-soft)', fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                          <span style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-sm)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                             <Icon icon={Clock} size="sm" /> Pending
                           </span>
                         ) : r.status === 'failed' ? (
-                          <span style={{ color: 'var(--critical)', fontSize: 11 }}>Error</span>
+                          <span style={{ color: 'var(--critical)', fontSize: 'var(--text-sm)' }}>Error</span>
                         ) : null}
                       </td>
                     </tr>
@@ -471,7 +471,7 @@ export function ReportsPage() {
 
       {/* HIPAA footnote */}
       <div style={{
-        marginTop: 20, fontSize: 11, color: 'var(--ink-ghost)',
+        marginTop: 20, fontSize: 'var(--text-sm)', color: 'var(--ink-ghost)',
         borderTop: '1px solid var(--border)', paddingTop: 12,
       }}>
         PDFs stored on the COPE server (signed, time-limited download links).{' '}

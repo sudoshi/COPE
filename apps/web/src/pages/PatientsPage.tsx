@@ -110,7 +110,7 @@ function AlertBadge({ count, severity }: { count: number; severity: string | nul
   return (
     <span style={{
       background: bg, color, borderRadius: 'var(--r-xs)',
-      padding: '2px 8px', fontSize: 11, fontWeight: 700,
+      padding: '2px 8px', fontSize: 'var(--text-sm)', fontWeight: 700,
     }}>
       {count}
     </span>
@@ -167,7 +167,7 @@ function InviteActions({
         style={{
           background: 'rgba(255,190,50,0.12)', color: 'var(--warning)',
           borderRadius: 'var(--r-xs)', padding: '2px 8px',
-          fontSize: 11, fontWeight: 700, cursor: 'pointer',
+          fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer',
           border: '1px solid rgba(255,190,50,0.3)',
           display: 'inline-flex', alignItems: 'center', gap: 4,
         }}
@@ -188,7 +188,7 @@ function InviteActions({
               display: 'block', width: '100%', padding: '9px 14px',
               background: 'none', border: 'none', textAlign: 'left',
               color: invite.resend_count >= 3 ? 'var(--ink-ghost)' : 'var(--ink)',
-              fontSize: 13, cursor: invite.resend_count >= 3 ? 'not-allowed' : 'pointer',
+              fontSize: 'var(--text-base)', cursor: invite.resend_count >= 3 ? 'not-allowed' : 'pointer',
             }}
           >
             {loading === 'resend' ? 'Sending…' : `Resend (${invite.resend_count}/3)`}
@@ -200,7 +200,7 @@ function InviteActions({
               display: 'block', width: '100%', padding: '9px 14px',
               background: 'none', border: 'none', textAlign: 'left',
               borderTop: '1px solid var(--border)',
-              color: 'var(--critical)', fontSize: 13, cursor: 'pointer',
+              color: 'var(--critical)', fontSize: 'var(--text-base)', cursor: 'pointer',
             }}
           >
             {loading === 'cancel' ? 'Cancelling…' : 'Cancel Invite'}
@@ -328,7 +328,7 @@ export function PatientsPage() {
         <div style={{
           position: 'fixed', top: 16, right: 16, zIndex: 999,
           background: 'var(--safe)', color: '#0a0e1a',
-          borderRadius: 8, padding: '10px 18px', fontWeight: 600, fontSize: 13,
+          borderRadius: 8, padding: '10px 18px', fontWeight: 600, fontSize: 'var(--text-base)',
           boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
         }}>
           {inviteToast}
@@ -351,7 +351,7 @@ export function PatientsPage() {
 
       {/* Page header */}
       <div style={{ padding: '0 24px 4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: 12, color: 'var(--ink-soft)' }} data-testid="patient-count">
+        <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }} data-testid="patient-count">
           {rows.length} patients on your caseload
           {pendingInvites.length > 0 && (
             <span style={{ marginLeft: 10, color: 'var(--warning)' }}>
@@ -365,7 +365,7 @@ export function PatientsPage() {
           style={{
             background: 'var(--safe)', color: '#0a0e1a',
             border: 'none', borderRadius: 8, padding: '7px 16px',
-            fontSize: 12, fontWeight: 700, cursor: 'pointer',
+            fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer',
             display: 'inline-flex', alignItems: 'center', gap: 6,
           }}
         >
@@ -423,7 +423,7 @@ export function PatientsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="form-input"
-            style={{ width: 200, fontSize: 12, padding: '5px 10px' }}
+            style={{ width: 200, fontSize: 'var(--text-sm)', padding: '5px 10px' }}
             data-testid="patient-search"
           />
           <select
@@ -445,7 +445,7 @@ export function PatientsPage() {
       {pendingInvites.length > 0 && (
         <div style={{ padding: '0 24px 8px' }}>
           <div className="panel" style={{ marginBottom: 0 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--warning)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--warning)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
               <Icon icon={Hourglass} size="lg" /> Pending Invites
             </div>
             <table className="patient-table">
@@ -460,9 +460,9 @@ export function PatientsPage() {
               <tbody>
                 {pendingInvites.map((inv) => (
                   <tr key={inv.id} onClick={(e) => e.stopPropagation()}>
-                    <td style={{ fontSize: 13, color: 'var(--ink)' }}>{inv.email}</td>
-                    <td style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{fmtDate(inv.created_at)}</td>
-                    <td style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
+                    <td style={{ fontSize: 'var(--text-base)', color: 'var(--ink)' }}>{inv.email}</td>
+                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>{fmtDate(inv.created_at)}</td>
+                    <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
                       {new Date(inv.expires_at) < new Date()
                         ? <span style={{ color: 'var(--critical)' }}>Expired</span>
                         : fmtDate(inv.expires_at)}
@@ -526,10 +526,10 @@ export function PatientsPage() {
                 >
                   {/* Patient name + MRN */}
                   <td>
-                    <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--ink)' }}>
+                    <div style={{ fontWeight: 600, fontSize: 'var(--text-base)', color: 'var(--ink)' }}>
                       {row.last_name}, {row.first_name}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginTop: 2 }}>
+                    <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 2 }}>
                       {row.mrn}
                     </div>
                   </td>
@@ -548,17 +548,17 @@ export function PatientsPage() {
                           className="mood-dot"
                           style={{ background: moodVar(row.todays_mood), width: 12, height: 12 }}
                         />
-                        <span style={{ fontWeight: 700, fontSize: 15, color: moodVar(row.todays_mood) }}>
+                        <span style={{ fontWeight: 700, fontSize: 'var(--text-md)', color: moodVar(row.todays_mood) }}>
                           {row.todays_mood}
                         </span>
                       </div>
                     ) : (
-                      <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}>—</span>
+                      <span style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-base)' }}>—</span>
                     )}
                   </td>
 
                   {/* Streak */}
-                  <td style={{ fontSize: 13, color: row.tracking_streak >= 7 ? 'var(--warning)' : 'var(--ink-soft)' }}>
+                  <td style={{ fontSize: 'var(--text-base)', color: row.tracking_streak >= 7 ? 'var(--warning)' : 'var(--ink-soft)' }}>
                     {row.tracking_streak > 0 ? (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                         <Icon icon={Flame} size="sm" /> {row.tracking_streak}d
@@ -567,7 +567,7 @@ export function PatientsPage() {
                   </td>
 
                   {/* Last check-in */}
-                  <td style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
+                  <td style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
                     {row.todays_submitted_at
                       ? fmtDate(row.todays_submitted_at)
                       : (row.last_checkin_at ? fmtDate(row.last_checkin_at) : '—')}
@@ -588,7 +588,7 @@ export function PatientsPage() {
 
         {/* Showing count */}
         {!loading && sorted.length > 0 && (
-          <div style={{ marginTop: 10, fontSize: 11, color: 'var(--ink-soft)', textAlign: 'right' }}>
+          <div style={{ marginTop: 10, fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', textAlign: 'right' }}>
             Showing {sorted.length} of {rows.length} patients
           </div>
         )}

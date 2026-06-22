@@ -100,7 +100,7 @@ export function ChangePasswordModal() {
           <h2 style={{
             margin: 0,
             fontFamily: 'var(--font-display, "DM Serif Display", Georgia, serif)',
-            fontSize: 22,
+            fontSize: 'var(--text-2xl)',
             fontWeight: 400,
             color: 'var(--text-primary, #F0EDE8)',
             letterSpacing: '-0.3px',
@@ -109,7 +109,7 @@ export function ChangePasswordModal() {
           </h2>
           <p style={{
             margin: '6px 0 0',
-            fontSize: 14,
+            fontSize: 'var(--text-base)',
             color: 'var(--text-muted, #8A857D)',
             lineHeight: 1.5,
           }}>
@@ -128,7 +128,7 @@ export function ChangePasswordModal() {
               htmlFor="cp-current"
               style={{
                 display: 'block',
-                fontSize: 12,
+                fontSize: 'var(--text-sm)',
                 fontWeight: 600,
                 color: 'var(--text-secondary, #C5C0B8)',
                 letterSpacing: '0.6px',
@@ -158,7 +158,7 @@ export function ChangePasswordModal() {
               htmlFor="cp-new"
               style={{
                 display: 'block',
-                fontSize: 12,
+                fontSize: 'var(--text-sm)',
                 fontWeight: 600,
                 color: 'var(--text-secondary, #C5C0B8)',
                 letterSpacing: '0.6px',
@@ -207,7 +207,7 @@ export function ChangePasswordModal() {
                 ))}
               </div>
               <span style={{
-                fontSize: 11,
+                fontSize: 'var(--text-sm)',
                 color: strength.color,
                 fontWeight: 600,
               }}>
@@ -222,7 +222,7 @@ export function ChangePasswordModal() {
               htmlFor="cp-confirm"
               style={{
                 display: 'block',
-                fontSize: 12,
+                fontSize: 'var(--text-sm)',
                 fontWeight: 600,
                 color: 'var(--text-secondary, #C5C0B8)',
                 letterSpacing: '0.6px',
@@ -248,7 +248,7 @@ export function ChangePasswordModal() {
             {confirmPassword.length > 0 && !passwordsMatch && (
               <p style={{
                 margin: '6px 0 0',
-                fontSize: 12,
+                fontSize: 'var(--text-sm)',
                 color: 'var(--critical, #E85A6B)',
               }}>
                 Passwords do not match
@@ -269,7 +269,7 @@ export function ChangePasswordModal() {
               marginBottom: 16,
             }} role="alert" data-testid="cp-error">
               <span style={{
-                fontSize: 13,
+                fontSize: 'var(--text-base)',
                 color: 'var(--critical, #E85A6B)',
                 lineHeight: 1.5,
               }}>

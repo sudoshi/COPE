@@ -102,8 +102,8 @@ function SummaryBar({ aggregates }: { aggregates: CohortAggregates }) {
     }}>
       {metrics.map((m) => (
         <div key={m.label} style={{ minWidth: 80 }}>
-          <div style={{ fontSize: 11, color: SUB, marginBottom: 2 }}>{m.label}</div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: m.color }}>{m.value}</div>
+          <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginBottom: 2 }}>{m.label}</div>
+          <div style={{ fontSize: 'var(--text-xl)', fontWeight: 800, color: m.color }}>{m.value}</div>
         </div>
       ))}
     </div>
@@ -143,7 +143,7 @@ function PatientTable({ patients, sorting, onSort, pagination, onPageChange }: P
     return (
       <span style={{
         display: 'inline-block', padding: '2px 8px', borderRadius: 12,
-        fontSize: 11, fontWeight: 600, background: `${color}22`, color,
+        fontSize: 'var(--text-sm)', fontWeight: 600, background: `${color}22`, color,
         border: `1px solid ${color}44`,
       }}>
         {level}
@@ -154,7 +154,7 @@ function PatientTable({ patients, sorting, onSort, pagination, onPageChange }: P
   return (
     <div>
       <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--text-sm)' }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
               {columns.map((col) => (
@@ -213,7 +213,7 @@ function PatientTable({ patients, sorting, onSort, pagination, onPageChange }: P
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           padding: '10px 0', marginTop: 8, borderTop: `1px solid ${BORDER}`,
         }}>
-          <span style={{ fontSize: 12, color: SUB }}>
+          <span style={{ fontSize: 'var(--text-sm)', color: SUB }}>
             Page {page} of {totalPages} ({pagination.total} total)
           </span>
           <div style={{ display: 'flex', gap: 6 }}>
@@ -221,7 +221,7 @@ function PatientTable({ patients, sorting, onSort, pagination, onPageChange }: P
               onClick={() => onPageChange(Math.max(0, pagination.offset - pagination.limit))}
               disabled={pagination.offset === 0}
               style={{
-                padding: '4px 12px', borderRadius: 4, fontSize: 12, cursor: 'pointer',
+                padding: '4px 12px', borderRadius: 4, fontSize: 'var(--text-sm)', cursor: 'pointer',
                 background: 'var(--glass-01)', border: `1px solid ${BORDER}`, color: TEXT,
                 opacity: pagination.offset === 0 ? 0.4 : 1,
               }}
@@ -232,7 +232,7 @@ function PatientTable({ patients, sorting, onSort, pagination, onPageChange }: P
               onClick={() => onPageChange(pagination.offset + pagination.limit)}
               disabled={!pagination.has_next}
               style={{
-                padding: '4px 12px', borderRadius: 4, fontSize: 12, cursor: 'pointer',
+                padding: '4px 12px', borderRadius: 4, fontSize: 'var(--text-sm)', cursor: 'pointer',
                 background: 'var(--glass-01)', border: `1px solid ${BORDER}`, color: TEXT,
                 opacity: !pagination.has_next ? 0.4 : 1,
               }}
@@ -265,14 +265,14 @@ function AnalyticsTab({ aggregates }: { aggregates: CohortAggregates }) {
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
       {/* Risk Distribution */}
       <div style={{ padding: 14, background: 'var(--glass-01)', borderRadius: 8, border: `1px solid ${BORDER}` }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: TEXT, marginBottom: 10 }}>Risk Distribution</div>
+        <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: TEXT, marginBottom: 10 }}>Risk Distribution</div>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={riskData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-            <XAxis type="number" tick={{ fontSize: 10, fill: SUB }} />
-            <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: TEXT }} width={70} />
+            <XAxis type="number" tick={{ fontSize: 'var(--text-sm)', fill: SUB }} />
+            <YAxis type="category" dataKey="name" tick={{ fontSize: 'var(--text-sm)', fill: TEXT }} width={70} />
             <RechartsTooltip
-              contentStyle={{ background: '#1a1e2e', border: `1px solid ${BORDER}`, borderRadius: 6, fontSize: 11 }}
+              contentStyle={{ background: '#1a1e2e', border: `1px solid ${BORDER}`, borderRadius: 6, fontSize: 'var(--text-sm)' }}
               labelStyle={{ color: TEXT }}
             />
             <Bar dataKey="value" radius={[0, 4, 4, 0]}>
@@ -286,7 +286,7 @@ function AnalyticsTab({ aggregates }: { aggregates: CohortAggregates }) {
 
       {/* Gender Distribution */}
       <div style={{ padding: 14, background: 'var(--glass-01)', borderRadius: 8, border: `1px solid ${BORDER}` }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: TEXT, marginBottom: 10 }}>Gender Distribution</div>
+        <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: TEXT, marginBottom: 10 }}>Gender Distribution</div>
         {genderData.length > 0 ? (
           <ResponsiveContainer width="100%" height={180}>
             <PieChart>
@@ -306,12 +306,12 @@ function AnalyticsTab({ aggregates }: { aggregates: CohortAggregates }) {
                 ))}
               </Pie>
               <RechartsTooltip
-                contentStyle={{ background: '#1a1e2e', border: `1px solid ${BORDER}`, borderRadius: 6, fontSize: 11 }}
+                contentStyle={{ background: '#1a1e2e', border: `1px solid ${BORDER}`, borderRadius: 6, fontSize: 'var(--text-sm)' }}
               />
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <div style={{ height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', color: SUB, fontSize: 12 }}>
+          <div style={{ height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', color: SUB, fontSize: 'var(--text-sm)' }}>
             No gender data
           </div>
         )}
@@ -319,7 +319,7 @@ function AnalyticsTab({ aggregates }: { aggregates: CohortAggregates }) {
 
       {/* Score averages */}
       <div style={{ padding: 14, background: 'var(--glass-01)', borderRadius: 8, border: `1px solid ${BORDER}`, gridColumn: '1 / -1' }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: TEXT, marginBottom: 10 }}>Cohort Averages</div>
+        <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: TEXT, marginBottom: 10 }}>Cohort Averages</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 12 }}>
           {[
             { label: 'PHQ-9', value: aggregates.avg_phq9, max: 27 },
@@ -329,8 +329,8 @@ function AnalyticsTab({ aggregates }: { aggregates: CohortAggregates }) {
             { label: 'Medications', value: aggregates.avg_med_count, max: null },
           ].map((m) => (
             <div key={m.label} style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 24, fontWeight: 800, color: PRIMARY }}>{m.value?.toFixed(1) ?? '--'}</div>
-              <div style={{ fontSize: 11, color: SUB }}>{m.label}{m.max ? ` / ${m.max}` : ''}</div>
+              <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, color: PRIMARY }}>{m.value?.toFixed(1) ?? '--'}</div>
+              <div style={{ fontSize: 'var(--text-sm)', color: SUB }}>{m.label}{m.max ? ` / ${m.max}` : ''}</div>
             </div>
           ))}
         </div>
@@ -391,14 +391,14 @@ function ExportTab({ hasFilters, filterGroup }: { hasFilters: boolean; filterGro
 
   return (
     <div style={{ padding: 4 }}>
-      <div style={{ fontSize: 12, color: SUB, marginBottom: 10 }}>Export format</div>
+      <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginBottom: 10 }}>Export format</div>
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         {(['ndjson', 'csv', 'fhir_bundle'] as const).map((fmt) => (
           <button
             key={fmt}
             onClick={() => setFormat(fmt)}
             style={{
-              padding: '5px 14px', borderRadius: 20, fontSize: 11, fontWeight: 600,
+              padding: '5px 14px', borderRadius: 20, fontSize: 'var(--text-sm)', fontWeight: 600,
               background: format === fmt ? 'var(--info)' : 'var(--glass-01)',
               color: format === fmt ? '#0a0e1a' : SUB,
               border: `1px solid ${format === fmt ? 'var(--info)' : BORDER}`,
@@ -416,7 +416,7 @@ function ExportTab({ hasFilters, filterGroup }: { hasFilters: boolean; filterGro
         style={{
           width: '100%', background: `${PRIMARY}22`, border: `1px solid ${PRIMARY}55`,
           color: PRIMARY, borderRadius: 8, padding: '9px 16px',
-          fontSize: 13, fontWeight: 600,
+          fontSize: 'var(--text-base)', fontWeight: 600,
           cursor: submitting || !hasFilters ? 'not-allowed' : 'pointer',
           opacity: !hasFilters ? 0.5 : 1,
         }}
@@ -424,14 +424,14 @@ function ExportTab({ hasFilters, filterGroup }: { hasFilters: boolean; filterGro
         {submitting ? 'Queuing...' : 'Export Cohort Data'}
       </button>
 
-      <div style={{ fontSize: 11, color: SUB, marginTop: 8, textAlign: 'center' }}>
+      <div style={{ fontSize: 'var(--text-sm)', color: SUB, marginTop: 8, textAlign: 'center' }}>
         De-identified per HIPAA Safe Harbour (18 PHI fields removed)
       </div>
 
       {job && (
         <div style={{
           marginTop: 14, padding: '10px 12px', borderRadius: 8,
-          background: 'var(--glass-02)', border: `1px solid ${BORDER}`, fontSize: 12,
+          background: 'var(--glass-02)', border: `1px solid ${BORDER}`, fontSize: 'var(--text-sm)',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
             <span style={{ color: SUB }}>Status</span>
@@ -457,7 +457,7 @@ function ExportTab({ hasFilters, filterGroup }: { hasFilters: boolean; filterGro
                 display: 'block', marginTop: 8, textAlign: 'center',
                 background: `${PRIMARY}22`, border: `1px solid ${PRIMARY}55`,
                 color: PRIMARY, borderRadius: 6, padding: '7px 12px',
-                fontSize: 12, fontWeight: 600, textDecoration: 'none',
+                fontSize: 'var(--text-sm)', fontWeight: 600, textDecoration: 'none',
               }}
             >
               Download Export
@@ -516,7 +516,7 @@ export function CohortResultsPanel({
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             style={{
-              padding: '10px 16px', fontSize: 12, fontWeight: 600,
+              padding: '10px 16px', fontSize: 'var(--text-sm)', fontWeight: 600,
               background: 'transparent', border: 'none',
               borderBottom: activeTab === tab.key ? `2px solid ${PRIMARY}` : '2px solid transparent',
               color: activeTab === tab.key ? PRIMARY : SUB,
@@ -533,11 +533,11 @@ export function CohortResultsPanel({
         {aggregates && <SummaryBar aggregates={aggregates} />}
 
         {loading ? (
-          <div style={{ padding: 40, textAlign: 'center', color: SUB, fontSize: 13 }}>
+          <div style={{ padding: 40, textAlign: 'center', color: SUB, fontSize: 'var(--text-base)' }}>
             Querying cohort...
           </div>
         ) : !aggregates ? (
-          <div style={{ padding: 40, textAlign: 'center', color: SUB, fontSize: 13 }}>
+          <div style={{ padding: 40, textAlign: 'center', color: SUB, fontSize: 'var(--text-base)' }}>
             Add filters and click "Search" to see results
           </div>
         ) : (

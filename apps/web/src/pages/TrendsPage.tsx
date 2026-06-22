@@ -67,7 +67,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
   if (loading) {
     return (
       <div className="panel anim" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
-        <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}>Loading historical data…</span>
+        <span style={{ color: 'var(--ink-soft)', fontSize: 'var(--text-base)' }}>Loading historical data…</span>
       </div>
     );
   }
@@ -110,7 +110,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
             <XAxis
               dataKey="date"
-              tick={{ fill: 'var(--ink-soft)', fontSize: 10 }}
+              tick={{ fill: 'var(--ink-soft)', fontSize: 'var(--text-sm)' }}
               tickLine={false}
               axisLine={{ stroke: 'var(--border)' }}
               tickFormatter={(v: string) => format(parseISO(v), 'MMM d')}
@@ -119,7 +119,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
             <YAxis
               domain={[0, 10]}
               ticks={[2, 4, 6, 8, 10]}
-              tick={{ fill: 'var(--ink-soft)', fontSize: 10 }}
+              tick={{ fill: 'var(--ink-soft)', fontSize: 'var(--text-sm)' }}
               tickLine={false}
               axisLine={{ stroke: 'var(--border)' }}
               width={24}
@@ -128,7 +128,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
               contentStyle={{
                 background: 'var(--glass-02)',
                 border: '1px solid var(--border)',
-                borderRadius: 8, fontSize: 12,
+                borderRadius: 8, fontSize: 'var(--text-sm)',
                 backdropFilter: 'blur(20px)',
               }}
               labelStyle={{ color: 'var(--ink-soft)' }}
@@ -156,7 +156,7 @@ function HistoricalMoodPanel({ token }: { token: string | null }) {
             />
           </LineChart>
         </ResponsiveContainer>
-        <div style={{ display: 'flex', gap: 16, padding: '4px 16px 12px', fontSize: 11, color: 'var(--ink-soft)' }}>
+        <div style={{ display: 'flex', gap: 16, padding: '4px 16px 12px', fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <span style={{ width: 18, height: 2, background: 'var(--safe)', display: 'inline-block', borderRadius: 1 }} />
             Avg Mood /10
@@ -187,7 +187,7 @@ function StatPanel({
       </div>
       <div className="stat-panel-value" style={{ color: color ?? 'var(--safe)' }}>
         {value}
-        {unit && <span style={{ fontSize: 18, color: 'var(--ink-soft)', marginLeft: 4 }}>{unit}</span>}
+        {unit && <span style={{ fontSize: 'var(--text-xl)', color: 'var(--ink-soft)', marginLeft: 4 }}>{unit}</span>}
       </div>
       {subtitle && <div className="stat-panel-label">{subtitle}</div>}
     </div>
@@ -232,7 +232,7 @@ function RiskDistributionPanel({ caseload }: { caseload: CaseloadRow[] }) {
           {buckets.map((b) => (
             <div key={b.key} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 10, height: 10, borderRadius: 2, background: b.color }} />
-              <span style={{ fontSize: 11, color: 'var(--ink-mid)' }}>
+              <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>
                 {b.label}: <strong style={{ color: 'var(--ink)' }}>{b.count}</strong>
                 <span style={{ color: 'var(--ink-soft)' }}>
                   {' '}({Math.round((b.count / total) * 100)}%)
@@ -318,8 +318,8 @@ function CaseloadSummaryPanel({ caseload, snapshot }: { caseload: CaseloadRow[];
               padding: '8px 18px', borderBottom: '1px solid var(--border)',
             }}
           >
-            <span style={{ fontSize: 12, color: 'var(--ink-mid)' }}>{r.label}</span>
-            <span style={{ fontSize: 13, fontWeight: 700, color: r.color }}>{r.value}</span>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-mid)' }}>{r.label}</span>
+            <span style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: r.color }}>{r.value}</span>
           </div>
         ))}
       </div>
@@ -371,19 +371,19 @@ function MoodDistributionBarChart({ data }: { data: PopBreakdown['moodDistributi
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
               <XAxis
                 dataKey="label"
-                tick={{ fill: 'var(--ink-soft)', fontSize: 11 }}
+                tick={{ fill: 'var(--ink-soft)', fontSize: 'var(--text-sm)' }}
                 tickLine={false}
                 axisLine={{ stroke: 'var(--border)' }}
               />
               <YAxis
                 allowDecimals={false}
-                tick={{ fill: 'var(--ink-soft)', fontSize: 10 }}
+                tick={{ fill: 'var(--ink-soft)', fontSize: 'var(--text-sm)' }}
                 tickLine={false}
                 axisLine={false}
                 width={24}
               />
               <RechartsTooltip
-                contentStyle={{ background: 'var(--glass-02)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }}
+                contentStyle={{ background: 'var(--glass-02)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 'var(--text-sm)' }}
                 cursor={{ fill: 'rgba(255,255,255,0.04)' }}
                 formatter={(v: number) => [v, 'Patients']}
               />
@@ -432,8 +432,8 @@ function AdherenceGaugePanel({ adherence, days }: { adherence: PopBreakdown['adh
           <path d={bgPath}  fill="none" stroke="var(--border)" strokeWidth={10} strokeLinecap="round" />
           {pct > 0 && <path d={arcPath} fill="none" stroke={color} strokeWidth={10} strokeLinecap="round" />}
         </svg>
-        <div style={{ fontSize: 28, fontWeight: 800, color, marginTop: -8 }}>{pct}%</div>
-        <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginTop: 2 }}>
+        <div style={{ fontSize: 'var(--text-3xl)', fontWeight: 800, color, marginTop: -8 }}>{pct}%</div>
+        <div style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)', marginTop: 2 }}>
           {pct >= 80 ? 'Excellent adherence' : pct >= 60 ? 'Moderate adherence' : adherence.total === 0 ? 'No data' : 'Needs attention'}
         </div>
       </div>
@@ -456,7 +456,7 @@ function AssessmentCompletionPanel({ completion, days }: { completion: PopBreakd
         <div className="panel-sub">Last {days} days · {completion.completed}/{completion.total} patients</div>
       </div>
       <div style={{ padding: '12px 18px 16px' }}>
-        <div style={{ fontSize: 28, fontWeight: 800, color, marginBottom: 10 }}>
+        <div style={{ fontSize: 'var(--text-3xl)', fontWeight: 800, color, marginBottom: 10 }}>
           {completion.total === 0 ? '—' : `${pct}%`}
         </div>
         <div style={{
@@ -465,7 +465,7 @@ function AssessmentCompletionPanel({ completion, days }: { completion: PopBreakd
         }}>
           <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 4, transition: 'width 0.6s ease' }} />
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 11, color: 'var(--ink-soft)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
           <span>{completion.completed} completed</span>
           <span>{completion.total - completion.completed} outstanding</span>
         </div>
@@ -540,7 +540,7 @@ export function TrendsPage() {
             key={d}
             onClick={() => setDays(d)}
             style={{
-              padding: '5px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600,
+              padding: '5px 14px', borderRadius: 20, fontSize: 'var(--text-sm)', fontWeight: 600,
               background: days === d ? 'var(--safe)' : 'var(--glass-01)',
               color: days === d ? '#0a0e1a' : 'var(--ink-mid)',
               border: `1px solid ${days === d ? 'var(--safe)' : 'var(--border)'}`,
@@ -600,7 +600,7 @@ export function TrendsPage() {
 
       {/* Nightly snapshot note */}
       {snapshot?.snapshot_date && (
-        <div style={{ marginTop: 12, fontSize: 11, color: 'var(--ink-ghost)', textAlign: 'right' }}>
+        <div style={{ marginTop: 12, fontSize: 'var(--text-sm)', color: 'var(--ink-ghost)', textAlign: 'right' }}>
           KPI figures from nightly snapshot ({snapshot.snapshot_date}) · Alert counts are live
         </div>
       )}

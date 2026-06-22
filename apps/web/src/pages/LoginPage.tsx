@@ -304,7 +304,7 @@ export function LoginPage() {
             animationDelay: '0.42s',
           }}>
             <p style={{
-              fontSize: 14,
+              fontSize: 'var(--text-base)',
               color: 'var(--text-muted, #8A857D)',
               margin: '0 0 6px',
             }}>
@@ -321,7 +321,7 @@ export function LoginPage() {
                 borderRadius: 10,
                 color: 'var(--accent, #C9A227)',
                 fontFamily: 'var(--font-body)',
-                fontSize: 15,
+                fontSize: 'var(--text-md)',
                 fontWeight: 600,
                 textDecoration: 'none',
                 letterSpacing: '0.2px',

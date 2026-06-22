@@ -88,17 +88,17 @@ const PRIMARY = 'var(--safe)';
 
 const selectStyle: React.CSSProperties = {
   background: CARD, border: `1px solid ${BORDER}`, color: TEXT,
-  borderRadius: 6, padding: '5px 8px', fontSize: 12, cursor: 'pointer', outline: 'none',
+  borderRadius: 6, padding: '5px 8px', fontSize: 'var(--text-sm)', cursor: 'pointer', outline: 'none',
 };
 
 const inputStyle: React.CSSProperties = {
   background: CARD, border: `1px solid ${BORDER}`, color: TEXT,
-  borderRadius: 6, padding: '5px 8px', fontSize: 12, outline: 'none', width: '100%',
+  borderRadius: 6, padding: '5px 8px', fontSize: 'var(--text-sm)', outline: 'none', width: '100%',
 };
 
 const smallBtnStyle: React.CSSProperties = {
   background: 'transparent', border: `1px solid ${BORDER}`, color: SUB,
-  borderRadius: 4, padding: '3px 8px', fontSize: 11, cursor: 'pointer',
+  borderRadius: 4, padding: '3px 8px', fontSize: 'var(--text-sm)', cursor: 'pointer',
 };
 
 // ---------------------------------------------------------------------------
@@ -170,7 +170,7 @@ function FilterRuleRow({ rule, onChange, onRemove }: FilterRuleRowProps) {
         return (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
             {meta.enumValues?.map((v) => (
-              <label key={v} style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: TEXT, cursor: 'pointer' }}>
+              <label key={v} style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 'var(--text-sm)', color: TEXT, cursor: 'pointer' }}>
                 <input
                   type="checkbox"
                   checked={selected.includes(v)}
@@ -226,7 +226,7 @@ function FilterRuleRow({ rule, onChange, onRemove }: FilterRuleRowProps) {
               {icd10.results.map((c) => (
                 <div
                   key={c.code}
-                  style={{ padding: '6px 10px', fontSize: 11, cursor: 'pointer', borderBottom: `1px solid ${BORDER}`, color: TEXT }}
+                  style={{ padding: '6px 10px', fontSize: 'var(--text-sm)', cursor: 'pointer', borderBottom: `1px solid ${BORDER}`, color: TEXT }}
                   onClick={() => { onChange({ ...rule, value: c.code }); setShowSuggestions(false); icd10.clear(); }}
                 >
                   <span style={{ fontWeight: 600, color: PRIMARY }}>{c.code}</span>{' '}
@@ -304,7 +304,7 @@ function FilterRuleRow({ rule, onChange, onRemove }: FilterRuleRowProps) {
       <button
         onClick={onRemove}
         title="Remove rule"
-        style={{ background: 'transparent', border: 'none', color: 'var(--ink-soft)', cursor: 'pointer', fontSize: 15, padding: '2px 4px', lineHeight: 1 }}
+        style={{ background: 'transparent', border: 'none', color: 'var(--ink-soft)', cursor: 'pointer', fontSize: 'var(--text-md)', padding: '2px 4px', lineHeight: 1 }}
       >
         ×
       </button>
@@ -381,13 +381,13 @@ export function FilterGroupEditor({ group, onChange, onRemove, depth = 0 }: Filt
           onClick={toggleLogic}
           style={{
             background: `${borderColor}22`, border: `1px solid ${borderColor}55`, color: borderColor,
-            borderRadius: 4, padding: '2px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+            borderRadius: 4, padding: '2px 10px', fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer',
             letterSpacing: 0.5,
           }}
         >
           {group.logic}
         </button>
-        <span style={{ fontSize: 11, color: SUB }}>
+        <span style={{ fontSize: 'var(--text-sm)', color: SUB }}>
           {group.logic === 'AND' ? 'All conditions must match' : 'Any condition matches'}
         </span>
         {onRemove && (
@@ -456,7 +456,7 @@ export function CohortFilterBuilder({
 
       <div style={{ padding: '0 16px 12px' }}>
         {filterGroup.rules.length === 0 ? (
-          <div style={{ color: SUB, fontSize: 13, padding: '24px 0', textAlign: 'center' }}>
+          <div style={{ color: SUB, fontSize: 'var(--text-base)', padding: '24px 0', textAlign: 'center' }}>
             No filters yet — click "+ Rule" to start building your cohort
           </div>
         ) : (
@@ -470,7 +470,7 @@ export function CohortFilterBuilder({
               onClick={() => onFilterChange({ ...filterGroup, rules: [makeDefaultRule()] })}
               style={{
                 background: `${PRIMARY}22`, border: `1px solid ${PRIMARY}55`, color: PRIMARY,
-                borderRadius: 6, padding: '7px 16px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                borderRadius: 6, padding: '7px 16px', fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer',
               }}
             >
               + Add First Rule
@@ -486,20 +486,20 @@ export function CohortFilterBuilder({
           borderTop: `1px solid ${BORDER}`,
           display: 'flex', alignItems: 'center', gap: 12,
         }}>
-          <div style={{ fontSize: 13, color: SUB }}>Matching:</div>
+          <div style={{ fontSize: 'var(--text-base)', color: SUB }}>Matching:</div>
           <div style={{
-            fontSize: 18, fontWeight: 800,
+            fontSize: 'var(--text-xl)', fontWeight: 800,
             color: countLoading ? SUB : liveCount !== null ? PRIMARY : 'var(--ink-soft)',
           }}>
             {countLoading ? '...' : liveCount !== null ? liveCount.toLocaleString() : '--'}
           </div>
-          <span style={{ fontSize: 12, color: SUB }}>patients</span>
+          <span style={{ fontSize: 'var(--text-sm)', color: SUB }}>patients</span>
           <button
             onClick={onSearch}
             style={{
               marginLeft: 'auto',
               background: `${PRIMARY}22`, border: `1px solid ${PRIMARY}55`, color: PRIMARY,
-              borderRadius: 6, padding: '6px 16px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+              borderRadius: 6, padding: '6px 16px', fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer',
             }}
           >
             Search
