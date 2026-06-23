@@ -6,6 +6,7 @@ import type { FastifyInstance } from 'fastify';
 import { API_PREFIX } from '@cope/shared';
 import healthRoutes from './health.js';
 import authRoutes from './auth.js';
+import authOidcRoutes from './auth-oidc.js';
 import patientRoutes from './patients/index.js';
 import dailyEntryRoutes from './daily-entries/index.js';
 import journalRoutes from './journal/index.js';
@@ -37,6 +38,8 @@ export async function registerRoutes(fastify: FastifyInstance): Promise<void> {
   await fastify.register(
     async (api) => {
       await api.register(authRoutes, { prefix: '/auth' });
+      // Authentik OIDC SSO — additive, same /auth prefix, distinct paths.
+      await api.register(authOidcRoutes, { prefix: '/auth' });
       await api.register(patientRoutes, { prefix: '/patients' });
       await api.register(dailyEntryRoutes, { prefix: '/daily-entries' });
       await api.register(journalRoutes, { prefix: '/journal' });

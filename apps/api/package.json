@@ -32,6 +32,7 @@
     "fastify": "^5.1.0",
     "fastify-plugin": "^4.5.1",
     "ioredis": "^5.3.2",
+    "jose": "^5.9.6",
     "openai": "^4.77.0",
     "otplib": "^13.4.1",
     "pino": "^9.5.0",

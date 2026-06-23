@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { API_PREFIX } from '@cope/shared';
 import { api, ApiError } from '../services/api.js';
 import { authActions } from '../stores/auth.js';
 import { FernIcon } from '../components/FernIcon.js';
@@ -92,6 +93,28 @@ export function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [oidc, setOidc] = useState<{ label: string; redirectPath: string } | null>(null);
+
+  // Discover whether Authentik SSO is available for this deployment.
+  // Best-effort: local sign-in is always available regardless.
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      try {
+        const data = await api.get<{
+          oidc_enabled?: boolean;
+          oidc_label?: string | null;
+          oidc_redirect_path?: string | null;
+        }>('/auth/providers');
+        if (active && data.oidc_enabled && data.oidc_redirect_path) {
+          setOidc({ label: data.oidc_label ?? 'Authentik', redirectPath: data.oidc_redirect_path });
+        }
+      } catch {
+        /* SSO discovery is optional */
+      }
+    })();
+    return () => { active = false; };
+  }, []);
 
   // Prompt browser to save credentials using Credential Management API
   const saveCredentials = async (em: string, pw: string) => {
@@ -295,6 +318,37 @@ export function LoginPage() {
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
+
+          {/* Authentik SSO — shown only when the provider is enabled */}
+          {oidc && (
+            <div style={{ marginTop: 20 }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                color: 'var(--text-muted, #8A857D)', fontSize: 'var(--text-sm, 13px)',
+                margin: '0 0 16px',
+              }}>
+                <span style={{ flex: 1, height: 1, background: 'var(--glass-02, rgba(255,255,255,0.08))' }} />
+                or
+                <span style={{ flex: 1, height: 1, background: 'var(--glass-02, rgba(255,255,255,0.08))' }} />
+              </div>
+              <a
+                href={`${API_PREFIX}${oidc.redirectPath}`}
+                data-testid="oidc-login-button"
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                  width: '100%', boxSizing: 'border-box', padding: '12px 20px',
+                  background: 'var(--glass-01, rgba(255,255,255,0.04))',
+                  border: '1px solid var(--teal, #2DD4BF)',
+                  borderRadius: 10, color: 'var(--teal, #2DD4BF)',
+                  fontFamily: 'var(--font-body)', fontSize: 'var(--text-md)', fontWeight: 600,
+                  textDecoration: 'none', letterSpacing: '0.2px', transition: 'all 0.2s',
+                }}
+              >
+                <LockIcon size={18} />
+                Continue with {oidc.label}
+              </a>
+            </div>
+          )}
 
           {/* Create Account link */}
           <div style={{

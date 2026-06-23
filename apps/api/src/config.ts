@@ -21,6 +21,12 @@ function optionalBool(key: string, fallback: boolean): boolean {
   return val === 'true';
 }
 
+function optionalList(key: string, fallback: string[]): string[] {
+  const val = process.env[key];
+  if (val === undefined) return fallback;
+  return val.split(',').map((item) => item.trim()).filter(Boolean);
+}
+
 export const config = {
   // Server
   port: Number(optional('API_PORT', '3000')),
@@ -35,6 +41,21 @@ export const config = {
   jwtSecret: required('JWT_SECRET'),
   jwtAccessExpiry: optional('JWT_ACCESS_EXPIRY', '15m'),
   jwtRefreshExpiry: optional('JWT_REFRESH_EXPIRY', '7d'),
+
+  // Authentik OIDC SSO (additive — local bcrypt auth remains primary).
+  // The "Login with Authentik" button only appears when enabled + client_id +
+  // discovery_url + redirect_uri are all set.
+  oidcEnabled: optionalBool('OIDC_ENABLED', false),
+  oidcLabel: optional('OIDC_LABEL', 'Authentik'),
+  oidcDiscoveryUrl: process.env['OIDC_DISCOVERY_URL'] ?? '',
+  oidcClientId: process.env['OIDC_CLIENT_ID'] ?? '',
+  oidcClientSecret: process.env['OIDC_CLIENT_SECRET'] ?? '',
+  oidcRedirectUri: optional('OIDC_REDIRECT_URI', 'http://localhost:3000/api/v1/auth/oidc/callback'),
+  oidcScopes: optionalList('OIDC_SCOPES', ['openid', 'profile', 'email', 'groups']),
+  oidcAllowedGroups: optionalList('OIDC_ALLOWED_GROUPS', ['COPE Admins']),
+  oidcAdminGroups: optionalList('OIDC_ADMIN_GROUPS', ['COPE Admins']),
+  oidcStateTtlSeconds: Number(optional('OIDC_STATE_TTL_SECONDS', '300')),
+  oidcExchangeTtlSeconds: Number(optional('OIDC_EXCHANGE_TTL_SECONDS', '60')),
 
   // Local file storage (reports, research exports) — replaces Supabase Storage
   storageDir: optional('STORAGE_DIR', './storage'),
