@@ -250,6 +250,9 @@ iOS checklist:
     - [x] Add XCUITest target, `npm run native:ios:ui-test`, and unauthenticated simulator fixture launch environment.
 - [x] Add build schemes for development, staging, and production.
   - Apple Team ID `TKXPY255A2` and App Store Connect App ID `6785638840` are recorded in the iOS release config.
+- [x] Add App Store/TestFlight archive pipeline.
+  - `npm run native:ios:release:check` validates release config, XcodeGen production bundle settings, and App Store Connect export options.
+  - `npm run native:ios:testflight` runs archive, export, and App Store Connect upload through `scripts/ios-testflight.sh` when signing assets and App Store Connect API credentials are available.
 - [x] Add Keychain token storage.
 - [~] Add encrypted local database foundation.
   - iOS now has an AES-GCM encrypted file-backed persistence layer for same-day Today drafts and foreground sync outbox records, with the encryption key stored in Keychain and files protected under Application Support.
@@ -486,7 +489,8 @@ Checklist:
 - [ ] Device matrix testing.
 - [ ] Store listing content.
 - [ ] Privacy nutrition labels and Play Data Safety forms.
-- [ ] TestFlight and internal Android distribution.
+- [~] TestFlight and internal Android distribution.
+  - iOS has a validated TestFlight archive/export/upload script path; internal Android distribution remains parked until Google Play service account credentials are available.
 - [ ] Crash reporting and redaction review.
 - [ ] Clinical pilot runbook.
 - [ ] Support and incident response runbook.
@@ -668,6 +672,19 @@ Checklist:
 - [x] Verify `npm run native:ios:test`.
 - [ ] Promote the foreground flusher into a broader sync engine with retry backoff, background triggers, conflict records, and safety-priority lanes.
 
+### Slice 11 - iOS TestFlight archive pipeline
+
+Reason: the first native iOS pilot shell needs a repeatable App Store Connect archive/export/upload path before TestFlight distribution can be trusted.
+
+Checklist:
+
+- [x] Validate release config against Apple Team ID `TKXPY255A2`, App Store Connect App ID `6785638840`, and production bundle `com.cope.app`.
+- [x] Add a checked-in iOS release helper for validate, archive, export, upload, and full TestFlight pipeline commands.
+- [x] Keep upload credential-gated through App Store Connect API key environment variables instead of committing secrets.
+- [x] Add package scripts for release config validation and TestFlight upload.
+- [x] Verify `npm run native:ios:release:check`.
+- [ ] Run a signed production archive/export/upload on a machine or CI runner with Apple signing assets and App Store Connect API credentials.
+
 ## 7. Live Database Verification Plan
 
 The live database should be used for verification, not as the source of truth for undocumented behavior.
@@ -749,3 +766,5 @@ The native split is complete only when:
   - TodayViewModelTests now cover offline daily-entry save replay and offline save-then-submit replay through encrypted temp stores, a deterministic clock, and an actor-backed mocked API client.
 - [x] Add iOS UI test scaffold and simulator fixture strategy.
   - COPEUITests now launch the app with session restore disabled, override the API base URL for fixture servers, and cover unauthenticated login, local validation, and registration field availability.
+- [x] Add iOS TestFlight archive/export/upload pipeline.
+  - `scripts/ios-testflight.sh` validates release metadata and runs archive/export/upload when signing and App Store Connect credentials are present; signed upload remains to be executed in the Apple signing environment.

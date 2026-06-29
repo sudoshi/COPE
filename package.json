@@ -31,6 +31,8 @@
     "native:ios:build": "npm run native:ios:generate && xcodebuild -project apps/ios/COPE.xcodeproj -scheme 'COPE Development' -configuration Debug -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build",
     "native:ios:test": "npm run native:ios:generate && xcodebuild test -project apps/ios/COPE.xcodeproj -scheme 'COPE Development' -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 17'",
     "native:ios:ui-test": "npm run native:ios:generate && xcodebuild test -project apps/ios/COPE.xcodeproj -scheme 'COPE Development' -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:COPEUITests",
+    "native:ios:release:check": "bash scripts/ios-testflight.sh validate",
+    "native:ios:testflight": "bash scripts/ios-testflight.sh all",
     "native:ios:archive": "npm run native:ios:generate && xcodebuild -project apps/ios/COPE.xcodeproj -scheme 'COPE Production' -configuration Release -archivePath apps/ios/build/COPE.xcarchive archive",
     "native:ios:export": "xcodebuild -exportArchive -archivePath apps/ios/build/COPE.xcarchive -exportPath apps/ios/build/export -exportOptionsPlist apps/ios/ExportOptions.plist",
     "build:mobile:preview": "eas build --profile preview --platform all",
