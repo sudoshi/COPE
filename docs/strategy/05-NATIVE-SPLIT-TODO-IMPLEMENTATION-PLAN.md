@@ -237,7 +237,9 @@ iOS checklist:
 - [x] Add build schemes for development, staging, and production.
   - Apple Team ID `TKXPY255A2` and App Store Connect App ID `6785638840` are recorded in the iOS release config.
 - [x] Add Keychain token storage.
-- [ ] Add encrypted local database foundation.
+- [~] Add encrypted local database foundation.
+  - iOS now has a file-protected Today draft store for the first daily-entry cache step.
+  - Full encrypted database selection, migrations, outbox tables, and logout wipe remain open.
 - [x] Add API client generated from OpenAPI or bridged from KMP.
   - [x] Add native health-check smoke client.
   - [x] Add OpenAPI generator workspace/config for Swift.
@@ -307,7 +309,8 @@ Goal: the primary clinical loop works offline, syncs correctly, and escalates sa
 
 Checklist:
 
-- [ ] Implement local daily-entry draft creation.
+- [~] Implement local daily-entry draft creation.
+  - iOS persists same-day Today check-in drafts before attempting network writes and restores them on screen load.
 - [~] Implement all expanded clinical domains:
   - [x] Mood.
   - [ ] Coping/wellbeing.
@@ -558,7 +561,9 @@ Checklist:
 - [x] Add network-backed Assessments screen for pending scale list, generic item scoring, score calculation, and backend submission.
 - [x] Verify `npm run native:ios:build`.
 - [ ] Replace generic assessment item labels with approved/licensed instrument content and scoring fixtures.
-- [ ] Add offline local persistence, draft restore, outbox, and conflict handling.
+- [~] Add offline local persistence, draft restore, outbox, and conflict handling.
+  - iOS Today draft restore and local save status are implemented with file protection.
+  - General outbox, encrypted database migration, conflict handling, and multi-screen persistence remain open.
 - [ ] Add C-SSRS safety handoff before clinical pilot use.
 
 ### Slice 7 - iOS consent, safety, and notification infrastructure
@@ -577,6 +582,23 @@ Checklist:
 - [ ] Add local crisis-resource cache so safety resources remain available offline.
 - [ ] Migrate backend push delivery from Expo-token assumptions to native APNs/FCM token metadata before real device notification delivery.
 - [ ] Add device/simulator tests for notification permission states and consent persistence.
+
+### Slice 8 - iOS Today local draft persistence
+
+Reason: the native Today flow needs a first local-first behavior before broader encrypted database and sync outbox work.
+
+Checklist:
+
+- [x] Make `DailyEntryDraft` codable with backend-aligned coding keys.
+- [x] Add a file-protected iOS draft store under Application Support for same-day Today drafts.
+- [x] Restore a saved local draft when Today opens.
+- [x] Save Today inputs locally before attempting the network save.
+- [x] Surface local draft sync state in the Today UI.
+- [x] Delete the local draft after successful submit.
+- [x] Verify `npm run native:ios:build`.
+- [ ] Promote this file-backed draft cache into the selected encrypted database/outbox design.
+- [ ] Add retry/sync worker semantics for queued local writes.
+- [ ] Add simulator/unit coverage for draft restore, pending upload, and submitted-delete behavior.
 
 ## 7. Live Database Verification Plan
 
@@ -648,5 +670,6 @@ The native split is complete only when:
 - [x] Implement first iOS generated-client flow: auth/session plus `/patients/me`.
 - [x] Implement first iOS clinical workflow slice: network-backed Today save/submit and pending assessment submit.
 - [x] Implement first iOS consent/safety/notification infrastructure slice.
+- [x] Implement first iOS local Today draft persistence slice.
 - [ ] Implement iOS invite registration, MFA continuation, and consent/intake screens.
 - [ ] Choose iOS encrypted persistence stack and start daily-entry local cache/outbox.

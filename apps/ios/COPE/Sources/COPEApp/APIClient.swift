@@ -98,7 +98,7 @@ struct DailyEntrySubmitResult: Decodable, Equatable {
     }
 }
 
-struct DailyEntryDraft: Equatable {
+struct DailyEntryDraft: Codable, Equatable {
     let entryDate: String
     let moodScore: Int
     let sleepHours: Double?
@@ -106,6 +106,16 @@ struct DailyEntryDraft: Equatable {
     let stressScore: Int?
     let suicidalIdeation: Int?
     let notes: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case entryDate = "entry_date"
+        case moodScore = "mood_score"
+        case sleepHours = "sleep_hours"
+        case anxietyScore = "anxiety_score"
+        case stressScore = "stress_score"
+        case suicidalIdeation = "suicidal_ideation"
+        case notes
+    }
 }
 
 struct PendingAssessment: Decodable, Equatable, Identifiable {

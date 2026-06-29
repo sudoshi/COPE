@@ -5,7 +5,10 @@ final class TodayViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var isSaving = false
     @Published private(set) var entry: DailyEntrySummary?
+    @Published private(set) var localDraftMessage: String?
+    @Published private(set) var localDraftNeedsSync = false
     @Published var errorMessage: String?
+    @Published var successMessage: String?
     @Published var moodScore = 6
     @Published var sleepHours = 7.0
     @Published var anxietyScore = 4
@@ -14,22 +17,36 @@ final class TodayViewModel: ObservableObject {
     @Published var notes = ""
 
     private let apiClient: APIClient
+    private let draftStore: DailyEntryDraftStore
 
-    init(apiClient: APIClient) {
+    init(
+        apiClient: APIClient,
+        draftStore: DailyEntryDraftStore = .shared
+    ) {
         self.apiClient = apiClient
+        self.draftStore = draftStore
     }
 
     func load() async {
         isLoading = true
         errorMessage = nil
+        successMessage = nil
+
+        let restoredLocalDraft = await restoreLocalDraft()
 
         do {
             entry = try await apiClient.todayDailyEntry()
-            if let entry, let mood = entry.mood {
+            if let entry, entry.isSubmitted {
+                try? await draftStore.deleteDraft(for: entry.entryDate)
+                localDraftMessage = nil
+                localDraftNeedsSync = false
+            } else if !restoredLocalDraft, let entry, let mood = entry.mood {
                 moodScore = mood
             }
         } catch {
-            errorMessage = SessionViewModel.message(for: error)
+            errorMessage = restoredLocalDraft
+                ? "Network unavailable. Your saved local draft is still on this device."
+                : SessionViewModel.message(for: error)
         }
 
         isLoading = false
@@ -38,9 +55,12 @@ final class TodayViewModel: ObservableObject {
     func saveDraft() async {
         isSaving = true
         errorMessage = nil
+        successMessage = nil
+        let draft = currentDraft
+        let localSaved = await saveLocalDraft(draft, pendingServerSave: true)
 
         do {
-            let result = try await apiClient.saveDailyEntry(currentDraft)
+            let result = try await apiClient.saveDailyEntry(draft)
             entry = DailyEntrySummary(
                 id: result.id,
                 entryDate: result.entryDate,
@@ -53,8 +73,12 @@ final class TodayViewModel: ObservableObject {
                 symptomsComplete: entry?.symptomsComplete,
                 journalComplete: entry?.journalComplete
             )
+            _ = await saveLocalDraft(draft, pendingServerSave: false)
+            successMessage = "Draft saved."
         } catch {
-            errorMessage = SessionViewModel.message(for: error)
+            errorMessage = localSaved
+                ? "Saved locally. Connect to sync this draft with your care record."
+                : SessionViewModel.message(for: error)
         }
 
         isSaving = false
@@ -86,6 +110,10 @@ final class TodayViewModel: ObservableObject {
                 symptomsComplete: entry.symptomsComplete,
                 journalComplete: entry.journalComplete
             )
+            try? await draftStore.deleteDraft(for: entry.entryDate)
+            localDraftMessage = nil
+            localDraftNeedsSync = false
+            successMessage = "Check-in submitted."
         } catch {
             errorMessage = SessionViewModel.message(for: error)
         }
@@ -105,12 +133,62 @@ final class TodayViewModel: ObservableObject {
         )
     }
 
+    private func restoreLocalDraft() async -> Bool {
+        do {
+            guard let stored = try await draftStore.loadDraft(for: Self.todayString()) else {
+                localDraftMessage = nil
+                localDraftNeedsSync = false
+                return false
+            }
+
+            apply(stored.draft)
+            updateLocalDraftStatus(from: stored, verb: "Restored")
+            return true
+        } catch {
+            errorMessage = "Saved draft could not be restored."
+            return false
+        }
+    }
+
+    private func saveLocalDraft(_ draft: DailyEntryDraft, pendingServerSave: Bool) async -> Bool {
+        do {
+            let stored = try await draftStore.saveDraft(draft, pendingServerSave: pendingServerSave)
+            updateLocalDraftStatus(from: stored, verb: pendingServerSave ? "Saved locally" : "Synced locally")
+            return true
+        } catch {
+            errorMessage = "Draft could not be saved on this device."
+            return false
+        }
+    }
+
+    private func apply(_ draft: DailyEntryDraft) {
+        moodScore = draft.moodScore
+        sleepHours = draft.sleepHours ?? sleepHours
+        anxietyScore = draft.anxietyScore ?? anxietyScore
+        stressScore = draft.stressScore ?? stressScore
+        suicidalIdeation = draft.suicidalIdeation ?? suicidalIdeation
+        notes = draft.notes ?? ""
+    }
+
+    private func updateLocalDraftStatus(from stored: StoredDailyEntryDraft, verb: String) {
+        localDraftNeedsSync = stored.pendingServerSave
+        let syncState = stored.pendingServerSave ? "waiting to sync" : "synced"
+        localDraftMessage = "\(verb) at \(Self.timeString(stored.updatedAt)); \(syncState)."
+    }
+
     private static func todayString() -> String {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.string(from: Date())
+    }
+
+    private static func timeString(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 }
 
@@ -127,6 +205,7 @@ struct TodayView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     statusHeader
                     checkInControls
+                    statusMessages
 
                     if let errorMessage = model.errorMessage {
                         Text(errorMessage)
@@ -172,6 +251,26 @@ struct TodayView: View {
                 .foregroundStyle(CopeColor.textMuted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private var statusMessages: some View {
+        if let localDraftMessage = model.localDraftMessage {
+            Label(
+                localDraftMessage,
+                systemImage: model.localDraftNeedsSync ? "icloud.and.arrow.up" : "checkmark.icloud.fill"
+            )
+            .font(.system(size: 13, weight: .medium))
+            .foregroundStyle(model.localDraftNeedsSync ? CopeColor.warning : CopeColor.success)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
+        if let successMessage = model.successMessage {
+            Label(successMessage, systemImage: "checkmark.circle.fill")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(CopeColor.success)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 
     private var checkInControls: some View {
