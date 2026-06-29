@@ -48,6 +48,19 @@ final class SessionViewModel: ObservableObject {
         isRestoring = false
     }
 
+    #if DEBUG
+    func prepareUnauthenticatedUITestSession() {
+        isRestoring = false
+        isAuthenticated = false
+        isLoading = false
+        profile = nil
+        pendingMFAToken = nil
+        requiredConsentsSatisfied = nil
+        grantedRequiredConsentTypes = []
+        errorMessage = nil
+    }
+    #endif
+
     func signIn(email: String, password: String) async {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedEmail.isEmpty, !password.isEmpty else {

@@ -4,6 +4,14 @@ struct AppConfiguration: Equatable {
     let apiBaseURL: URL
 
     static var current: AppConfiguration {
+        #if DEBUG
+        if let value = ProcessInfo.processInfo.environment["COPE_API_BASE_URL"],
+           let url = URL(string: value),
+           !value.isEmpty {
+            return AppConfiguration(apiBaseURL: url.removingTrailingSlash())
+        }
+        #endif
+
         if let value = Bundle.main.object(forInfoDictionaryKey: "COPEAPIBaseURL") as? String,
            let url = URL(string: value),
            !value.isEmpty {

@@ -247,7 +247,7 @@ iOS checklist:
   - [ ] Add SwiftLint or SwiftFormat.
   - [~] Add unit and UI test scaffolds.
     - [x] Add native XCTest unit-test target and `npm run native:ios:test`.
-    - [ ] Add UI test scaffold and simulator fixture strategy.
+    - [x] Add XCUITest target, `npm run native:ios:ui-test`, and unauthenticated simulator fixture launch environment.
 - [x] Add build schemes for development, staging, and production.
   - Apple Team ID `TKXPY255A2` and App Store Connect App ID `6785638840` are recorded in the iOS release config.
 - [x] Add Keychain token storage.
@@ -568,7 +568,9 @@ Checklist:
 - [x] Add SwiftUI root session state and login screen.
 - [x] Add first authenticated profile screen backed by `GET /api/v1/patients/me`.
 - [x] Verify `npm run native:ios:build`.
-- [ ] Add UI test harness for login/profile once a stable simulator fixture account is available.
+- [~] Add UI test harness for login/profile once a stable simulator fixture account is available.
+  - Login launch, local validation, and registration fixture fields are covered by XCUITest without requiring a backend account.
+  - Authenticated profile UI coverage still needs a stable simulator fixture account or local API fixture server.
 
 ### Slice 6 - iOS Today and assessments network workflow
 
@@ -745,3 +747,5 @@ The native split is complete only when:
   - XCTest target now covers encrypted draft migration, encrypted draft/outbox persistence, outbox mutation semantics, and local wipe key rotation.
 - [x] Add Today view-model replay coverage with a mocked API client before promoting the foreground flusher to a broader sync engine.
   - TodayViewModelTests now cover offline daily-entry save replay and offline save-then-submit replay through encrypted temp stores, a deterministic clock, and an actor-backed mocked API client.
+- [x] Add iOS UI test scaffold and simulator fixture strategy.
+  - COPEUITests now launch the app with session restore disabled, override the API base URL for fixture servers, and cover unauthenticated login, local validation, and registration field availability.

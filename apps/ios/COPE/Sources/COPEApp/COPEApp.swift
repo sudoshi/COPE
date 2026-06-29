@@ -10,6 +10,13 @@ struct COPEApp: App {
             RootView()
                 .environmentObject(session)
                 .task {
+                    #if DEBUG
+                    if ProcessInfo.processInfo.environment["COPE_UI_TEST_DISABLE_SESSION_RESTORE"] == "1" {
+                        session.prepareUnauthenticatedUITestSession()
+                        return
+                    }
+                    #endif
+
                     await session.restoreSession()
                 }
         }

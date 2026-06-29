@@ -18,6 +18,7 @@ struct LoginView: View {
                 Text("COPE")
                     .font(.system(size: 40, weight: .bold))
                     .foregroundStyle(CopeColor.text)
+                    .accessibilityIdentifier("login.title")
 
                 Picker("Authentication", selection: $mode) {
                     ForEach(AuthenticationMode.allCases) { mode in
@@ -26,6 +27,7 @@ struct LoginView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                .accessibilityIdentifier("login.mode.picker")
 
                 if mode == .signIn {
                     signInForm
@@ -45,6 +47,7 @@ struct LoginView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .background(CopeColor.background)
+        .accessibilityIdentifier("login.screen")
         .onAppear(perform: applyPendingInviteToken)
         .onChange(of: session.pendingInviteToken) {
             applyPendingInviteToken()
@@ -72,10 +75,16 @@ struct LoginView: View {
                 text: $email,
                 contentType: .emailAddress,
                 keyboardType: .emailAddress,
-                autocapitalization: .never
+                autocapitalization: .never,
+                accessibilityIdentifier: "login.email"
             )
 
-            AuthSecureField(title: "Password", text: $password, contentType: .password)
+            AuthSecureField(
+                title: "Password",
+                text: $password,
+                contentType: .password,
+                accessibilityIdentifier: "login.password"
+            )
 
             Button {
                 Task {
@@ -92,6 +101,7 @@ struct LoginView: View {
             .background(session.isLoading ? CopeColor.primaryDark : CopeColor.primary)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .disabled(session.isLoading)
+            .accessibilityIdentifier("login.sign-in.button")
         }
     }
 
@@ -102,12 +112,23 @@ struct LoginView: View {
                 text: $inviteToken,
                 contentType: .oneTimeCode,
                 keyboardType: .default,
-                autocapitalization: .never
+                autocapitalization: .never,
+                accessibilityIdentifier: "register.invite-code"
             )
 
             HStack(spacing: 12) {
-                AuthTextField(title: "First Name", text: $firstName, contentType: .givenName)
-                AuthTextField(title: "Last Name", text: $lastName, contentType: .familyName)
+                AuthTextField(
+                    title: "First Name",
+                    text: $firstName,
+                    contentType: .givenName,
+                    accessibilityIdentifier: "register.first-name"
+                )
+                AuthTextField(
+                    title: "Last Name",
+                    text: $lastName,
+                    contentType: .familyName,
+                    accessibilityIdentifier: "register.last-name"
+                )
             }
 
             AuthTextField(
@@ -115,7 +136,8 @@ struct LoginView: View {
                 text: $email,
                 contentType: .emailAddress,
                 keyboardType: .emailAddress,
-                autocapitalization: .never
+                autocapitalization: .never,
+                accessibilityIdentifier: "register.email"
             )
 
             DatePicker("Date of Birth", selection: $dateOfBirth, displayedComponents: .date)
@@ -129,8 +151,18 @@ struct LoginView: View {
                         .stroke(CopeColor.border, lineWidth: 1)
                 )
 
-            AuthSecureField(title: "Password", text: $password, contentType: .newPassword)
-            AuthSecureField(title: "Confirm Password", text: $confirmPassword, contentType: .newPassword)
+            AuthSecureField(
+                title: "Password",
+                text: $password,
+                contentType: .newPassword,
+                accessibilityIdentifier: "register.password"
+            )
+            AuthSecureField(
+                title: "Confirm Password",
+                text: $confirmPassword,
+                contentType: .newPassword,
+                accessibilityIdentifier: "register.confirm-password"
+            )
 
             VStack(spacing: 12) {
                 ForEach(PatientConsentType.requiredOnboardingConsents) { type in
@@ -163,6 +195,7 @@ struct LoginView: View {
             .background(session.isLoading ? CopeColor.primaryDark : CopeColor.primary)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .disabled(session.isLoading)
+            .accessibilityIdentifier("register.create-account.button")
         }
     }
 
@@ -248,7 +281,8 @@ private struct MFAVerificationView: View {
                     text: $code,
                     contentType: .oneTimeCode,
                     keyboardType: .numberPad,
-                    autocapitalization: .never
+                    autocapitalization: .never,
+                    accessibilityIdentifier: "mfa.verification-code"
                 )
 
                 if let errorMessage = session.errorMessage {
@@ -276,6 +310,7 @@ private struct MFAVerificationView: View {
                 .background(session.isLoading ? CopeColor.primaryDark : CopeColor.primary)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .disabled(session.isLoading)
+                .accessibilityIdentifier("mfa.verify.button")
 
                 Button(role: .cancel) {
                     session.cancelMFA()
@@ -310,6 +345,7 @@ private struct AuthTextField: View {
     var contentType: UITextContentType?
     var keyboardType: UIKeyboardType = .default
     var autocapitalization: TextInputAutocapitalization = .words
+    var accessibilityIdentifier: String?
 
     var body: some View {
         TextField(title, text: $text)
@@ -326,6 +362,7 @@ private struct AuthTextField: View {
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(CopeColor.border, lineWidth: 1)
             )
+            .accessibilityIdentifier(accessibilityIdentifier ?? "text-field.\(title)")
     }
 }
 
@@ -333,6 +370,7 @@ private struct AuthSecureField: View {
     let title: String
     @Binding var text: String
     var contentType: UITextContentType?
+    var accessibilityIdentifier: String?
 
     var body: some View {
         SecureField(title, text: $text)
@@ -346,6 +384,7 @@ private struct AuthSecureField: View {
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(CopeColor.border, lineWidth: 1)
             )
+            .accessibilityIdentifier(accessibilityIdentifier ?? "secure-field.\(title)")
     }
 }
 

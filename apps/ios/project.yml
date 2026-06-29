@@ -61,6 +61,18 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.cope.app.tests
+  COPEUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: COPE/UITests
+    dependencies:
+      - target: COPE
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.cope.app.uitests
 schemes:
   COPE Development:
     build:
@@ -72,6 +84,7 @@ schemes:
       config: Debug
       targets:
         - COPETests
+        - COPEUITests
     profile:
       config: Debug
     analyze:
