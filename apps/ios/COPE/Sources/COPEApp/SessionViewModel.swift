@@ -9,7 +9,7 @@ final class SessionViewModel: ObservableObject {
     @Published private(set) var profile: PatientProfileSummary?
     @Published var errorMessage: String?
 
-    private let apiClient: APIClient
+    let apiClient: APIClient
 
     init(apiClient: APIClient = APIClient()) {
         self.apiClient = apiClient
@@ -75,7 +75,7 @@ final class SessionViewModel: ObservableObject {
         errorMessage = nil
     }
 
-    private static func message(for error: Error) -> String {
+    static func message(for error: Error) -> String {
         if let localizedError = error as? LocalizedError,
            let description = localizedError.errorDescription {
             return description

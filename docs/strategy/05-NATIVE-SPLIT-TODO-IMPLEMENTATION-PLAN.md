@@ -307,20 +307,23 @@ Goal: the primary clinical loop works offline, syncs correctly, and escalates sa
 Checklist:
 
 - [ ] Implement local daily-entry draft creation.
-- [ ] Implement all expanded clinical domains:
-  - [ ] Mood.
+- [~] Implement all expanded clinical domains:
+  - [x] Mood.
   - [ ] Coping/wellbeing.
-  - [ ] Sleep duration and quality.
+  - [~] Sleep duration and quality.
+    - iOS currently captures sleep duration only; sleep quality remains open.
   - [ ] Exercise.
   - [ ] Mania/racing thoughts/decreased sleep need.
-  - [ ] Anxiety/somatic anxiety.
+  - [~] Anxiety/somatic anxiety.
+    - iOS currently captures anxiety score only; somatic anxiety remains open.
   - [ ] Anhedonia.
-  - [ ] Suicidal ideation.
+  - [x] Suicidal ideation.
   - [ ] Substance use.
   - [ ] Social functioning.
   - [ ] Cognitive functioning.
   - [ ] Appetite.
-  - [ ] Stress and life events.
+  - [~] Stress and life events.
+    - iOS currently captures stress score and notes; structured life-event handling remains open.
   - [ ] Triggers, symptoms, and wellness strategies.
 - [ ] Implement local validation before submit.
 - [ ] Write local outbox operations before network calls.
@@ -359,16 +362,21 @@ Medication checklist:
 
 Assessment checklist:
 
-- [ ] Pending assessment list.
-- [ ] PHQ-9.
-- [ ] GAD-7.
-- [ ] ASRM.
+- [x] Pending assessment list.
+- [~] PHQ-9.
+  - Generic item capture and score submission are implemented; licensed/approved item text and fixture validation remain open.
+- [~] GAD-7.
+  - Generic item capture and score submission are implemented; approved item text and fixture validation remain open.
+- [~] ASRM.
+  - Generic item capture and score submission are implemented; approved item text and fixture validation remain open.
 - [ ] ISI.
-- [ ] C-SSRS.
+- [~] C-SSRS.
+  - Generic item capture and score submission are implemented; safety handoff remains open.
 - [ ] WHODAS.
 - [ ] QIDS-SR.
 - [ ] Local draft answers.
-- [ ] Score calculation and backend submission.
+- [~] Score calculation and backend submission.
+  - iOS sums generic item responses and submits through the generated OpenAPI client.
 - [ ] Immediate safety handoff for C-SSRS risk responses.
 
 Notification checklist:
@@ -528,6 +536,23 @@ Checklist:
 - [x] Verify `npm run native:ios:build`.
 - [ ] Add UI test harness for login/profile once a stable simulator fixture account is available.
 
+### Slice 6 - iOS Today and assessments network workflow
+
+Reason: the first clinical workflow needs to prove native SwiftUI screens can use generated contracts beyond profile reads.
+
+Checklist:
+
+- [x] Add typed iOS app decoders around generic OpenAPI success envelopes.
+- [x] Add generated-client wrapper methods for `GET /daily-entries/today`, `POST /daily-entries`, and `PATCH /daily-entries/:id/submit`.
+- [x] Add generated-client wrapper methods for `GET /assessments/pending` and `POST /assessments`.
+- [x] Add authenticated tab shell for Today, Assessments, and Profile.
+- [x] Add network-backed Today screen for mood, sleep duration, anxiety, stress, suicidal ideation, notes, save, and submit.
+- [x] Add network-backed Assessments screen for pending scale list, generic item scoring, score calculation, and backend submission.
+- [x] Verify `npm run native:ios:build`.
+- [ ] Replace generic assessment item labels with approved/licensed instrument content and scoring fixtures.
+- [ ] Add offline local persistence, draft restore, outbox, and conflict handling.
+- [ ] Add C-SSRS safety handoff before clinical pilot use.
+
 ## 7. Live Database Verification Plan
 
 The live database should be used for verification, not as the source of truth for undocumented behavior.
@@ -596,5 +621,6 @@ The native split is complete only when:
 - [x] Decide KMP shared core versus fully independent native clients with generated contracts.
   - Proceeding with independent native clients plus generated-contract discipline for the first implementation track.
 - [x] Implement first iOS generated-client flow: auth/session plus `/patients/me`.
+- [x] Implement first iOS clinical workflow slice: network-backed Today save/submit and pending assessment submit.
 - [ ] Implement iOS invite registration, MFA continuation, and consent/intake screens.
 - [ ] Choose iOS encrypted persistence stack and start daily-entry local cache/outbox.

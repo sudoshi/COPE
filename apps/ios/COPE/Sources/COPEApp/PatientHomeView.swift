@@ -2,6 +2,30 @@ import SwiftUI
 
 struct PatientHomeView: View {
     @EnvironmentObject private var session: SessionViewModel
+
+    var body: some View {
+        TabView {
+            TodayView(apiClient: session.apiClient)
+                .tabItem {
+                    Label("Today", systemImage: "checklist")
+                }
+
+            AssessmentsView(apiClient: session.apiClient)
+                .tabItem {
+                    Label("Assessments", systemImage: "list.clipboard")
+                }
+
+            ProfileTabView()
+                .tabItem {
+                    Label("Profile", systemImage: "person.crop.circle")
+                }
+        }
+        .tint(CopeColor.primary)
+    }
+}
+
+private struct ProfileTabView: View {
+    @EnvironmentObject private var session: SessionViewModel
     @State private var isRefreshing = false
 
     var body: some View {
