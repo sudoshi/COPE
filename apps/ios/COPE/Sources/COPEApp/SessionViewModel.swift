@@ -9,6 +9,8 @@ final class SessionViewModel: ObservableObject {
     @Published private(set) var profile: PatientProfileSummary?
     @Published private(set) var pendingMFAToken: String?
     @Published private(set) var pendingInviteToken: String?
+    @Published private(set) var requiredConsentsSatisfied: Bool?
+    @Published private(set) var grantedRequiredConsentTypes: Set<PatientConsentType> = []
     @Published var errorMessage: String?
 
     let apiClient: APIClient
@@ -27,11 +29,14 @@ final class SessionViewModel: ObservableObject {
 
             if hasSession {
                 try await refreshProfile()
+                await refreshRequiredConsentStatus()
             }
         } catch {
             try? await apiClient.logout()
             isAuthenticated = false
             profile = nil
+            requiredConsentsSatisfied = nil
+            grantedRequiredConsentTypes = []
         }
 
         isRestoring = false
@@ -159,6 +164,53 @@ final class SessionViewModel: ObservableObject {
         isLoading = false
     }
 
+    func refreshRequiredConsentStatus() async {
+        errorMessage = nil
+
+        do {
+            let records = try await apiClient.consentRecords()
+            let grantedTypes = Set(
+                records.compactMap { record -> PatientConsentType? in
+                    guard record.granted else {
+                        return nil
+                    }
+                    return record.type
+                }
+            )
+
+            grantedRequiredConsentTypes = grantedTypes.intersection(PatientConsentType.requiredOnboardingConsents)
+            requiredConsentsSatisfied = PatientConsentType.requiredOnboardingConsents.allSatisfy {
+                grantedTypes.contains($0)
+            }
+        } catch {
+            requiredConsentsSatisfied = false
+            grantedRequiredConsentTypes = []
+            errorMessage = Self.message(for: error)
+        }
+    }
+
+    func grantRequiredConsents(acceptedTypes: Set<PatientConsentType>) async {
+        let requiredTypes = Set(PatientConsentType.requiredOnboardingConsents)
+        guard requiredTypes.isSubset(of: acceptedTypes) else {
+            errorMessage = "Accept the required consent items to continue."
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            for type in PatientConsentType.requiredOnboardingConsents where !grantedRequiredConsentTypes.contains(type) {
+                try await apiClient.updateConsent(type: type, granted: true)
+            }
+            await refreshRequiredConsentStatus()
+        } catch {
+            errorMessage = Self.message(for: error)
+        }
+
+        isLoading = false
+    }
+
     func handleOpenURL(_ url: URL) {
         guard url.scheme?.lowercased() == "cope" else {
             return
@@ -194,6 +246,8 @@ final class SessionViewModel: ObservableObject {
         isAuthenticated = false
         profile = nil
         pendingMFAToken = nil
+        requiredConsentsSatisfied = nil
+        grantedRequiredConsentTypes = []
         errorMessage = nil
     }
 
@@ -217,6 +271,7 @@ final class SessionViewModel: ObservableObject {
         pendingMFAToken = nil
         isAuthenticated = true
         try await refreshProfile()
+        await refreshRequiredConsentStatus()
     }
 
     static func message(for error: Error) -> String {

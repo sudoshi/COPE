@@ -13,10 +13,15 @@ struct RootView: View {
                     .tint(CopeColor.primary)
             } else if session.isAuthenticated {
                 if let profile = session.profile {
-                    if profile.onboardingComplete {
+                    if session.requiredConsentsSatisfied == true, profile.onboardingComplete {
                         PatientHomeView()
-                    } else {
+                    } else if session.requiredConsentsSatisfied == true {
                         OnboardingIntakeView()
+                    } else if session.requiredConsentsSatisfied == false {
+                        OnboardingConsentView()
+                    } else {
+                        ProgressView()
+                            .tint(CopeColor.primary)
                     }
                 } else {
                     ProgressView()

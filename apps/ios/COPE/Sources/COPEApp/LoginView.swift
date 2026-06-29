@@ -10,6 +10,7 @@ struct LoginView: View {
     @State private var lastName = ""
     @State private var dateOfBirth = Calendar.current.date(byAdding: .year, value: -18, to: .now) ?? .now
     @State private var confirmPassword = ""
+    @State private var acceptedRegistrationConsentTypes: Set<PatientConsentType> = []
 
     var body: some View {
         ScrollView {
@@ -131,6 +132,24 @@ struct LoginView: View {
             AuthSecureField(title: "Password", text: $password, contentType: .newPassword)
             AuthSecureField(title: "Confirm Password", text: $confirmPassword, contentType: .newPassword)
 
+            VStack(spacing: 12) {
+                ForEach(PatientConsentType.requiredOnboardingConsents) { type in
+                    ConsentAcceptanceRow(
+                        type: type,
+                        isOn: Binding(
+                            get: { acceptedRegistrationConsentTypes.contains(type) },
+                            set: { isAccepted in
+                                if isAccepted {
+                                    acceptedRegistrationConsentTypes.insert(type)
+                                } else {
+                                    acceptedRegistrationConsentTypes.remove(type)
+                                }
+                            }
+                        )
+                    )
+                }
+            }
+
             Button {
                 submitRegistration()
             } label: {
@@ -148,6 +167,11 @@ struct LoginView: View {
     }
 
     private func submitRegistration() {
+        guard Set(PatientConsentType.requiredOnboardingConsents).isSubset(of: acceptedRegistrationConsentTypes) else {
+            session.errorMessage = "Accept the required consent items to create your account."
+            return
+        }
+
         guard password == confirmPassword else {
             session.errorMessage = "Passwords must match."
             return

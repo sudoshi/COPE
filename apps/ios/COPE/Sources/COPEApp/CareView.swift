@@ -666,61 +666,6 @@ private struct NotificationToggleRow: View {
     }
 }
 
-private extension PatientConsentType {
-    static let appControls: [PatientConsentType] = [
-        .journalSharing,
-        .dataResearch,
-        .aiInsights,
-        .emergencyContact,
-        .pushNotifications,
-    ]
-
-    var title: String {
-        switch self {
-        case .journalSharing:
-            return "Journal sharing"
-        case .dataResearch:
-            return "Research data"
-        case .aiInsights:
-            return "AI insights"
-        case .emergencyContact:
-            return "Emergency contact"
-        case .pushNotifications:
-            return "Push notifications"
-        }
-    }
-
-    var subtitle: String {
-        switch self {
-        case .journalSharing:
-            return "Share selected journal entries with your care team."
-        case .dataResearch:
-            return "Allow de-identified data export for research workflows."
-        case .aiInsights:
-            return "Allow AI-assisted summaries and trend insights."
-        case .emergencyContact:
-            return "Allow emergency contact use during safety events."
-        case .pushNotifications:
-            return "Allow device notifications for reminders and care requests."
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .journalSharing:
-            return "book.pages.fill"
-        case .dataResearch:
-            return "chart.xyaxis.line"
-        case .aiInsights:
-            return "sparkles"
-        case .emergencyContact:
-            return "person.crop.circle.badge.exclamationmark"
-        case .pushNotifications:
-            return "bell.badge.fill"
-        }
-    }
-}
-
 private extension SafetyPlanContact {
     var details: String {
         [relationship, phone, location, note]

@@ -285,8 +285,8 @@ Checklist:
   - A separate pre-registration invite validation endpoint is still not present in the mobile contract.
 - [x] Implement secure session persistence and refresh.
 - [x] Enforce patient-only app role handling.
-- [~] Implement required consent screens using backend consent enum.
-  - iOS now has authenticated consent controls backed by the generated consent contract; required consent gating inside onboarding remains open.
+- [x] Implement required consent screens using backend consent enum.
+  - iOS now requires `terms_of_service` and `privacy_policy` acceptance before invite registration, gates existing authenticated sessions missing those records before intake, and keeps authenticated optional consent controls in Care.
 - [x] Implement optional consent controls for research, AI insights, journal sharing, emergency contact sharing, and push notifications.
 - [~] Implement intake:
   - [x] Primary concern.
@@ -617,8 +617,8 @@ Checklist:
 - [x] Gate authenticated patients with incomplete onboarding into a native intake screen before showing tabs.
 - [x] Add primary-concern and emergency-contact intake submission.
 - [x] Align backend intake completion with the `onboarding_complete` profile flag consumed by `/patients/me`.
+- [x] Add required consent acceptance to invite registration and required consent gating to onboarding instead of only authenticated Care-tab controls.
 - [x] Verify `npm run native:ios:build`.
-- [ ] Add required consent gating to onboarding instead of only authenticated Care-tab controls.
 - [ ] Add medication, symptom, trigger, and reminder onboarding steps.
 - [ ] Add simulator/UI coverage for invite deep link, invalid invite errors, MFA continuation, and intake completion.
 
@@ -694,6 +694,6 @@ The native split is complete only when:
 - [x] Implement first iOS consent/safety/notification infrastructure slice.
 - [x] Implement first iOS local Today draft persistence slice.
 - [~] Implement iOS invite registration, MFA continuation, and consent/intake screens.
-  - Invite registration, MFA continuation, and primary/emergency-contact intake gate are implemented.
-  - Required consent gating plus medication, symptom, trigger, and reminder intake remain open.
+  - Invite registration, MFA continuation, required consent gating, and primary/emergency-contact intake gate are implemented.
+  - Medication, symptom, trigger, and reminder intake remain open.
 - [ ] Choose iOS encrypted persistence stack and start daily-entry local cache/outbox.

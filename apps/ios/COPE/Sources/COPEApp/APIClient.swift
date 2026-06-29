@@ -172,6 +172,12 @@ struct AssessmentSubmissionResult: Decodable, Equatable, Identifiable {
 }
 
 enum PatientConsentType: String, CaseIterable, Identifiable {
+    case shareWithClinician = "share_with_clinician"
+    case shareJournalWithClinician = "share_journal_with_clinician"
+    case researchParticipation = "research_participation"
+    case dataExport = "data_export"
+    case termsOfService = "terms_of_service"
+    case privacyPolicy = "privacy_policy"
     case journalSharing = "journal_sharing"
     case dataResearch = "data_research"
     case aiInsights = "ai_insights"
