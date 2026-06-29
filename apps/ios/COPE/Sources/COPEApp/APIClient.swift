@@ -279,7 +279,7 @@ struct ConsentRecord: Equatable, Identifiable {
     }
 }
 
-struct SafetyResource: Decodable, Equatable, Identifiable {
+struct SafetyResource: Codable, Equatable, Identifiable {
     let id: String
     let name: String
     let phone: String?
@@ -308,7 +308,7 @@ struct SafetyResource: Decodable, Equatable, Identifiable {
     }
 }
 
-struct SafetyResourcesResponse: Decodable, Equatable {
+struct SafetyResourcesResponse: Codable, Equatable {
     let resources: [SafetyResource]
     let disclaimer: String?
 }
@@ -471,6 +471,16 @@ protocol DailyEntryAPIProviding: Sendable {
     func todayDailyEntry() async throws -> DailyEntrySummary?
     func saveDailyEntry(_ draft: DailyEntryDraft) async throws -> DailyEntryWriteResult
     func submitDailyEntry(id: String) async throws -> DailyEntrySubmitResult
+}
+
+protocol CareAPIProviding: Sendable {
+    func consentRecords() async throws -> [ConsentRecord]
+    func updateConsent(type: PatientConsentType, granted: Bool) async throws
+    func safetyResources() async throws -> SafetyResourcesResponse
+    func mySafetyPlan() async throws -> SafetyPlanResponse?
+    func notificationPreferences() async throws -> NotificationPreferences
+    func updateNotificationPreferences(_ update: NotificationPreferenceUpdate) async throws -> NotificationPreferences
+    func registerPushToken(_ token: String) async throws -> PushTokenRegistration
 }
 
 actor APIClient {
@@ -940,6 +950,7 @@ actor APIClient {
 }
 
 extension APIClient: DailyEntryAPIProviding {}
+extension APIClient: CareAPIProviding {}
 
 enum APIClientError: Error, LocalizedError {
     case mfaRequired

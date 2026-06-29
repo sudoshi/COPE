@@ -357,8 +357,8 @@ Checklist:
 - [~] Write local outbox operations before network calls.
   - iOS queues encrypted Today save, submit, and save-then-submit operations before attempting network writes, then flushes them during foreground Today loads.
 - [ ] Submit safety-relevant signals as high-priority sync operations.
-- [~] Display crisis resources locally even when offline.
-  - iOS reads backend crisis resources and displays them in the Care tab; offline cache remains open.
+- [x] Display crisis resources locally even when offline.
+  - iOS reads backend crisis resources, stores them in an encrypted Application Support cache, restores them on Care tab load, and falls back to saved resources when the network request fails.
 - [~] Add safety plan read/sign support once backend contract is finalized.
   - iOS reads the authenticated patient safety plan and handles no-plan `404` as an empty state; patient signature/acknowledgement remains open.
 - [~] Add sync status UI that reflects actual outbox state.
@@ -608,7 +608,8 @@ Checklist:
 - [x] Add APNs permission flow, app delegate token callback bridge, remote-notification background mode, and `aps-environment` entitlement wiring.
 - [x] Verify `npm run native:ios:build`.
 - [ ] Add safety-plan patient acknowledgement/sign action once UI copy and clinical semantics are approved.
-- [ ] Add local crisis-resource cache so safety resources remain available offline.
+- [x] Add local crisis-resource cache so safety resources remain available offline.
+  - CareViewModel now caches safety resources with encrypted local file storage and surfaces an offline fallback message when showing saved crisis resources.
 - [ ] Migrate backend push delivery from Expo-token assumptions to native APNs/FCM token metadata before real device notification delivery.
 - [ ] Add device/simulator tests for notification permission states and consent persistence.
 
@@ -768,3 +769,5 @@ The native split is complete only when:
   - COPEUITests now launch the app with session restore disabled, override the API base URL for fixture servers, and cover unauthenticated login, local validation, and registration field availability.
 - [x] Add iOS TestFlight archive/export/upload pipeline.
   - `scripts/ios-testflight.sh` validates release metadata and runs archive/export/upload when signing and App Store Connect credentials are present; signed upload remains to be executed in the Apple signing environment.
+- [x] Add iOS local crisis-resource cache and offline Care fallback.
+  - CareViewModelTests now cover network-backed cache writes and offline restoration from the encrypted safety-resource cache.

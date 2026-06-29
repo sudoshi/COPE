@@ -12,33 +12,39 @@ final class CareViewModel: ObservableObject {
     @Published private(set) var safetyPlan: SafetyPlan?
     @Published private(set) var safetyResources: [SafetyResource] = []
     @Published private(set) var safetyDisclaimer: String?
+    @Published private(set) var safetyResourceCacheMessage: String?
     @Published private(set) var notificationPreferences: NotificationPreferences?
     @Published private(set) var notificationAuthorizationStatus: UNAuthorizationStatus = .notDetermined
     @Published private(set) var deviceToken: String?
     @Published var errorMessage: String?
     @Published var successMessage: String?
 
-    private let apiClient: APIClient
-    private let notificationService: NotificationRegistrationService
+    private let apiClient: any CareAPIProviding
+    private let notificationService: any NotificationRegistrationProviding
+    private let safetyResourceCache: SafetyResourceCacheStore
 
     init(
-        apiClient: APIClient,
-        notificationService: NotificationRegistrationService = .shared
+        apiClient: any CareAPIProviding,
+        notificationService: any NotificationRegistrationProviding = NotificationRegistrationService.shared,
+        safetyResourceCache: SafetyResourceCacheStore = .shared
     ) {
         self.apiClient = apiClient
         self.notificationService = notificationService
+        self.safetyResourceCache = safetyResourceCache
     }
 
     func load() async {
         isLoading = true
         errorMessage = nil
         successMessage = nil
+        safetyResourceCacheMessage = nil
 
         await notificationService.refreshAuthorizationStatus()
         notificationAuthorizationStatus = notificationService.authorizationStatus
         deviceToken = notificationService.deviceToken
 
         var firstError: String?
+        let restoredCachedResources = await restoreCachedSafetyResources()
 
         do {
             consentRecords = try await apiClient.consentRecords()
@@ -48,17 +54,30 @@ final class CareViewModel: ObservableObject {
 
         do {
             let resources = try await apiClient.safetyResources()
-            safetyResources = resources.resources
-            safetyDisclaimer = resources.disclaimer
+            applySafetyResources(resources)
+            await saveCachedSafetyResources(resources)
+            safetyResourceCacheMessage = nil
         } catch {
-            firstError = firstError ?? SessionViewModel.message(for: error)
+            if restoredCachedResources {
+                safetyResourceCacheMessage = "Network unavailable. Showing saved crisis resources."
+            } else {
+                firstError = firstError ?? SessionViewModel.message(for: error)
+            }
         }
 
         do {
             let response = try await apiClient.mySafetyPlan()
             safetyPlan = response?.plan
             if let response {
-                safetyResources = response.resources.isEmpty ? safetyResources : response.resources
+                if !response.resources.isEmpty {
+                    let resources = SafetyResourcesResponse(
+                        resources: response.resources,
+                        disclaimer: response.disclaimer ?? safetyDisclaimer
+                    )
+                    applySafetyResources(resources)
+                    await saveCachedSafetyResources(resources)
+                    safetyResourceCacheMessage = nil
+                }
                 safetyDisclaimer = response.disclaimer ?? safetyDisclaimer
             }
         } catch {
@@ -77,6 +96,33 @@ final class CareViewModel: ObservableObject {
 
         errorMessage = firstError
         isLoading = false
+    }
+
+    private func restoreCachedSafetyResources() async -> Bool {
+        do {
+            guard let cached = try await safetyResourceCache.loadResources() else {
+                return false
+            }
+
+            applySafetyResources(cached.response)
+            safetyResourceCacheMessage = "Showing saved crisis resources."
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    private func saveCachedSafetyResources(_ resources: SafetyResourcesResponse) async {
+        guard !resources.resources.isEmpty else {
+            return
+        }
+
+        _ = try? await safetyResourceCache.saveResources(resources)
+    }
+
+    private func applySafetyResources(_ resources: SafetyResourcesResponse) {
+        safetyResources = resources.resources
+        safetyDisclaimer = resources.disclaimer
     }
 
     func isConsentGranted(_ type: PatientConsentType) -> Bool {
@@ -179,7 +225,7 @@ final class CareViewModel: ObservableObject {
 struct CareView: View {
     @StateObject private var model: CareViewModel
 
-    init(apiClient: APIClient) {
+    init(apiClient: any CareAPIProviding) {
         _model = StateObject(wrappedValue: CareViewModel(apiClient: apiClient))
     }
 
@@ -237,6 +283,13 @@ struct CareView: View {
                 ForEach(model.safetyResources) { resource in
                     SafetyResourceRow(resource: resource)
                 }
+            }
+
+            if let cacheMessage = model.safetyResourceCacheMessage {
+                Label(cacheMessage, systemImage: "icloud.slash")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(CopeColor.warning)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             if let disclaimer = model.safetyDisclaimer {

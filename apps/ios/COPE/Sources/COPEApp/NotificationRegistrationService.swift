@@ -7,6 +7,17 @@ extension Notification.Name {
 }
 
 @MainActor
+protocol NotificationRegistrationProviding: AnyObject {
+    var authorizationStatus: UNAuthorizationStatus { get }
+    var deviceToken: String? { get }
+    var registrationError: String? { get }
+
+    func refreshAuthorizationStatus() async
+    func requestAuthorization() async -> Bool
+    func registerForRemoteNotifications()
+}
+
+@MainActor
 final class NotificationRegistrationService: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
     static let shared = NotificationRegistrationService()
 
@@ -57,6 +68,8 @@ final class NotificationRegistrationService: NSObject, ObservableObject, UNUserN
         [.banner, .list, .sound]
     }
 }
+
+extension NotificationRegistrationService: NotificationRegistrationProviding {}
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
