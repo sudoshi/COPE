@@ -5,6 +5,7 @@
 import { Database } from '@nozbe/watermelondb';
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 import { schema } from './schema';
+import { migrations } from './migrations';
 import DailyEntry from './models/DailyEntry';
 import DailyEntryTrigger from './models/DailyEntryTrigger';
 import DailyEntrySymptom from './models/DailyEntrySymptom';
@@ -16,6 +17,7 @@ import WellnessStrategy from './models/WellnessStrategy';
 
 const adapter = new SQLiteAdapter({
   schema,
+  migrations,
   dbName: 'cope',
   jsi: true, // use JSI for better performance on new arch
   onSetUpError: (error) => {

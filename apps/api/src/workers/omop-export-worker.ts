@@ -15,10 +15,11 @@
 // Concurrency: 1 (serialised writes to avoid HWM race conditions)
 // =============================================================================
 
-import { Worker, Queue, type Job } from 'bullmq';
+import { Worker, type Job } from 'bullmq';
 import { sql } from '@cope/db';
 import { connection } from './rules-engine.js';
 import { createSignedUrl, saveObject } from '../services/storage.js';
+import { createQueue } from './queue-factory.js';
 import {
   mapPerson,
   mapObservationPeriod,
@@ -50,7 +51,7 @@ import {
 // ---------------------------------------------------------------------------
 
 const OMOP_QUEUE_NAME = 'cope-omop-exports';
-export const omopExportQueue = new Queue(OMOP_QUEUE_NAME, { connection });
+export const omopExportQueue = createQueue<OmopExportJobData>(OMOP_QUEUE_NAME, { connection });
 
 export interface OmopExportJobData {
   exportRunId: string;

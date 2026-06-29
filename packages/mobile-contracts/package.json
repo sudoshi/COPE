@@ -1,0 +1,16 @@
+{
+  "name": "@cope/mobile-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate-openapi.mjs",
+    "export:mobile-openapi": "node scripts/export-mobile-openapi.mjs",
+    "generate": "npm run export:mobile-openapi && npm run generate:android && npm run generate:ios",
+    "generate:android": "bash scripts/with-java.sh openapi-generator-cli generate -i openapi-mobile.json -g kotlin -c openapi-generator/android-kotlin.yml -o generated/android",
+    "generate:ios": "bash scripts/with-java.sh openapi-generator-cli generate -i openapi-mobile.json -g swift5 -c openapi-generator/ios-swift.yml -o generated/ios"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "2.39.0"
+  }
+}

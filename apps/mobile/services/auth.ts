@@ -11,6 +11,10 @@ import { API_PREFIX } from '@cope/shared';
 const API_BASE = process.env['EXPO_PUBLIC_API_BASE'] ?? '';
 const API_URL = API_BASE ? `${API_BASE}${API_PREFIX}` : API_PREFIX;
 
+function isFormDataBody(body: RequestInit['body']): boolean {
+  return typeof FormData !== 'undefined' && body instanceof FormData;
+}
+
 const KEYS = {
   ACCESS_TOKEN: 'cope_access_token',
   REFRESH_TOKEN: 'cope_refresh_token',
@@ -171,8 +175,12 @@ export async function apiFetch(
   const token = await getAccessToken();
 
   const headers = new Headers(init.headers as HeadersInit | undefined);
-  headers.set('Content-Type', 'application/json');
-  if (token) headers.set('Authorization', `Bearer ${token}`);
+  if (init.body !== undefined && !headers.has('Content-Type') && !isFormDataBody(init.body)) {
+    headers.set('Content-Type', 'application/json');
+  }
+  if (token && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
 
   const res = await fetch(`${API_URL}${path}`, { ...init, headers });
 

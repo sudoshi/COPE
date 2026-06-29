@@ -26,6 +26,12 @@ import {
 } from '../services/refresh-tokens.js';
 import { sendWelcomeEmail, sendCredentialsEmail } from '../services/messaging.js';
 import type { JwtPayload } from '../plugins/auth.js';
+import {
+  loginRouteSchema,
+  mfaVerifyRouteSchema,
+  refreshRouteSchema,
+  registerRouteSchema,
+} from './mobile-openapi-schemas.js';
 
 // MFA verify only needs the 6-digit code; the clinician identity is
 // embedded in the partial JWT issued during login.
@@ -43,6 +49,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
   // Stricter rate limit: 10 attempts per minute per IP (brute-force protection)
   // ---------------------------------------------------------------------------
   fastify.post('/login', {
+    schema: loginRouteSchema,
     config: { rateLimit: { max: 10, timeWindow: '1 minute' } },
   }, async (request, reply) => {
     const body = LoginSchema.parse(request.body);
@@ -467,6 +474,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
   // Stricter rate limit: 5 registrations per minute per IP
   // ---------------------------------------------------------------------------
   fastify.post('/register', {
+    schema: registerRouteSchema,
     config: { rateLimit: { max: 5, timeWindow: '1 minute' } },
   }, async (request, reply) => {
     const body = RegisterSchema.parse(request.body);
@@ -650,7 +658,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
   // The clinician identity is read from the partial JWT (not the request body);
   // the code is checked against the locally stored TOTP secret.
   // ---------------------------------------------------------------------------
-  fastify.post('/mfa/verify', async (request, reply) => {
+  fastify.post('/mfa/verify', { schema: mfaVerifyRouteSchema }, async (request, reply) => {
     const body = MfaVerifyBodySchema.parse(request.body);
 
     try {
@@ -811,7 +819,7 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
   // ---------------------------------------------------------------------------
   // POST /refresh — rotate a first-party refresh token (clinician or patient)
   // ---------------------------------------------------------------------------
-  fastify.post('/refresh', async (request, reply) => {
+  fastify.post('/refresh', { schema: refreshRouteSchema }, async (request, reply) => {
     const body = RefreshTokenSchema.parse(request.body);
 
     const rotated = await rotateRefreshToken(body.refresh_token);

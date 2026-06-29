@@ -15,6 +15,10 @@ import fp from 'fastify-plugin';
 import type { FastifyInstance } from 'fastify';
 import { config } from '../config.js';
 import { sql } from '@cope/db';
+import {
+  assertPhiSafePushPayload,
+  buildClinicalAlertPushPayload,
+} from '../services/pushPayloadPolicy.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -158,9 +162,8 @@ export async function dispatchAlertNotifications(params: AlertNotificationParams
     .map((cl) => cl.email);
 
   const severityEmoji = severity === 'critical' ? '🚨' : severity === 'warning' ? '⚠️' : 'ℹ️';
-  const pushTitle = `${severityEmoji} COPE Alert`;
-  // Push body must NOT include PHI — no patient name, just the rule category
-  const pushBody = title;
+  const push = buildClinicalAlertPushPayload();
+  assertPhiSafePushPayload(push);
 
   const emailHtml = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
@@ -183,7 +186,7 @@ export async function dispatchAlertNotifications(params: AlertNotificationParams
   `;
 
   await Promise.allSettled([
-    sendExpoPush(pushTokens, pushTitle, pushBody, { alertId, severity, ruleKey }),
+    sendExpoPush(pushTokens, push.title, push.body, push.data),
     sendResendEmail(emailAddresses, `${severityEmoji} COPE: ${title}`, emailHtml),
   ]);
 

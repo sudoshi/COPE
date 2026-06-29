@@ -307,7 +307,7 @@ SELECT p.id,
           END)::smallint)),
        '{}'::jsonb,
        (CURRENT_DATE - d.days_ago)::timestamp + '18:00:00'::time,
-       '44261-6'   -- LOINC code for PHQ-9
+       '44249-1'   -- LOINC panel code for PHQ-9
 FROM   patients p
 CROSS  JOIN (VALUES (56), (42), (28), (14)) AS d(days_ago)
 WHERE  p.organisation_id = (SELECT id FROM _org)
@@ -328,7 +328,7 @@ SELECT p.id,
           END)::smallint)),
        '{}'::jsonb,
        (CURRENT_DATE - d.days_ago)::timestamp + '18:05:00'::time,
-       '69737-5'   -- LOINC code for GAD-7
+       '69737-5'   -- LOINC panel code for GAD-7
 FROM   patients p
 CROSS  JOIN (VALUES (56), (42), (28), (14)) AS d(days_ago)
 WHERE  p.organisation_id = (SELECT id FROM _org)

@@ -11,12 +11,13 @@
 //   Nightly batch → rulesQueue.add() for every active patient → Worker.process()
 // =============================================================================
 
-import { Worker, Queue } from 'bullmq';
+import { Worker } from 'bullmq';
 import { ALERT_RULE_KEYS, ALERT_THRESHOLDS, type AlertRuleKey } from '@cope/shared';
 import { sql } from '@cope/db';
 import { config } from '../config.js';
 import { publishAlert } from '../plugins/websocket.js';
 import { generateCompletion } from '../services/llmClient.js';
+import { createQueue } from './queue-factory.js';
 
 // ---------------------------------------------------------------------------
 // Queue — exported so API routes can enqueue jobs
@@ -29,7 +30,7 @@ export const connection = {
   port: Number(new URL(config.redisUrl).port || 6379),
 };
 
-export const rulesQueue = new Queue(RULES_QUEUE_NAME, {
+export const rulesQueue = createQueue<RulesJobData>(RULES_QUEUE_NAME, {
   connection,
   defaultJobOptions: {
     attempts: 3,

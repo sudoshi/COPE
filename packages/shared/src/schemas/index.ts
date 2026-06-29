@@ -263,6 +263,13 @@ export type UpdateAlertStatusInput = z.infer<typeof UpdateAlertStatusSchema>;
 // ---------------------------------------------------------------------------
 
 export const ConsentTypeSchema = z.enum([
+  'share_with_clinician',
+  'share_journal_with_clinician',
+  'research_participation',
+  'data_export',
+  'push_notifications',
+  'terms_of_service',
+  'privacy_policy',
   'journal_sharing',
   'data_research',
   'ai_insights',

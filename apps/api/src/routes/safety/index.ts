@@ -18,6 +18,10 @@ import type { FastifyInstance, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { sql } from '@cope/db';
 import { UuidSchema, UpsertSafetyPlanSchema } from '@cope/shared';
+import {
+  getMySafetyPlanRouteSchema,
+  getSafetyResourcesRouteSchema,
+} from '../mobile-openapi-schemas.js';
 
 // Static list — extend via DB table in a future phase if clinician-configurable
 // resources are needed.  These US resources are always safe to expose.
@@ -85,7 +89,7 @@ export default async function safetyRoutes(fastify: FastifyInstance): Promise<vo
 
   // ── GET /safety/resources — Public ───────────────────────────────────────
   // No authentication needed so patients can access even if session has expired.
-  fastify.get('/resources', async (_request, reply) => {
+  fastify.get('/resources', { schema: getSafetyResourcesRouteSchema }, async (_request, reply) => {
     return reply.send({
       success: true,
       data: {
@@ -283,7 +287,7 @@ export default async function safetyRoutes(fastify: FastifyInstance): Promise<vo
   // ── GET /safety/my-plan — Patient reads own plan ─────────────────────────
   fastify.get(
     '/my-plan',
-    patientOnly,
+    { ...patientOnly, schema: getMySafetyPlanRouteSchema },
     async (request, reply) => {
       const patientId = (request.user as { sub: string; org_id: string }).sub;
 

@@ -1,0 +1,6 @@
+projectName: COPEOpenAPI
+swiftPackagePath: COPEOpenAPI
+responseAs: AsyncAwait
+useSPMFileStructure: true
+enumUnknownDefaultCase: true
+useClasses: false

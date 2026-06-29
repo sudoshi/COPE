@@ -7,6 +7,8 @@ import Fastify from 'fastify';
 import fastifyCors from '@fastify/cors';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyRateLimit from '@fastify/rate-limit';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 import { config } from './config.js';
 import authPlugin from './plugins/auth.js';
 import auditPlugin from './plugins/audit.js';
@@ -94,12 +96,66 @@ export async function buildApp() {
   });
 
   // ------------------------------------------------------------------
+  // OpenAPI
+  // ------------------------------------------------------------------
+  await fastify.register(fastifySwagger, {
+    mode: 'dynamic',
+    openapi: {
+      openapi: '3.1.0',
+      info: {
+        title: 'COPE API',
+        description: 'Clinical Outcomes Platform for Empowerment API',
+        version: '0.96.1',
+      },
+      servers: [
+        {
+          url: config.apiPublicUrl || `http://localhost:${config.port}`,
+          description: config.isProd ? 'Production API' : 'Local or configured API',
+        },
+      ],
+      tags: [
+        { name: 'auth', description: 'Authentication, MFA, registration, and refresh' },
+        { name: 'patients', description: 'Patient profile and intake workflows' },
+        { name: 'daily-entries', description: 'Daily check-ins and clinical self-report data' },
+        { name: 'journal', description: 'Patient journal entries' },
+        { name: 'medications', description: 'Medication schedule and adherence' },
+        { name: 'assessments', description: 'Validated clinical assessments' },
+        { name: 'sync', description: 'Offline-first mobile synchronization' },
+        { name: 'consent', description: 'Patient consent records' },
+        { name: 'notifications', description: 'Push token and notification preferences' },
+        { name: 'safety', description: 'Crisis resources and safety plans' },
+      ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      },
+    },
+  });
+
+  if (!config.isProd) {
+    await fastify.register(fastifySwaggerUi, {
+      routePrefix: '/documentation',
+      uiConfig: {
+        docExpansion: 'list',
+        deepLinking: true,
+      },
+    });
+  }
+
+  // ------------------------------------------------------------------
   // Plugins
   // ------------------------------------------------------------------
   await fastify.register(errorHandlerPlugin);
   await fastify.register(authPlugin);
   await fastify.register(auditPlugin);
-  await fastify.register(websocketPlugin);
+  if (process.env['OPENAPI_EXPORT'] !== 'true') {
+    await fastify.register(websocketPlugin);
+  }
   await fastify.register(notificationsPlugin);
 
   // ------------------------------------------------------------------

@@ -10,18 +10,19 @@
 //   - No PHI leaves the server except via Resend (requires BAA).
 // =============================================================================
 
-import { Worker, Queue, type Job } from 'bullmq';
+import { Worker, type Job } from 'bullmq';
 import { sql } from '@cope/db';
 import { config } from '../config.js';
 import { createSignedUrl as signedDownloadUrl, saveObject } from '../services/storage.js';
 import { connection } from './rules-engine.js';
+import { createQueue } from './queue-factory.js';
 
 // ---------------------------------------------------------------------------
 // Queue
 // ---------------------------------------------------------------------------
 
 export const REPORT_QUEUE_NAME = 'cope-reports';
-export const reportQueue = new Queue(REPORT_QUEUE_NAME, { connection });
+export const reportQueue = createQueue<ReportJobData>(REPORT_QUEUE_NAME, { connection });
 
 // ---------------------------------------------------------------------------
 // Job data shape

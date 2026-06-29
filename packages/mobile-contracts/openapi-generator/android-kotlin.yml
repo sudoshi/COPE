@@ -1,0 +1,10 @@
+packageName: app.cope.contracts
+groupId: app.cope
+artifactId: cope-mobile-contracts
+artifactVersion: 0.1.0
+library: jvm-okhttp4
+serializationLibrary: moshi
+dateLibrary: java8
+enumPropertyNaming: original
+useCoroutines: true
+useTags: true

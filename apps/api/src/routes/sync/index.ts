@@ -10,10 +10,13 @@
 // =============================================================================
 
 import type { FastifyInstance } from 'fastify';
-import fp from 'fastify-plugin';
 import { sql } from '@cope/db';
 import { auditLog } from '../../middleware/audit.js';
 import type { JwtPayload } from '../../plugins/auth.js';
+import {
+  syncPullRouteSchema,
+  syncPushRouteSchema,
+} from '../mobile-openapi-schemas.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -72,7 +75,7 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
   // ---------------------------------------------------------------------------
   fastify.get<{ Querystring: PullQuery }>(
     '/pull',
-    { preHandler: [fastify.authenticate] },
+    { preHandler: [fastify.authenticate], schema: syncPullRouteSchema },
     async (request, reply) => {
       const user = request.user as JwtPayload;
 
@@ -110,6 +113,12 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
                  (de.submitted_at IS NOT NULL) AS is_complete,
                  de.completion_pct, de.core_complete, de.wellness_complete,
                  de.triggers_complete, de.symptoms_complete, de.journal_complete,
+                 de.mania_score, de.racing_thoughts, de.decreased_sleep_need,
+                 de.anxiety_score, de.somatic_anxiety, de.anhedonia_score,
+                 de.suicidal_ideation, de.substance_use, de.substance_quantity,
+                 de.social_score, de.social_avoidance, de.cognitive_score,
+                 de.brain_fog, de.appetite_score, de.stress_score,
+                 de.life_event_note,
                  de.submitted_at, de.created_at,
                  GREATEST(
                    de.updated_at,
@@ -133,6 +142,12 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
                  (de.submitted_at IS NOT NULL) AS is_complete,
                  de.completion_pct, de.core_complete, de.wellness_complete,
                  de.triggers_complete, de.symptoms_complete, de.journal_complete,
+                 de.mania_score, de.racing_thoughts, de.decreased_sleep_need,
+                 de.anxiety_score, de.somatic_anxiety, de.anhedonia_score,
+                 de.suicidal_ideation, de.substance_use, de.substance_quantity,
+                 de.social_score, de.social_avoidance, de.cognitive_score,
+                 de.brain_fog, de.appetite_score, de.stress_score,
+                 de.life_event_note,
                  de.submitted_at, de.created_at,
                  GREATEST(
                    de.updated_at,
@@ -339,7 +354,7 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
   // ---------------------------------------------------------------------------
   fastify.post<{ Body: PushBody }>(
     '/push',
-    { preHandler: [fastify.authenticate] },
+    { preHandler: [fastify.authenticate], schema: syncPushRouteSchema },
     async (request, reply) => {
       const user = request.user as JwtPayload;
       if (user.role !== 'patient') {
@@ -366,7 +381,13 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
           INSERT INTO daily_entries (
             id, patient_id, entry_date, mood, notes, completion_pct,
             core_complete, wellness_complete, triggers_complete, symptoms_complete,
-            journal_complete, submitted_at
+            journal_complete,
+            mania_score, racing_thoughts, decreased_sleep_need,
+            anxiety_score, somatic_anxiety, anhedonia_score,
+            suicidal_ideation, substance_use, substance_quantity,
+            social_score, social_avoidance, cognitive_score,
+            brain_fog, appetite_score, stress_score, life_event_note,
+            submitted_at
           )
           VALUES (
             COALESCE(${requestedId}::UUID, gen_random_uuid()),
@@ -380,6 +401,22 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
             ${Boolean(row.triggers_complete)},
             ${Boolean(row.symptoms_complete)},
             ${Boolean(row.journal_complete)},
+            ${(row.mania_score as number | null) ?? null},
+            ${(row.racing_thoughts as boolean | null) ?? null},
+            ${(row.decreased_sleep_need as boolean | null) ?? null},
+            ${(row.anxiety_score as number | null) ?? null},
+            ${(row.somatic_anxiety as boolean | null) ?? null},
+            ${(row.anhedonia_score as number | null) ?? null},
+            ${(row.suicidal_ideation as number | null) ?? null},
+            ${(row.substance_use as string | null) ?? null},
+            ${(row.substance_quantity as number | null) ?? null},
+            ${(row.social_score as number | null) ?? null},
+            ${(row.social_avoidance as boolean | null) ?? null},
+            ${(row.cognitive_score as number | null) ?? null},
+            ${(row.brain_fog as boolean | null) ?? null},
+            ${(row.appetite_score as number | null) ?? null},
+            ${(row.stress_score as number | null) ?? null},
+            ${(row.life_event_note as string | null) ?? null},
             ${(row.submitted_at as string | null) ?? null}
           )
           ON CONFLICT (patient_id, entry_date)
@@ -392,6 +429,22 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
             triggers_complete = EXCLUDED.triggers_complete,
             symptoms_complete = EXCLUDED.symptoms_complete,
             journal_complete = EXCLUDED.journal_complete,
+            mania_score = EXCLUDED.mania_score,
+            racing_thoughts = EXCLUDED.racing_thoughts,
+            decreased_sleep_need = EXCLUDED.decreased_sleep_need,
+            anxiety_score = EXCLUDED.anxiety_score,
+            somatic_anxiety = EXCLUDED.somatic_anxiety,
+            anhedonia_score = EXCLUDED.anhedonia_score,
+            suicidal_ideation = EXCLUDED.suicidal_ideation,
+            substance_use = EXCLUDED.substance_use,
+            substance_quantity = EXCLUDED.substance_quantity,
+            social_score = EXCLUDED.social_score,
+            social_avoidance = EXCLUDED.social_avoidance,
+            cognitive_score = EXCLUDED.cognitive_score,
+            brain_fog = EXCLUDED.brain_fog,
+            appetite_score = EXCLUDED.appetite_score,
+            stress_score = EXCLUDED.stress_score,
+            life_event_note = EXCLUDED.life_event_note,
             last_saved_at = NOW(),
             submitted_at = COALESCE(EXCLUDED.submitted_at, daily_entries.submitted_at)
           RETURNING id, entry_date::TEXT AS entry_date
@@ -558,4 +611,4 @@ async function syncRoutes(fastify: FastifyInstance): Promise<void> {
   );
 }
 
-export default fp(syncRoutes, { name: 'sync-routes' });
+export default syncRoutes;

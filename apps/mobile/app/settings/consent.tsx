@@ -16,17 +16,32 @@ import { apiFetch } from '../../services/auth';
 interface ConsentRecord {
   id: string;
   consent_type: string;
+  granted: boolean;
   granted_at: string;
   expires_at: string | null;
-  withdrawn_at: string | null;
+  revoked_at: string | null;
 }
 
 const CONSENT_LABELS: Record<string, string> = {
-  HIPAA_AUTHORIZATION: 'HIPAA Authorization',
-  DATA_SHARING_CARE_TEAM: 'Share data with care team',
-  AI_ANALYSIS: 'AI-assisted insights',
-  RESEARCH_PARTICIPATION: 'Research participation',
+  share_with_clinician: 'Share data with care team',
+  share_journal_with_clinician: 'Share journal with care team',
+  research_participation: 'Research participation',
+  data_export: 'Data export',
+  push_notifications: 'Push notifications',
+  terms_of_service: 'Terms of Service',
+  privacy_policy: 'Privacy Policy',
+  journal_sharing: 'Share journal with care team',
+  data_research: 'Research and quality improvement',
+  ai_insights: 'AI-assisted insights',
+  emergency_contact: 'Emergency contact sharing',
 };
+
+const REVOCABLE_CONSENT_TYPES = new Set([
+  'journal_sharing',
+  'data_research',
+  'ai_insights',
+  'emergency_contact',
+]);
 
 export default function ConsentScreen() {
   const [records, setRecords] = useState<ConsentRecord[]>([]);
@@ -50,10 +65,10 @@ export default function ConsentScreen() {
   useEffect(() => { void load(); }, []);
 
   const withdraw = (record: ConsentRecord) => {
-    if (record.consent_type === 'HIPAA_AUTHORIZATION') {
+    if (!REVOCABLE_CONSENT_TYPES.has(record.consent_type)) {
       Alert.alert(
-        'Cannot withdraw HIPAA Authorization',
-        'HIPAA Authorization is required to use COPE. Contact your care team to request record deletion.',
+        'Contact your care team',
+        'This consent type cannot be withdrawn in the app. Contact your care team or privacy@cope.app for help.',
       );
       return;
     }
@@ -102,7 +117,8 @@ export default function ConsentScreen() {
           <Text style={styles.empty}>No consent records found.</Text>
         ) : (
           records.map((record) => {
-            const active = !record.withdrawn_at;
+            const active = record.granted && !record.revoked_at;
+            const canWithdraw = active && REVOCABLE_CONSENT_TYPES.has(record.consent_type);
             return (
               <View key={record.id} style={styles.card}>
                 <View style={styles.cardHeader}>
@@ -119,12 +135,17 @@ export default function ConsentScreen() {
                   Granted: {new Date(record.granted_at).toLocaleDateString()}
                   {record.expires_at ? `  ·  Expires: ${new Date(record.expires_at).toLocaleDateString()}` : ''}
                 </Text>
-                {record.withdrawn_at && (
+                {record.revoked_at && (
                   <Text style={styles.cardDate}>
-                    Withdrawn: {new Date(record.withdrawn_at).toLocaleDateString()}
+                    Withdrawn: {new Date(record.revoked_at).toLocaleDateString()}
                   </Text>
                 )}
-                {active && (
+                {active && !canWithdraw && (
+                  <Text style={styles.cardHint}>
+                    Contact your care team to change this consent.
+                  </Text>
+                )}
+                {canWithdraw && (
                   <TouchableOpacity
                     style={styles.withdrawBtn}
                     onPress={() => withdraw(record)}
@@ -180,6 +201,7 @@ const styles = StyleSheet.create({
   badgeTextActive: { color: DESIGN_TOKENS.COLOR_SUCCESS },
   badgeTextWithdrawn: { color: DESIGN_TOKENS.COLOR_DANGER },
   cardDate: { color: SUB, fontSize: 12, marginBottom: 2 },
+  cardHint: { color: SUB, fontSize: 12, marginTop: 8, lineHeight: 18 },
   withdrawBtn: {
     marginTop: 10, borderWidth: 1, borderColor: '#4a1010',
     borderRadius: 8, padding: 8, alignItems: 'center',

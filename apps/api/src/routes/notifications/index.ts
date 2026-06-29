@@ -10,6 +10,15 @@ import { z } from 'zod';
 import { sql } from '@cope/db';
 import { config } from '../../config.js';
 import { UuidSchema } from '@cope/shared';
+import {
+  assertPhiSafePushPayload,
+  buildAssessmentRequestPushPayload,
+} from '../../services/pushPayloadPolicy.js';
+import {
+  getNotificationPrefsRouteSchema,
+  registerPushTokenRouteSchema,
+  updateNotificationPrefsRouteSchema,
+} from '../mobile-openapi-schemas.js';
 
 const EXPO_PUSH_URL = 'https://exp.host/--/api/v2/push/send';
 
@@ -39,6 +48,74 @@ const UpdatePrefsSchema = z.object({
   appointment_reminders: z.boolean().optional(),
   push_token: z.string().max(512).nullable().optional(),
 });
+const RegisterPushTokenSchema = z.object({
+  push_token: z.string().min(1).max(512),
+});
+
+type UpdatePrefs = z.infer<typeof UpdatePrefsSchema>;
+type PatientNotificationPrefsRow = {
+  id: string;
+  daily_reminder_enabled: boolean;
+  daily_reminder_time: string;
+  medication_reminder_enabled: boolean;
+  streak_notifications: boolean;
+  appointment_reminders: boolean;
+  push_token: string | null;
+  updated_at: string;
+};
+
+async function upsertPatientNotificationPrefs(
+  patientId: string,
+  body: UpdatePrefs,
+): Promise<PatientNotificationPrefsRow> {
+  const tokenUpdatedAt = body.push_token != null ? new Date() : null;
+
+  // Use UPDATE … WHERE + INSERT fallback pattern to avoid complex UPSERT
+  const [existing] = await sql<{ id: string }[]>`
+    SELECT id FROM patient_notification_preferences WHERE patient_id = ${patientId} LIMIT 1
+  `;
+
+  if (existing) {
+    const [updated] = await sql<PatientNotificationPrefsRow[]>`
+      UPDATE patient_notification_preferences SET
+        daily_reminder_enabled      = COALESCE(${body.daily_reminder_enabled ?? null}, daily_reminder_enabled),
+        daily_reminder_time         = COALESCE(${body.daily_reminder_time ?? null}::TIME, daily_reminder_time),
+        medication_reminder_enabled = COALESCE(${body.medication_reminder_enabled ?? null}, medication_reminder_enabled),
+        streak_notifications        = COALESCE(${body.streak_notifications ?? null}, streak_notifications),
+        appointment_reminders       = COALESCE(${body.appointment_reminders ?? null}, appointment_reminders),
+        push_token                  = COALESCE(${body.push_token ?? null}, push_token),
+        push_token_updated_at       = COALESCE(${tokenUpdatedAt}, push_token_updated_at),
+        updated_at                  = NOW()
+      WHERE patient_id = ${patientId}
+      RETURNING id, daily_reminder_enabled, daily_reminder_time::TEXT AS daily_reminder_time,
+                medication_reminder_enabled, streak_notifications,
+                appointment_reminders, push_token, updated_at
+    `;
+    return updated!;
+  }
+
+  const [created] = await sql<PatientNotificationPrefsRow[]>`
+    INSERT INTO patient_notification_preferences (
+      patient_id, daily_reminder_enabled, daily_reminder_time,
+      medication_reminder_enabled, streak_notifications,
+      appointment_reminders, push_token, push_token_updated_at
+    )
+    VALUES (
+      ${patientId},
+      ${body.daily_reminder_enabled ?? true},
+      ${body.daily_reminder_time ?? '20:00'}::TIME,
+      ${body.medication_reminder_enabled ?? true},
+      ${body.streak_notifications ?? true},
+      ${body.appointment_reminders ?? true},
+      ${body.push_token ?? null},
+      ${tokenUpdatedAt}
+    )
+    RETURNING id, daily_reminder_enabled, daily_reminder_time::TEXT AS daily_reminder_time,
+              medication_reminder_enabled, streak_notifications,
+              appointment_reminders, push_token, updated_at
+  `;
+  return created!;
+}
 
 export default async function notificationRoutes(fastify: FastifyInstance): Promise<void> {
   const patientOnly = { preHandler: [fastify.requireRole(['patient'])] };
@@ -46,7 +123,7 @@ export default async function notificationRoutes(fastify: FastifyInstance): Prom
   // ---------------------------------------------------------------------------
   // GET /notifications/prefs — patient reads their notification prefs
   // ---------------------------------------------------------------------------
-  fastify.get('/prefs', patientOnly, async (request, reply) => {
+  fastify.get('/prefs', { ...patientOnly, schema: getNotificationPrefsRouteSchema }, async (request, reply) => {
     const patientId = request.user.sub;
 
     const [prefs] = await sql`
@@ -77,57 +154,29 @@ export default async function notificationRoutes(fastify: FastifyInstance): Prom
   // ---------------------------------------------------------------------------
   // PUT /notifications/prefs — patient updates notification prefs
   // ---------------------------------------------------------------------------
-  fastify.put('/prefs', patientOnly, async (request, reply) => {
+  fastify.put('/prefs', { ...patientOnly, schema: updateNotificationPrefsRouteSchema }, async (request, reply) => {
     const patientId = request.user.sub;
     const body = UpdatePrefsSchema.parse(request.body);
-    const tokenUpdatedAt = body.push_token != null ? new Date() : null;
+    const prefs = await upsertPatientNotificationPrefs(patientId, body);
 
-    // Use UPDATE … WHERE + INSERT fallback pattern to avoid complex UPSERT
-    const [existing] = await sql<{ id: string }[]>`
-      SELECT id FROM patient_notification_preferences WHERE patient_id = ${patientId} LIMIT 1
-    `;
+    return reply.send({ success: true, data: prefs });
+  });
 
-    if (existing) {
-      const [updated] = await sql`
-        UPDATE patient_notification_preferences SET
-          daily_reminder_enabled      = COALESCE(${body.daily_reminder_enabled ?? null}, daily_reminder_enabled),
-          daily_reminder_time         = COALESCE(${body.daily_reminder_time ?? null}::TIME, daily_reminder_time),
-          medication_reminder_enabled = COALESCE(${body.medication_reminder_enabled ?? null}, medication_reminder_enabled),
-          streak_notifications        = COALESCE(${body.streak_notifications ?? null}, streak_notifications),
-          appointment_reminders       = COALESCE(${body.appointment_reminders ?? null}, appointment_reminders),
-          push_token                  = COALESCE(${body.push_token ?? null}, push_token),
-          push_token_updated_at       = COALESCE(${tokenUpdatedAt}, push_token_updated_at),
-          updated_at                  = NOW()
-        WHERE patient_id = ${patientId}
-        RETURNING id, daily_reminder_enabled, daily_reminder_time,
-                  medication_reminder_enabled, streak_notifications,
-                  appointment_reminders, push_token, updated_at
-      `;
-      return reply.send({ success: true, data: updated });
-    }
+  // ---------------------------------------------------------------------------
+  // POST /notifications/push-token — patient registers or replaces push token
+  // ---------------------------------------------------------------------------
+  fastify.post('/push-token', { ...patientOnly, schema: registerPushTokenRouteSchema }, async (request, reply) => {
+    const patientId = request.user.sub;
+    const body = RegisterPushTokenSchema.parse(request.body);
+    const prefs = await upsertPatientNotificationPrefs(patientId, body);
 
-    // Insert with provided values (or defaults)
-    const [created] = await sql`
-      INSERT INTO patient_notification_preferences (
-        patient_id, daily_reminder_enabled, daily_reminder_time,
-        medication_reminder_enabled, streak_notifications,
-        appointment_reminders, push_token, push_token_updated_at
-      )
-      VALUES (
-        ${patientId},
-        ${body.daily_reminder_enabled ?? true},
-        ${body.daily_reminder_time ?? '20:00'}::TIME,
-        ${body.medication_reminder_enabled ?? true},
-        ${body.streak_notifications ?? true},
-        ${body.appointment_reminders ?? true},
-        ${body.push_token ?? null},
-        ${tokenUpdatedAt}
-      )
-      RETURNING id, daily_reminder_enabled, daily_reminder_time,
-                medication_reminder_enabled, streak_notifications,
-                appointment_reminders, push_token, updated_at
-    `;
-    return reply.send({ success: true, data: created });
+    return reply.send({
+      success: true,
+      data: {
+        push_token: prefs.push_token,
+        updated_at: prefs.updated_at,
+      },
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -154,16 +203,11 @@ export default async function notificationRoutes(fastify: FastifyInstance): Prom
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Not on this patient\'s care team' } });
     }
 
-    // Fetch clinician name + patient push token
-    const [[clinician], [prefs]] = await Promise.all([
-      sql<{ first_name: string; last_name: string; title: string | null }[]>`
-        SELECT first_name, last_name, title FROM clinicians WHERE id = ${clinicianId}::UUID LIMIT 1
-      `,
-      sql<{ push_token: string | null }[]>`
-        SELECT push_token FROM patient_notification_preferences
-        WHERE patient_id = ${body.patient_id} LIMIT 1
-      `,
-    ]);
+    // Fetch patient push token. The push body remains generic and PHI-safe.
+    const [prefs] = await sql<{ push_token: string | null }[]>`
+      SELECT push_token FROM patient_notification_preferences
+      WHERE patient_id = ${body.patient_id} LIMIT 1
+    `;
 
     const pushToken = prefs?.push_token;
     if (!pushToken) {
@@ -173,18 +217,9 @@ export default async function notificationRoutes(fastify: FastifyInstance): Prom
       });
     }
 
-    const clinicianName = clinician
-      ? `${clinician.title ? clinician.title + ' ' : ''}${clinician.first_name} ${clinician.last_name}`
-      : 'Your clinician';
-
-    const pushTitle = `Assessment Requested: ${body.scale}`;
-    const pushBody = body.message ?? `${clinicianName} has requested a ${body.scale} assessment. Please open COPE to complete it.`;
-
-    await sendPatientPush(pushToken, pushTitle, pushBody, {
-      type: 'assessment_request',
-      scale: body.scale,
-      clinicianId,
-    });
+    const push = buildAssessmentRequestPushPayload();
+    assertPhiSafePushPayload(push);
+    await sendPatientPush(pushToken, push.title, push.body, push.data);
 
     return reply.status(200).send({ success: true, data: { sent: true, scale: body.scale } });
   });

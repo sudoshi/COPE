@@ -24,12 +24,13 @@
 //                                 domain findings, early warnings, etc.)
 // =============================================================================
 
-import { Worker, Queue } from 'bullmq';
+import { Worker } from 'bullmq';
 import { sql } from '@cope/db';
 import { config } from '../config.js';
 import { connection } from './rules-engine.js';
 import { computeRiskScore, persistRiskScore } from '../services/riskScoring.js';
 import { generateCompletion, computeCostCents } from '../services/llmClient.js';
+import { createQueue } from './queue-factory.js';
 
 // ---------------------------------------------------------------------------
 // Queue — exported so routes can enqueue jobs
@@ -37,7 +38,7 @@ import { generateCompletion, computeCostCents } from '../services/llmClient.js';
 
 export const AI_INSIGHTS_QUEUE_NAME = 'cope-ai-insights';
 
-export const aiInsightsQueue = new Queue(AI_INSIGHTS_QUEUE_NAME, {
+export const aiInsightsQueue = createQueue<AiInsightJobData>(AI_INSIGHTS_QUEUE_NAME, {
   connection,
   defaultJobOptions: {
     attempts:         2,

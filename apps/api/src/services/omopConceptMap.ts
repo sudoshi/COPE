@@ -7,6 +7,8 @@
 // Pure data — no I/O, no side effects. Version-controlled and testable.
 // =============================================================================
 
+import { SCALE_TOTAL_SCORE_LOINC_MAP } from '@cope/shared';
+
 // ---------------------------------------------------------------------------
 // Gender concepts (OMOP standard — Gender domain)
 // ---------------------------------------------------------------------------
@@ -150,22 +152,22 @@ export interface AssessmentConceptDef {
 export const ASSESSMENT_CONCEPTS: Record<string, AssessmentConceptDef> = {
   'PHQ-9': {
     concept_id:   40758882,
-    loinc_code:   '44249-1',
+    loinc_code:   SCALE_TOTAL_SCORE_LOINC_MAP['PHQ-9'] ?? '',
     concept_name: 'PHQ-9 total score',
   },
   'GAD-7': {
     concept_id:   40766345,
-    loinc_code:   '69737-5',
+    loinc_code:   SCALE_TOTAL_SCORE_LOINC_MAP['GAD-7'] ?? '',
     concept_name: 'GAD-7 total score',
   },
   'ISI': {
     concept_id:   0,
-    loinc_code:   '89794-0',
+    loinc_code:   SCALE_TOTAL_SCORE_LOINC_MAP.ISI ?? '',
     concept_name: 'Insomnia Severity Index total score',
   },
   'C-SSRS': {
     concept_id:   0,
-    loinc_code:   '89213-1',
+    loinc_code:   SCALE_TOTAL_SCORE_LOINC_MAP['C-SSRS'] ?? '',
     concept_name: 'C-SSRS Screener total score',
   },
   'ASRM': {

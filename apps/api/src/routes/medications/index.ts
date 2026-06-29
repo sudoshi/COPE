@@ -9,7 +9,7 @@
 // GET    /medications/today          — today's meds + adherence status (patient-only shortcut)
 // =============================================================================
 
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { sql } from '@cope/db';
 import {
@@ -19,6 +19,12 @@ import {
   UuidSchema,
   PaginationSchema,
 } from '@cope/shared';
+import {
+  createMedicationRouteSchema,
+  getTodayMedicationsRouteSchema,
+  listMedicationLogsRouteSchema,
+  logMedicationAdherenceRouteSchema,
+} from '../mobile-openapi-schemas.js';
 
 // ---------------------------------------------------------------------------
 // Local helpers
@@ -32,7 +38,7 @@ import {
 async function resolvePatientId(
   fastify: FastifyInstance,
   request: { user: { sub: string; role: string }; query: Record<string, string | undefined> },
-  reply: { status: (code: number) => { send: (body: unknown) => void }; send: (body: unknown) => void },
+  reply: FastifyReply,
 ): Promise<string | null> {
   const role = request.user.role;
 
@@ -73,7 +79,7 @@ export default async function medicationRoutes(fastify: FastifyInstance): Promis
   // GET /medications/today — patient shortcut: today's meds + adherence status
   // Must be registered BEFORE /:id to avoid conflict.
   // -------------------------------------------------------------------------
-  fastify.get('/today', auth, async (request, reply) => {
+  fastify.get('/today', { ...auth, schema: getTodayMedicationsRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({
         success: false,
@@ -180,7 +186,7 @@ export default async function medicationRoutes(fastify: FastifyInstance): Promis
   // -------------------------------------------------------------------------
   // POST /medications — add a medication for a patient
   // -------------------------------------------------------------------------
-  fastify.post('/', auth, async (request, reply) => {
+  fastify.post('/', { ...auth, schema: createMedicationRouteSchema }, async (request, reply) => {
     const body = CreatePatientMedicationSchema.parse(request.body);
     const query = request.query as Record<string, string | undefined>;
 
@@ -309,7 +315,7 @@ export default async function medicationRoutes(fastify: FastifyInstance): Promis
   // -------------------------------------------------------------------------
   // GET /medications/:id/logs — adherence history for a single medication
   // -------------------------------------------------------------------------
-  fastify.get('/:id/logs', auth, async (request, reply) => {
+  fastify.get('/:id/logs', { ...auth, schema: listMedicationLogsRouteSchema }, async (request, reply) => {
     const { id } = z.object({ id: UuidSchema }).parse(request.params);
     const query = request.query as Record<string, string | undefined>;
     const { page, limit } = PaginationSchema.parse(query);
@@ -373,7 +379,7 @@ export default async function medicationRoutes(fastify: FastifyInstance): Promis
   // POST /medications/:id/logs — log or upsert adherence for a given date
   // Only patients may log their own adherence.
   // -------------------------------------------------------------------------
-  fastify.post('/:id/logs', auth, async (request, reply) => {
+  fastify.post('/:id/logs', { ...auth, schema: logMedicationAdherenceRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({
         success: false,

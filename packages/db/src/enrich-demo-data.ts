@@ -459,7 +459,7 @@ async function enrichDemoData(): Promise<void> {
         await sql`
           INSERT INTO validated_assessments (patient_id, scale, score, item_responses, completed_at, loinc_code)
           VALUES (${patient.id}, 'C-SSRS', ${cssrs.score}, ${JSON.stringify(cssrs.itemResponses)},
-                  ${completedAt}::date + TIME '10:00:00', '93267-6')
+                  ${completedAt}::date + TIME '10:00:00', '93245-9')
           ON CONFLICT DO NOTHING
         `;
         assessmentsAdded++;
@@ -475,7 +475,7 @@ async function enrichDemoData(): Promise<void> {
         await sql`
           INSERT INTO validated_assessments (patient_id, scale, score, item_responses, completed_at, loinc_code)
           VALUES (${patient.id}, 'ISI', ${isi.score}, ${JSON.stringify(isi.itemResponses)},
-                  ${completedAt}::date + TIME '09:30:00', '70173-7')
+                  ${completedAt}::date + TIME '09:30:00', '89794-0')
           ON CONFLICT DO NOTHING
         `;
         assessmentsAdded++;
@@ -494,7 +494,7 @@ async function enrichDemoData(): Promise<void> {
       await sql`
         INSERT INTO validated_assessments (patient_id, scale, score, item_responses, completed_at, loinc_code)
         VALUES (${patient.id}, 'QIDS-SR', ${qids.score}, ${JSON.stringify(qids.itemResponses)},
-                ${completedAt}::date + TIME '11:00:00', '77716-8')
+                ${completedAt}::date + TIME '11:00:00', NULL)
         ON CONFLICT DO NOTHING
       `;
       assessmentsAdded++;

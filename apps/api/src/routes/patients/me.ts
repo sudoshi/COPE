@@ -19,6 +19,11 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { sql } from '@cope/db';
 import { UuidSchema, IntakeSchema } from '@cope/shared';
+import {
+  getPatientMeRouteSchema,
+  updatePatientIntakeRouteSchema,
+  updatePatientMeRouteSchema,
+} from '../mobile-openapi-schemas.js';
 
 const PatchMeSchema = z.object({
   preferred_name: z.string().max(100).optional(),
@@ -36,7 +41,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   // ---------------------------------------------------------------------------
   // GET /patients/me — own profile
   // ---------------------------------------------------------------------------
-  fastify.get('/', auth, async (request, reply) => {
+  fastify.get('', { ...auth, schema: getPatientMeRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
@@ -66,7 +71,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   // ---------------------------------------------------------------------------
   // PATCH /patients/me — update preferred_name and/or timezone
   // ---------------------------------------------------------------------------
-  fastify.patch('/', auth, async (request, reply) => {
+  fastify.patch('', { ...auth, schema: updatePatientMeRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
@@ -98,7 +103,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   // PATCH /patients/me/intake — update clinical intake fields
   // Called during the post-registration onboarding wizard (Phase 7).
   // ---------------------------------------------------------------------------
-  fastify.patch('/intake', auth, async (request, reply) => {
+  fastify.patch('/intake', { ...auth, schema: updatePatientIntakeRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }

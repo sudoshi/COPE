@@ -12,6 +12,11 @@ import { z } from 'zod';
 import { sql } from '@cope/db';
 import { CreateDailyEntrySchema, PaginationSchema, UuidSchema, IsoDateSchema } from '@cope/shared';
 import { rulesQueue } from '../../workers/rules-engine.js';
+import {
+  createDailyEntryRouteSchema,
+  getTodayDailyEntryRouteSchema,
+  submitDailyEntryRouteSchema,
+} from '../mobile-openapi-schemas.js';
 
 export default async function dailyEntryRoutes(fastify: FastifyInstance): Promise<void> {
   const auth = { preHandler: [fastify.authenticate] };
@@ -19,7 +24,7 @@ export default async function dailyEntryRoutes(fastify: FastifyInstance): Promis
   // ---------------------------------------------------------------------------
   // GET /daily-entries/today — must be registered before /:id
   // ---------------------------------------------------------------------------
-  fastify.get('/today', auth, async (request, reply) => {
+  fastify.get('/today', { ...auth, schema: getTodayDailyEntryRouteSchema }, async (request, reply) => {
     const today = new Date().toISOString().split('T')[0]!;
 
     const [entry] = await sql<{ id: string; entry_date: string; mood: number | null; submitted_at: string | null; completion_pct: number }[]>`
@@ -42,7 +47,7 @@ export default async function dailyEntryRoutes(fastify: FastifyInstance): Promis
   // ---------------------------------------------------------------------------
   // POST /daily-entries — create or upsert the day's entry
   // ---------------------------------------------------------------------------
-  fastify.post('/', auth, async (request, reply) => {
+  fastify.post('/', { ...auth, schema: createDailyEntryRouteSchema }, async (request, reply) => {
     const body = CreateDailyEntrySchema.parse(request.body);
     const patientId = request.user.sub;
 
@@ -244,7 +249,7 @@ export default async function dailyEntryRoutes(fastify: FastifyInstance): Promis
   // ---------------------------------------------------------------------------
   // PATCH /daily-entries/:id/submit — finalise the entry
   // ---------------------------------------------------------------------------
-  fastify.patch('/:id/submit', auth, async (request, reply) => {
+  fastify.patch('/:id/submit', { ...auth, schema: submitDailyEntryRouteSchema }, async (request, reply) => {
     const { id } = z.object({ id: UuidSchema }).parse(request.params);
 
     const [entry] = await sql<{ id: string; submitted_at: string | null }[]>`

@@ -10,6 +10,11 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { sql } from '@cope/db';
 import { SCALE_LOINC_MAP } from '@cope/shared';
+import {
+  getPendingAssessmentsRouteSchema,
+  submitAssessmentByScaleRouteSchema,
+  submitAssessmentRouteSchema,
+} from '../mobile-openapi-schemas.js';
 
 // ---------------------------------------------------------------------------
 // Validation schemas
@@ -24,6 +29,10 @@ const SubmitAssessmentSchema = z.object({
   item_responses: z.record(z.string(), z.number().int().min(0).max(9)),
   notes: z.string().max(2000).optional(),
 });
+const SubmitAssessmentByScaleSchema = SubmitAssessmentSchema.omit({ scale: true });
+const ScaleParamSchema = z.object({ scale: z.enum(VALID_SCALES) });
+
+type SubmitAssessment = z.infer<typeof SubmitAssessmentSchema>;
 
 // Recommended reassessment interval (days) per scale
 const REASSESS_INTERVAL_DAYS: Record<Scale, number> = {
@@ -70,6 +79,27 @@ function toFhirQuestionnaireResponse(assessment: {
   };
 }
 
+async function createValidatedAssessment(patientId: string, body: SubmitAssessment) {
+  const loincCode = SCALE_LOINC_MAP[body.scale] ?? null;
+
+  const [row] = await sql<{ id: string; completed_at: string }[]>`
+    INSERT INTO validated_assessments
+      (patient_id, scale, score, item_responses, loinc_code, notes, completed_at)
+    VALUES
+      (${patientId}, ${body.scale}, ${body.score}, ${JSON.stringify(body.item_responses)},
+       ${loincCode}, ${body.notes ?? null}, NOW())
+    RETURNING id, completed_at
+  `;
+
+  return {
+    id: row!.id,
+    scale: body.scale,
+    score: body.score,
+    completed_at: row!.completed_at,
+    loinc_code: loincCode,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Route plugin
 // ---------------------------------------------------------------------------
@@ -78,38 +108,44 @@ export default async function assessmentRoutes(fastify: FastifyInstance): Promis
   const auth = { preHandler: [fastify.authenticate] };
 
   // ── POST /assessments — submit a completed scale ─────────────────────────
-  fastify.post('/', auth, async (request, reply) => {
+  fastify.post('/', { ...auth, schema: submitAssessmentRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
 
     const body = SubmitAssessmentSchema.parse(request.body);
     const patientId = request.user.sub;
-    const loincCode = SCALE_LOINC_MAP[body.scale] ?? null;
-
-    const [row] = await sql<{ id: string; completed_at: string }[]>`
-      INSERT INTO validated_assessments
-        (patient_id, scale, score, item_responses, loinc_code, completed_at)
-      VALUES
-        (${patientId}, ${body.scale}, ${body.score}, ${JSON.stringify(body.item_responses)},
-         ${loincCode}, NOW())
-      RETURNING id, completed_at
-    `;
+    const assessment = await createValidatedAssessment(patientId, body);
 
     return reply.status(201).send({
       success: true,
-      data: {
-        id: row!.id,
-        scale: body.scale,
-        score: body.score,
-        completed_at: row!.completed_at,
-        loinc_code: loincCode,
-      },
+      data: assessment,
     });
   });
 
+  // ── POST /assessments/:scale/responses — native-friendly compatibility alias
+  fastify.post(
+    '/:scale/responses',
+    { ...auth, schema: submitAssessmentByScaleRouteSchema },
+    async (request, reply) => {
+      if (request.user.role !== 'patient') {
+        return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
+      }
+
+      const { scale } = ScaleParamSchema.parse(request.params);
+      const body = SubmitAssessmentByScaleSchema.parse(request.body);
+      const patientId = request.user.sub;
+      const assessment = await createValidatedAssessment(patientId, { ...body, scale });
+
+      return reply.status(201).send({
+        success: true,
+        data: assessment,
+      });
+    },
+  );
+
   // ── GET /assessments/pending — which scales are due ───────────────────────
-  fastify.get('/pending', auth, async (request, reply) => {
+  fastify.get('/pending', { ...auth, schema: getPendingAssessmentsRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }

@@ -1,0 +1,84 @@
+name: COPE
+options:
+  bundleIdPrefix: com.cope
+  deploymentTarget:
+    iOS: "18.0"
+configs:
+  Debug: debug
+  Staging: release
+  Release: release
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: TKXPY255A2
+targets:
+  COPE:
+    type: application
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: COPE/Sources
+    resources:
+      - path: COPE/Resources
+    settings:
+      base:
+        INFOPLIST_FILE: COPE/Resources/Info.plist
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: TKXPY255A2
+      configs:
+        Debug:
+          PRODUCT_BUNDLE_IDENTIFIER: com.cope.app.dev
+          COPE_API_BASE_URL: http://localhost:3000
+        Staging:
+          PRODUCT_BUNDLE_IDENTIFIER: com.cope.app.staging
+          COPE_API_BASE_URL: https://staging.cope.health
+        Release:
+          PRODUCT_BUNDLE_IDENTIFIER: com.cope.app
+          COPE_API_BASE_URL: https://app.cope.health
+    scheme:
+      testTargets: []
+schemes:
+  COPE Development:
+    build:
+      targets:
+        COPE: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+    profile:
+      config: Debug
+    analyze:
+      config: Debug
+    archive:
+      config: Debug
+  COPE Staging:
+    build:
+      targets:
+        COPE: all
+    run:
+      config: Staging
+    test:
+      config: Staging
+    profile:
+      config: Staging
+    analyze:
+      config: Staging
+    archive:
+      config: Staging
+  COPE Production:
+    build:
+      targets:
+        COPE: all
+    run:
+      config: Release
+    test:
+      config: Release
+    profile:
+      config: Release
+    analyze:
+      config: Release
+    archive:
+      config: Release

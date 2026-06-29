@@ -11,6 +11,8 @@
 // to authorised clinicians (enforced in the route layer).
 // =============================================================================
 
+import { ASSESSMENT_LOINC_CODES } from '@cope/shared';
+
 // ---------------------------------------------------------------------------
 // Shared types (minimal — avoid heavy FHIR SDK dependency)
 // ---------------------------------------------------------------------------
@@ -165,12 +167,12 @@ const DAILY_ENTRY_LOINC: Record<string, { code: string; display: string; unit: s
 
 // LOINC codes for validated assessments
 const ASSESSMENT_LOINC: Record<string, { code: string; display: string }> = {
-  'PHQ-9':  { code: '44249-1', display: 'PHQ-9 quick depression assessment panel' },
+  'PHQ-9':  { code: ASSESSMENT_LOINC_CODES['PHQ-9'].panel, display: 'PHQ-9 quick depression assessment panel' },
   'PHQ-2':  { code: '55757-9', display: 'PHQ-2 depression screening' },
-  'GAD-7':  { code: '69737-5', display: 'GAD-7 anxiety severity scale' },
+  'GAD-7':  { code: ASSESSMENT_LOINC_CODES['GAD-7'].panel, display: 'GAD-7 anxiety severity scale' },
   'GAD-2':  { code: '69725-0', display: 'GAD-2 anxiety screening' },
-  'ASRM':   { code: '96842-6', display: 'Altman Self-Rating Mania Scale' },
-  'C-SSRS': { code: '96844-2', display: 'Columbia Suicide Severity Rating Scale' },
+  'ISI':    { code: ASSESSMENT_LOINC_CODES.ISI.panel, display: 'Insomnia Severity Index' },
+  'C-SSRS': { code: ASSESSMENT_LOINC_CODES['C-SSRS'].panel, display: 'Columbia Suicide Severity Rating Scale' },
   'AUDIT':  { code: '75626-2', display: 'AUDIT alcohol use disorder screening' },
   'AUDIT-C':{ code: '72109-2', display: 'AUDIT-C alcohol use disorder screening' },
 };

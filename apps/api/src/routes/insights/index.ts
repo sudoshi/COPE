@@ -8,7 +8,12 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { sql } from '@cope/db';
 import { aiGate } from '../../middleware/aiGate.js';
-import { aiInsightsQueue, HIPAA_PREAMBLE, buildClinicalSnapshot } from '../../workers/ai-insights-worker.js';
+import {
+  aiInsightsQueue,
+  HIPAA_PREAMBLE,
+  buildClinicalSnapshot,
+  type AiInsightJobType,
+} from '../../workers/ai-insights-worker.js';
 import { generateChat, computeCostCents, type ChatMessage } from '../../services/llmClient.js';
 
 const InsightsQuerySchema = z.object({
@@ -514,10 +519,13 @@ export default async function insightsRoutes(fastify: FastifyInstance): Promise<
     }
 
     const body = request.body as { type?: string; period_days?: number };
-    const allowedTypes = ['weekly_summary', 'trend_narrative', 'anomaly_detection', 'nightly_deep_analysis'] as const;
-    const jobType = allowedTypes.includes(body?.type as typeof allowedTypes[number])
-      ? (body.type as typeof allowedTypes[number])
-      : 'weekly_summary';
+    const jobTypeByRequestType: Record<string, AiInsightJobType> = {
+      weekly_summary: 'generate_weekly_summary',
+      trend_narrative: 'generate_trend_narrative',
+      anomaly_detection: 'detect_anomaly',
+      nightly_deep_analysis: 'nightly_deep_analysis',
+    };
+    const jobType = body?.type ? jobTypeByRequestType[body.type] ?? 'generate_weekly_summary' : 'generate_weekly_summary';
     const periodDays = Math.max(7, Math.min(30, Number(body?.period_days ?? (jobType === 'nightly_deep_analysis' ? 30 : 7))));
 
     const job = await aiInsightsQueue.add(jobType, {

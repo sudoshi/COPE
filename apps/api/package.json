@@ -12,7 +12,8 @@
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "openapi:generate": "node --env-file-if-exists=../../.env --import tsx/esm src/scripts/export-openapi.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

@@ -9,6 +9,11 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { sql } from '@cope/db';
 import { UpdateConsentSchema } from '@cope/shared';
+import {
+  listConsentRouteSchema,
+  revokeConsentRouteSchema,
+  updateConsentRouteSchema,
+} from '../mobile-openapi-schemas.js';
 
 const CONSENT_VERSION = '1.0.0';
 
@@ -18,7 +23,7 @@ export default async function consentRoutes(fastify: FastifyInstance): Promise<v
   // ---------------------------------------------------------------------------
   // GET /consent — list latest consent status per type for this patient
   // ---------------------------------------------------------------------------
-  fastify.get('/', patientOnly, async (request, reply) => {
+  fastify.get('/', { ...patientOnly, schema: listConsentRouteSchema }, async (request, reply) => {
     const patientId = request.user.sub;
 
     // Return the most recent record per consent_type
@@ -36,7 +41,7 @@ export default async function consentRoutes(fastify: FastifyInstance): Promise<v
   // ---------------------------------------------------------------------------
   // POST /consent — grant or update consent
   // ---------------------------------------------------------------------------
-  fastify.post('/', patientOnly, async (request, reply) => {
+  fastify.post('/', { ...patientOnly, schema: updateConsentRouteSchema }, async (request, reply) => {
     const patientId = request.user.sub;
     const body = UpdateConsentSchema.parse(request.body);
 
@@ -56,7 +61,7 @@ export default async function consentRoutes(fastify: FastifyInstance): Promise<v
   // ---------------------------------------------------------------------------
   // DELETE /consent/:type — revoke a consent type
   // ---------------------------------------------------------------------------
-  fastify.delete('/:type', patientOnly, async (request, reply) => {
+  fastify.delete('/:type', { ...patientOnly, schema: revokeConsentRouteSchema }, async (request, reply) => {
     const { type } = z.object({
       type: z.enum(['journal_sharing', 'data_research', 'ai_insights', 'emergency_contact']),
     }).parse(request.params);

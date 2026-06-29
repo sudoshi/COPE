@@ -34,14 +34,14 @@ import {
 import { omopExportQueue, type OmopExportJobData } from '../../workers/omop-export-worker.js';
 import { queryCohort, countCohort, captureCohortSnapshot } from '../../services/cohortQueryEngine.js';
 import { connection } from '../../workers/rules-engine.js';
-import { Queue } from 'bullmq';
+import { createQueue } from '../../workers/queue-factory.js';
 
 // ---------------------------------------------------------------------------
 // Research export queue (separate from report queue for isolation)
 // ---------------------------------------------------------------------------
 
 const RESEARCH_QUEUE_NAME = 'cope-research-exports';
-export const researchQueue = new Queue(RESEARCH_QUEUE_NAME, { connection });
+export const researchQueue = createQueue<ResearchExportJobData>(RESEARCH_QUEUE_NAME, { connection });
 
 export interface ResearchExportJobData {
   exportId: string;

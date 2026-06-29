@@ -197,15 +197,67 @@ export const DESIGN_TOKENS = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// LOINC codes for validated assessment instruments
+// LOINC codes for validated assessment instruments.
+// Keep questionnaire/panel codes distinct from total-score Observation codes:
+// a QuestionnaireResponse should point at the instrument/panel, while an
+// OMOP/FHIR measurement of the numeric score should use a total-score code.
 // ---------------------------------------------------------------------------
 
+export const ASSESSMENT_LOINC_CODES = {
+  'PHQ-9': {
+    panel: '44249-1',
+    totalScore: '44261-6',
+    display: 'Patient Health Questionnaire 9 item',
+  },
+  'GAD-7': {
+    panel: '69737-5',
+    totalScore: '70274-6',
+    display: 'Generalized Anxiety Disorder 7 item',
+  },
+  'ISI': {
+    panel: '89794-0',
+    totalScore: null,
+    display: 'Insomnia Severity Index',
+  },
+  'C-SSRS': {
+    panel: '93245-9',
+    screener: '93373-9',
+    totalScore: null,
+    display: 'Columbia Suicide Severity Rating Scale',
+  },
+  'ASRM': {
+    panel: null,
+    totalScore: null,
+    display: 'Altman Self-Rating Mania Scale',
+  },
+  'WHODAS': {
+    panel: null,
+    totalScore: null,
+    display: 'WHODAS 2.0',
+  },
+  'QIDS-SR': {
+    panel: null,
+    totalScore: null,
+    display: 'Quick Inventory of Depressive Symptomatology Self-Report',
+  },
+} as const;
+
 export const SCALE_LOINC_MAP: Record<string, string | null> = {
-  'PHQ-9':    '44249-1',
-  'GAD-7':    '69737-5',
-  'ISI':      '89794-0',
-  'C-SSRS':   '89213-1',
-  'ASRM':     null,    // No official LOINC code; store scale name as identifier
-  'WHODAS':   null,
-  'QIDS-SR':  null,
+  'PHQ-9':    ASSESSMENT_LOINC_CODES['PHQ-9'].panel,
+  'GAD-7':    ASSESSMENT_LOINC_CODES['GAD-7'].panel,
+  'ISI':      ASSESSMENT_LOINC_CODES.ISI.panel,
+  'C-SSRS':   ASSESSMENT_LOINC_CODES['C-SSRS'].panel,
+  'ASRM':     ASSESSMENT_LOINC_CODES.ASRM.panel,
+  'WHODAS':   ASSESSMENT_LOINC_CODES.WHODAS.panel,
+  'QIDS-SR':  ASSESSMENT_LOINC_CODES['QIDS-SR'].panel,
+};
+
+export const SCALE_TOTAL_SCORE_LOINC_MAP: Record<string, string | null> = {
+  'PHQ-9':    ASSESSMENT_LOINC_CODES['PHQ-9'].totalScore,
+  'GAD-7':    ASSESSMENT_LOINC_CODES['GAD-7'].totalScore,
+  'ISI':      ASSESSMENT_LOINC_CODES.ISI.totalScore,
+  'C-SSRS':   ASSESSMENT_LOINC_CODES['C-SSRS'].totalScore,
+  'ASRM':     ASSESSMENT_LOINC_CODES.ASRM.totalScore,
+  'WHODAS':   ASSESSMENT_LOINC_CODES.WHODAS.totalScore,
+  'QIDS-SR':  ASSESSMENT_LOINC_CODES['QIDS-SR'].totalScore,
 };

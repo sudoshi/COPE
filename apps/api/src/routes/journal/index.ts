@@ -13,6 +13,10 @@ import { z } from 'zod';
 import { sql } from '@cope/db';
 import { CreateJournalEntrySchema, UpdateJournalEntrySchema, PaginationSchema, UuidSchema } from '@cope/shared';
 import { auditLog } from '../../middleware/audit.js';
+import {
+  createJournalEntryRouteSchema,
+  listJournalEntriesRouteSchema,
+} from '../mobile-openapi-schemas.js';
 
 export default async function journalRoutes(fastify: FastifyInstance): Promise<void> {
   const auth = { preHandler: [fastify.authenticate] };
@@ -28,7 +32,7 @@ export default async function journalRoutes(fastify: FastifyInstance): Promise<v
   // ---------------------------------------------------------------------------
   // POST /journal — create entry
   // ---------------------------------------------------------------------------
-  fastify.post('/', auth, async (request, reply) => {
+  fastify.post('/', { ...auth, schema: createJournalEntryRouteSchema }, async (request, reply) => {
     const body = CreateJournalEntrySchema.parse(request.body);
     const patientId = request.user.sub;
 
@@ -94,7 +98,7 @@ export default async function journalRoutes(fastify: FastifyInstance): Promise<v
   // ---------------------------------------------------------------------------
   // GET /journal — patient's own journal (paginated)
   // ---------------------------------------------------------------------------
-  fastify.get('/', auth, async (request, reply) => {
+  fastify.get('/', { ...auth, schema: listJournalEntriesRouteSchema }, async (request, reply) => {
     const query = PaginationSchema.parse(request.query);
     const limit = query.limit;
     const offset = (query.page - 1) * limit;
