@@ -21,6 +21,7 @@ import { UuidSchema, UpsertSafetyPlanSchema } from '@cope/shared';
 import {
   getMySafetyPlanRouteSchema,
   getSafetyResourcesRouteSchema,
+  signMySafetyPlanRouteSchema,
 } from '../mobile-openapi-schemas.js';
 
 // Static list — extend via DB table in a future phase if clinician-configurable
@@ -323,7 +324,7 @@ export default async function safetyRoutes(fastify: FastifyInstance): Promise<vo
   // ── POST /safety/my-plan/sign — Patient acknowledges plan ────────────────
   fastify.post(
     '/my-plan/sign',
-    patientOnly,
+    { ...patientOnly, schema: signMySafetyPlanRouteSchema },
     async (request, reply) => {
       const patientId = (request.user as { sub: string; org_id: string }).sub;
 

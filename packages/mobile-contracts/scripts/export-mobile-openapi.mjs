@@ -36,6 +36,7 @@ const mobilePaths = [
   '/api/v1/sync/push',
   '/api/v1/safety/resources',
   '/api/v1/safety/my-plan',
+  '/api/v1/safety/my-plan/sign',
   '/api/v1/notifications/prefs',
   '/api/v1/notifications/push-token',
   '/api/v1/consent/',

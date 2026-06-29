@@ -371,6 +371,10 @@ struct SafetyPlanResponse: Decodable, Equatable {
     let disclaimer: String?
 }
 
+struct SafetyPlanAcknowledgement: Equatable {
+    let signedAt: Date
+}
+
 struct NotificationPreferences: Decodable, Equatable {
     let id: String?
     let dailyReminderEnabled: Bool
@@ -478,6 +482,7 @@ protocol CareAPIProviding: Sendable {
     func updateConsent(type: PatientConsentType, granted: Bool) async throws
     func safetyResources() async throws -> SafetyResourcesResponse
     func mySafetyPlan() async throws -> SafetyPlanResponse?
+    func signMySafetyPlan() async throws -> SafetyPlanAcknowledgement
     func notificationPreferences() async throws -> NotificationPreferences
     func updateNotificationPreferences(_ update: NotificationPreferenceUpdate) async throws -> NotificationPreferences
     func registerPushToken(_ token: String) async throws -> PushTokenRegistration
@@ -779,6 +784,14 @@ actor APIClient {
             }
             throw error
         }
+    }
+
+    func signMySafetyPlan() async throws -> SafetyPlanAcknowledgement {
+        let response = try await executeAuthorized {
+            try await SafetyAPI.apiV1SafetyMyPlanSignPost()
+        }
+
+        return SafetyPlanAcknowledgement(signedAt: response.data.signedAt)
     }
 
     func notificationPreferences() async throws -> NotificationPreferences {

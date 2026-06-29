@@ -68,6 +68,7 @@ Class | Method | HTTP request | Description
 *PatientsAPI* | [**apiV1PatientsMeTriggersPost**](docs/PatientsAPI.md#apiv1patientsmetriggerspost) | **POST** /api/v1/patients/me/triggers | Add a trigger to authenticated patient tracking
 *PatientsAPI* | [**apiV1PatientsMeTriggersTriggerIdDelete**](docs/PatientsAPI.md#apiv1patientsmetriggerstriggeriddelete) | **DELETE** /api/v1/patients/me/triggers/{triggerId} | Remove a trigger from authenticated patient tracking
 *SafetyAPI* | [**apiV1SafetyMyPlanGet**](docs/SafetyAPI.md#apiv1safetymyplanget) | **GET** /api/v1/safety/my-plan | Get authenticated patient safety plan
+*SafetyAPI* | [**apiV1SafetyMyPlanSignPost**](docs/SafetyAPI.md#apiv1safetymyplansignpost) | **POST** /api/v1/safety/my-plan/sign | Acknowledge authenticated patient safety plan
 *SafetyAPI* | [**apiV1SafetyResourcesGet**](docs/SafetyAPI.md#apiv1safetyresourcesget) | **GET** /api/v1/safety/resources | Get public crisis and safety resources
 *SyncAPI* | [**apiV1SyncPullGet**](docs/SyncAPI.md#apiv1syncpullget) | **GET** /api/v1/sync/pull | Pull WatermelonDB-compatible offline changes
 *SyncAPI* | [**apiV1SyncPushPost**](docs/SyncAPI.md#apiv1syncpushpost) | **POST** /api/v1/sync/push | Push WatermelonDB-compatible offline changes
@@ -119,6 +120,8 @@ Class | Method | HTTP request | Description
  - [ApiV1PatientsMeSymptomsPostRequest](docs/ApiV1PatientsMeSymptomsPostRequest.md)
  - [ApiV1PatientsMeTriggersGet200Response](docs/ApiV1PatientsMeTriggersGet200Response.md)
  - [ApiV1PatientsMeTriggersGet200ResponseDataInner](docs/ApiV1PatientsMeTriggersGet200ResponseDataInner.md)
+ - [ApiV1SafetyMyPlanSignPost200Response](docs/ApiV1SafetyMyPlanSignPost200Response.md)
+ - [ApiV1SafetyMyPlanSignPost200ResponseData](docs/ApiV1SafetyMyPlanSignPost200ResponseData.md)
  - [ApiV1SyncPullGet200Response](docs/ApiV1SyncPullGet200Response.md)
  - [ApiV1SyncPullGet200ResponseData](docs/ApiV1SyncPullGet200ResponseData.md)
  - [ApiV1SyncPullGet200ResponseDataChanges](docs/ApiV1SyncPullGet200ResponseDataChanges.md)

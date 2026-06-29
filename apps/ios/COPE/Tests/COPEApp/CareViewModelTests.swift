@@ -64,6 +64,42 @@ final class CareViewModelTests: XCTestCase {
         XCTAssertEqual(safetyResourceRequestCount, 1)
     }
 
+    func testAcknowledgeSafetyPlanSignsAndRefreshesPlan() async throws {
+        let harness = try makeHarness()
+        let resourcesResponse = makeResourcesResponse(
+            name: "988 Suicide and Crisis Lifeline",
+            disclaimer: "Call 911 for immediate danger."
+        )
+        let initialPlan = makeSafetyPlan(isAcknowledged: false)
+        let signedPlan = makeSafetyPlan(isAcknowledged: true)
+        let api = MockCareAPI(
+            safetyResourcesResponse: resourcesResponse,
+            safetyPlanResponse: SafetyPlanResponse(plan: initialPlan, resources: [], disclaimer: nil),
+            signedSafetyPlanResponse: SafetyPlanResponse(plan: signedPlan, resources: [], disclaimer: nil)
+        )
+        let notificationService = MockNotificationRegistrationService()
+        let model = CareViewModel(
+            apiClient: api,
+            notificationService: notificationService,
+            safetyResourceCache: harness.cache
+        )
+
+        await model.load()
+        XCTAssertEqual(model.safetyPlan, initialPlan)
+        XCTAssertFalse(model.safetyPlan?.isAcknowledged == true)
+
+        await model.acknowledgeSafetyPlan()
+
+        let signRequestCount = await api.safetyPlanSignRequestCount()
+
+        XCTAssertEqual(model.safetyPlan, signedPlan)
+        XCTAssertTrue(model.safetyPlan?.isAcknowledged == true)
+        XCTAssertEqual(model.successMessage, "Safety plan acknowledged.")
+        XCTAssertNil(model.errorMessage)
+        XCTAssertFalse(model.isAcknowledgingSafetyPlan)
+        XCTAssertEqual(signRequestCount, 1)
+    }
+
     private struct Harness {
         let cache: SafetyResourceCacheStore
     }
@@ -115,19 +151,40 @@ final class CareViewModelTests: XCTestCase {
             disclaimer: disclaimer
         )
     }
+
+    private func makeSafetyPlan(isAcknowledged: Bool) -> SafetyPlan {
+        SafetyPlan(
+            id: "safety-plan-1",
+            warningSigns: ["Trouble sleeping"],
+            internalCopingStrategies: ["Breathing exercise"],
+            supportContacts: [],
+            socialDistractions: [],
+            crisisLinePhone: "988",
+            crisisLineName: "988 Suicide and Crisis Lifeline",
+            erAddress: "Nearest emergency room",
+            emergencySteps: "Call 911 if in immediate danger.",
+            reasonsForLiving: ["Family"],
+            patientSignatureAt: isAcknowledged ? "2026-06-29T23:30:00.000Z" : nil,
+            clinicianSignatureAt: "2026-06-29T22:00:00.000Z",
+            updatedAt: "2026-06-29T22:00:00.000Z"
+        )
+    }
 }
 
 private actor MockCareAPI: CareAPIProviding {
     private let safetyResourcesResponse: SafetyResourcesResponse?
     private let safetyResourcesError: Error?
     private let safetyPlanResponse: SafetyPlanResponse?
+    private let signedSafetyPlanResponse: SafetyPlanResponse?
     private let notificationPreferencesResponse: NotificationPreferences
     private var safetyResourceRequests = 0
+    private var safetyPlanSignRequests = 0
 
     init(
         safetyResourcesResponse: SafetyResourcesResponse?,
         safetyResourcesError: Error? = nil,
         safetyPlanResponse: SafetyPlanResponse? = nil,
+        signedSafetyPlanResponse: SafetyPlanResponse? = nil,
         notificationPreferencesResponse: NotificationPreferences = NotificationPreferences(
             id: nil,
             dailyReminderEnabled: true,
@@ -142,11 +199,16 @@ private actor MockCareAPI: CareAPIProviding {
         self.safetyResourcesResponse = safetyResourcesResponse
         self.safetyResourcesError = safetyResourcesError
         self.safetyPlanResponse = safetyPlanResponse
+        self.signedSafetyPlanResponse = signedSafetyPlanResponse
         self.notificationPreferencesResponse = notificationPreferencesResponse
     }
 
     func safetyResourceRequestCount() -> Int {
         safetyResourceRequests
+    }
+
+    func safetyPlanSignRequestCount() -> Int {
+        safetyPlanSignRequests
     }
 
     func consentRecords() async throws -> [ConsentRecord] {
@@ -166,7 +228,16 @@ private actor MockCareAPI: CareAPIProviding {
     }
 
     func mySafetyPlan() async throws -> SafetyPlanResponse? {
-        safetyPlanResponse
+        if safetyPlanSignRequests > 0 {
+            return signedSafetyPlanResponse ?? safetyPlanResponse
+        }
+
+        return safetyPlanResponse
+    }
+
+    func signMySafetyPlan() async throws -> SafetyPlanAcknowledgement {
+        safetyPlanSignRequests += 1
+        return SafetyPlanAcknowledgement(signedAt: Date(timeIntervalSince1970: 1_782_755_200))
     }
 
     func notificationPreferences() async throws -> NotificationPreferences {

@@ -359,8 +359,8 @@ Checklist:
 - [ ] Submit safety-relevant signals as high-priority sync operations.
 - [x] Display crisis resources locally even when offline.
   - iOS reads backend crisis resources, stores them in an encrypted Application Support cache, restores them on Care tab load, and falls back to saved resources when the network request fails.
-- [~] Add safety plan read/sign support once backend contract is finalized.
-  - iOS reads the authenticated patient safety plan and handles no-plan `404` as an empty state; patient signature/acknowledgement remains open.
+- [x] Add safety plan read/sign support once backend contract is finalized.
+  - iOS reads the authenticated patient safety plan, handles no-plan `404` as an empty state, and acknowledges/signs the plan through the generated `POST /safety/my-plan/sign` client path.
 - [~] Add sync status UI that reflects actual outbox state.
   - iOS Today displays queued local sync operation counts; background sync status and conflict-specific states remain open.
 - [ ] Add conflict behavior for same-day edits across devices.
@@ -607,7 +607,8 @@ Checklist:
 - [x] Add an authenticated Care tab for safety plan, crisis resources, consent controls, and notification preferences.
 - [x] Add APNs permission flow, app delegate token callback bridge, remote-notification background mode, and `aps-environment` entitlement wiring.
 - [x] Verify `npm run native:ios:build`.
-- [ ] Add safety-plan patient acknowledgement/sign action once UI copy and clinical semantics are approved.
+- [x] Add safety-plan patient acknowledgement/sign action once UI copy and clinical semantics are approved.
+  - CareViewModel signs the plan through the generated OpenAPI client, refreshes the plan, and surfaces completion/error state in the Care tab.
 - [x] Add local crisis-resource cache so safety resources remain available offline.
   - CareViewModel now caches safety resources with encrypted local file storage and surfaces an offline fallback message when showing saved crisis resources.
 - [ ] Migrate backend push delivery from Expo-token assumptions to native APNs/FCM token metadata before real device notification delivery.
@@ -771,3 +772,5 @@ The native split is complete only when:
   - `scripts/ios-testflight.sh` validates release metadata and runs archive/export/upload when signing and App Store Connect credentials are present; signed upload remains to be executed in the Apple signing environment.
 - [x] Add iOS local crisis-resource cache and offline Care fallback.
   - CareViewModelTests now cover network-backed cache writes and offline restoration from the encrypted safety-resource cache.
+- [x] Add iOS safety-plan acknowledgement/sign workflow.
+  - The mobile OpenAPI contract now includes `POST /safety/my-plan/sign`; generated Kotlin and Swift clients are synced, and CareViewModelTests cover sign-and-refresh behavior.

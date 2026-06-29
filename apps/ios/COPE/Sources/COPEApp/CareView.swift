@@ -13,6 +13,7 @@ final class CareViewModel: ObservableObject {
     @Published private(set) var safetyResources: [SafetyResource] = []
     @Published private(set) var safetyDisclaimer: String?
     @Published private(set) var safetyResourceCacheMessage: String?
+    @Published private(set) var isAcknowledgingSafetyPlan = false
     @Published private(set) var notificationPreferences: NotificationPreferences?
     @Published private(set) var notificationAuthorizationStatus: UNAuthorizationStatus = .notDetermined
     @Published private(set) var deviceToken: String?
@@ -174,6 +175,38 @@ final class CareViewModel: ObservableObject {
         isUpdatingNotifications = false
     }
 
+    func acknowledgeSafetyPlan() async {
+        guard safetyPlan?.isAcknowledged == false else {
+            return
+        }
+
+        isAcknowledgingSafetyPlan = true
+        errorMessage = nil
+        successMessage = nil
+
+        do {
+            _ = try await apiClient.signMySafetyPlan()
+            if let response = try await apiClient.mySafetyPlan() {
+                safetyPlan = response.plan
+                if !response.resources.isEmpty {
+                    let resources = SafetyResourcesResponse(
+                        resources: response.resources,
+                        disclaimer: response.disclaimer ?? safetyDisclaimer
+                    )
+                    applySafetyResources(resources)
+                    await saveCachedSafetyResources(resources)
+                    safetyResourceCacheMessage = nil
+                }
+                safetyDisclaimer = response.disclaimer ?? safetyDisclaimer
+            }
+            successMessage = "Safety plan acknowledged."
+        } catch {
+            errorMessage = SessionViewModel.message(for: error)
+        }
+
+        isAcknowledgingSafetyPlan = false
+    }
+
     func enableNotifications() async {
         isRegisteringNotifications = true
         errorMessage = nil
@@ -270,7 +303,13 @@ struct CareView: View {
             SectionHeader(title: "Safety", systemImage: "cross.case.fill", isLoading: model.isLoading)
 
             if let safetyPlan = model.safetyPlan {
-                SafetyPlanCard(plan: safetyPlan)
+                SafetyPlanCard(
+                    plan: safetyPlan,
+                    isAcknowledging: model.isAcknowledgingSafetyPlan,
+                    onAcknowledge: {
+                        Task { await model.acknowledgeSafetyPlan() }
+                    }
+                )
             } else {
                 EmptyStateRow(
                     systemImage: "doc.text.magnifyingglass",
@@ -484,6 +523,8 @@ private struct EmptyStateRow: View {
 
 private struct SafetyPlanCard: View {
     let plan: SafetyPlan
+    let isAcknowledging: Bool
+    let onAcknowledge: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -522,6 +563,23 @@ private struct SafetyPlanCard: View {
 
             if let erAddress = plan.erAddress, !erAddress.isEmpty {
                 TextBlock(title: "Emergency room", value: erAddress)
+            }
+
+            if !plan.isAcknowledged {
+                Button(action: onAcknowledge) {
+                    Label(
+                        isAcknowledging ? "Acknowledging" : "Acknowledge Safety Plan",
+                        systemImage: "checkmark.seal.fill"
+                    )
+                    .font(.system(size: 15, weight: .semibold))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.white)
+                .background(CopeColor.primary)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .disabled(isAcknowledging)
             }
         }
         .padding(16)

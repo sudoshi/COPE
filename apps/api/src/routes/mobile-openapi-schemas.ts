@@ -1060,6 +1060,32 @@ export const getMySafetyPlanRouteSchema = {
   },
 } as const;
 
+export const signMySafetyPlanRouteSchema = {
+  tags: ['safety'],
+  summary: 'Acknowledge authenticated patient safety plan',
+  security: authHeader,
+  response: {
+    200: {
+      type: 'object',
+      required: ['success', 'data'],
+      additionalProperties: true,
+      properties: {
+        success: { type: 'boolean' },
+        data: {
+          type: 'object',
+          required: ['signed_at'],
+          additionalProperties: false,
+          properties: {
+            signed_at: isoDateTime,
+          },
+        },
+      },
+    },
+    403: errorResponse,
+    404: errorResponse,
+  },
+} as const;
+
 export const getNotificationPrefsRouteSchema = {
   tags: ['notifications'],
   summary: 'Get authenticated patient notification preferences',

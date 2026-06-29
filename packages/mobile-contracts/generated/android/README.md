@@ -87,6 +87,7 @@ All URIs are relative to *http://localhost:3000*
 | *PatientsApi* | [**apiV1PatientsMeTriggersPost**](docs/PatientsApi.md#apiv1patientsmetriggerspost) | **POST** /api/v1/patients/me/triggers | Add a trigger to authenticated patient tracking |
 | *PatientsApi* | [**apiV1PatientsMeTriggersTriggerIdDelete**](docs/PatientsApi.md#apiv1patientsmetriggerstriggeriddelete) | **DELETE** /api/v1/patients/me/triggers/{triggerId} | Remove a trigger from authenticated patient tracking |
 | *SafetyApi* | [**apiV1SafetyMyPlanGet**](docs/SafetyApi.md#apiv1safetymyplanget) | **GET** /api/v1/safety/my-plan | Get authenticated patient safety plan |
+| *SafetyApi* | [**apiV1SafetyMyPlanSignPost**](docs/SafetyApi.md#apiv1safetymyplansignpost) | **POST** /api/v1/safety/my-plan/sign | Acknowledge authenticated patient safety plan |
 | *SafetyApi* | [**apiV1SafetyResourcesGet**](docs/SafetyApi.md#apiv1safetyresourcesget) | **GET** /api/v1/safety/resources | Get public crisis and safety resources |
 | *SyncApi* | [**apiV1SyncPullGet**](docs/SyncApi.md#apiv1syncpullget) | **GET** /api/v1/sync/pull | Pull WatermelonDB-compatible offline changes |
 | *SyncApi* | [**apiV1SyncPushPost**](docs/SyncApi.md#apiv1syncpushpost) | **POST** /api/v1/sync/push | Push WatermelonDB-compatible offline changes |
@@ -139,6 +140,8 @@ All URIs are relative to *http://localhost:3000*
  - [app.cope.contracts.models.ApiV1PatientsMeSymptomsPostRequest](docs/ApiV1PatientsMeSymptomsPostRequest.md)
  - [app.cope.contracts.models.ApiV1PatientsMeTriggersGet200Response](docs/ApiV1PatientsMeTriggersGet200Response.md)
  - [app.cope.contracts.models.ApiV1PatientsMeTriggersGet200ResponseDataInner](docs/ApiV1PatientsMeTriggersGet200ResponseDataInner.md)
+ - [app.cope.contracts.models.ApiV1SafetyMyPlanSignPost200Response](docs/ApiV1SafetyMyPlanSignPost200Response.md)
+ - [app.cope.contracts.models.ApiV1SafetyMyPlanSignPost200ResponseData](docs/ApiV1SafetyMyPlanSignPost200ResponseData.md)
  - [app.cope.contracts.models.ApiV1SyncPullGet200Response](docs/ApiV1SyncPullGet200Response.md)
  - [app.cope.contracts.models.ApiV1SyncPullGet200ResponseData](docs/ApiV1SyncPullGet200ResponseData.md)
  - [app.cope.contracts.models.ApiV1SyncPullGet200ResponseDataChanges](docs/ApiV1SyncPullGet200ResponseDataChanges.md)
