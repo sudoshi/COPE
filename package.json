@@ -29,6 +29,7 @@
     "native:android:assemble": "ANDROID_HOME=${ANDROID_HOME:-$HOME/Library/Android/sdk} ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-$HOME/Library/Android/sdk} gradle -p apps/android :app:assembleDevelopmentDebug",
     "native:ios:generate": "xcodegen generate --spec apps/ios/project.yml",
     "native:ios:build": "npm run native:ios:generate && xcodebuild -project apps/ios/COPE.xcodeproj -scheme 'COPE Development' -configuration Debug -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build",
+    "native:ios:test": "npm run native:ios:generate && xcodebuild test -project apps/ios/COPE.xcodeproj -scheme 'COPE Development' -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 17'",
     "native:ios:archive": "npm run native:ios:generate && xcodebuild -project apps/ios/COPE.xcodeproj -scheme 'COPE Production' -configuration Release -archivePath apps/ios/build/COPE.xcarchive archive",
     "native:ios:export": "xcodebuild -exportArchive -archivePath apps/ios/build/COPE.xcarchive -exportPath apps/ios/build/export -exportOptionsPlist apps/ios/ExportOptions.plist",
     "build:mobile:preview": "eas build --profile preview --platform all",

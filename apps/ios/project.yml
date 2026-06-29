@@ -47,7 +47,20 @@ targets:
           COPE_API_BASE_URL: https://app.cope.health
           APS_ENVIRONMENT: production
     scheme:
-      testTargets: []
+      testTargets:
+        - COPETests
+  COPETests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: COPE/Tests
+    dependencies:
+      - target: COPE
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.cope.app.tests
 schemes:
   COPE Development:
     build:
@@ -57,6 +70,8 @@ schemes:
       config: Debug
     test:
       config: Debug
+      targets:
+        - COPETests
     profile:
       config: Debug
     analyze:

@@ -245,7 +245,9 @@ iOS checklist:
   - [x] Add reproducible XcodeGen project scaffold.
   - [x] Verify `npm run native:ios:build`.
   - [ ] Add SwiftLint or SwiftFormat.
-  - [ ] Add unit and UI test scaffolds.
+  - [~] Add unit and UI test scaffolds.
+    - [x] Add native XCTest unit-test target and `npm run native:ios:test`.
+    - [ ] Add UI test scaffold and simulator fixture strategy.
 - [x] Add build schemes for development, staging, and production.
   - Apple Team ID `TKXPY255A2` and App Store Connect App ID `6785638840` are recorded in the iOS release config.
 - [x] Add Keychain token storage.
@@ -622,7 +624,8 @@ Checklist:
   - Today drafts and outbox records now share encrypted local file storage; a full database and migration model remains open.
 - [~] Add retry/sync worker semantics for queued local writes.
   - Today foreground loads flush queued save, submit, and save-then-submit operations; background scheduling, backoff, conflict metadata, and priority lanes remain open.
-- [ ] Add simulator/unit coverage for draft restore, pending upload, and submitted-delete behavior.
+- [~] Add simulator/unit coverage for draft restore, pending upload, and submitted-delete behavior.
+  - XCTest coverage now verifies encrypted draft persistence/deletion and encrypted outbox storage; Today view restore and submitted-delete behavior still need view-model-level coverage.
 
 ### Slice 9 - iOS invite registration, MFA continuation, and intake gate
 
@@ -657,7 +660,10 @@ Checklist:
 - [x] Surface queued operation counts in the Today status UI.
 - [x] Wipe encrypted Today drafts, outbox records, and the local persistence key on logout/session rejection.
 - [x] Verify `npm run native:ios:build`.
-- [ ] Add unit/simulator coverage for encrypted draft migration, outbox ordering, save-then-submit replay, and logout wipe.
+- [~] Add unit/simulator coverage for encrypted draft migration, outbox ordering, save-then-submit replay, and logout wipe.
+  - XCTest coverage now verifies plaintext draft migration to encrypted storage, encrypted draft storage, outbox upsert/delete behavior, save-then-submit outbox persistence, and logout/session-wipe deletion plus key rotation.
+  - Full Today view replay against mocked API save/submit calls remains open.
+- [x] Verify `npm run native:ios:test`.
 - [ ] Promote the foreground flusher into a broader sync engine with retry backoff, background triggers, conflict records, and safety-priority lanes.
 
 ## 7. Live Database Verification Plan
@@ -735,4 +741,6 @@ The native split is complete only when:
   - Invite registration, MFA continuation, required consent gating, primary/emergency-contact intake, medication setup, symptom/trigger/wellness preferences, and reminder toggles are implemented.
 - [x] Start iOS encrypted persistence stack and daily-entry local cache/outbox.
   - AES-GCM encrypted file-backed persistence now protects Today drafts and outbox records; broader encrypted database, migrations, and background sync are still planned.
-- [ ] Add iOS persistence/outbox simulator or unit coverage before expanding the same pattern to additional clinical screens.
+- [x] Add first iOS persistence/outbox simulator or unit coverage before expanding the same pattern to additional clinical screens.
+  - XCTest target now covers encrypted draft migration, encrypted draft/outbox persistence, outbox mutation semantics, and local wipe key rotation.
+- [ ] Add Today view-model replay coverage with a mocked API client before promoting the foreground flusher to a broader sync engine.

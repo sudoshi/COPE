@@ -14,9 +14,14 @@ final class SessionViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     let apiClient: APIClient
+    private let localDataWiper: LocalPatientDataWiper
 
-    init(apiClient: APIClient = APIClient()) {
+    init(
+        apiClient: APIClient = APIClient(),
+        localDataWiper: LocalPatientDataWiper = .shared
+    ) {
         self.apiClient = apiClient
+        self.localDataWiper = localDataWiper
     }
 
     func restoreSession() async {
@@ -354,9 +359,7 @@ final class SessionViewModel: ObservableObject {
     }
 
     private func wipeLocalPatientData() async {
-        try? await DailyEntryDraftStore.shared.deleteAllDrafts()
-        try? await LocalOutboxStore.shared.deleteAll()
-        try? await LocalOutboxStore.shared.deleteEncryptionKey()
+        await localDataWiper.wipe()
     }
 
     static func message(for error: Error) -> String {

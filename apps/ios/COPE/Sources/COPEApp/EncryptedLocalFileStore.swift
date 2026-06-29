@@ -2,7 +2,7 @@ import CryptoKit
 import Foundation
 import Security
 
-final class LocalEncryptionKeyStore {
+final class LocalEncryptionKeyStore: @unchecked Sendable {
     private let service: String
     private let account: String
 
@@ -91,11 +91,9 @@ final class LocalEncryptionKeyStore {
     }
 }
 
-final class EncryptedLocalFileStore {
+final class EncryptedLocalFileStore: @unchecked Sendable {
     private let fileManager: FileManager
     private let keyStore: LocalEncryptionKeyStore
-    private let encoder: JSONEncoder
-    private let decoder: JSONDecoder
 
     init(
         fileManager: FileManager = .default,
@@ -103,10 +101,6 @@ final class EncryptedLocalFileStore {
     ) {
         self.fileManager = fileManager
         self.keyStore = keyStore
-        encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
     }
 
     func load<Value: Codable>(_ type: Value.Type, from url: URL, allowPlaintextMigration: Bool = true) throws -> Value? {
@@ -117,20 +111,20 @@ final class EncryptedLocalFileStore {
         let storedData = try Data(contentsOf: url)
         do {
             let decrypted = try decrypt(storedData)
-            return try decoder.decode(type, from: decrypted)
+            return try Self.decoder.decode(type, from: decrypted)
         } catch {
             guard allowPlaintextMigration else {
                 throw error
             }
 
-            let value = try decoder.decode(type, from: storedData)
+            let value = try Self.decoder.decode(type, from: storedData)
             try save(value, to: url)
             return value
         }
     }
 
     func save<Value: Encodable>(_ value: Value, to url: URL) throws {
-        let data = try encoder.encode(value)
+        let data = try Self.encoder.encode(value)
         let encrypted = try encrypt(data)
 
         try fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
@@ -169,6 +163,18 @@ final class EncryptedLocalFileStore {
         let key = try keyStore.loadOrCreateKey()
         let sealedBox = try AES.GCM.SealedBox(combined: data)
         return try AES.GCM.open(sealedBox, using: key)
+    }
+
+    private static var encoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }
+
+    private static var decoder: JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
     }
 }
 

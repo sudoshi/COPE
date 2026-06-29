@@ -23,13 +23,16 @@ actor LocalOutboxStore {
 
     private let fileManager: FileManager
     private let secureStore: EncryptedLocalFileStore
+    private let baseDirectory: URL?
 
     init(
         fileManager: FileManager = .default,
-        secureStore: EncryptedLocalFileStore = EncryptedLocalFileStore()
+        secureStore: EncryptedLocalFileStore = EncryptedLocalFileStore(),
+        baseDirectory: URL? = nil
     ) {
         self.fileManager = fileManager
         self.secureStore = secureStore
+        self.baseDirectory = baseDirectory
     }
 
     func pendingOperations() throws -> [LocalOutboxOperation] {
@@ -151,12 +154,7 @@ actor LocalOutboxStore {
     }
 
     private func storageDirectory() throws -> URL {
-        let supportDirectory = try fileManager.url(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: true
-        )
+        let supportDirectory = try supportDirectory()
         let directory = supportDirectory
             .appendingPathComponent("COPE", isDirectory: true)
             .appendingPathComponent("Outbox", isDirectory: true)
@@ -164,5 +162,18 @@ actor LocalOutboxStore {
         try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
         try fileManager.setAttributes([.protectionKey: FileProtectionType.complete], ofItemAtPath: directory.path)
         return directory
+    }
+
+    private func supportDirectory() throws -> URL {
+        if let baseDirectory {
+            return baseDirectory
+        }
+
+        return try fileManager.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
     }
 }
