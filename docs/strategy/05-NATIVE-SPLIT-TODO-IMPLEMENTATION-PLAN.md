@@ -250,8 +250,8 @@ iOS checklist:
   - Apple Team ID `TKXPY255A2` and App Store Connect App ID `6785638840` are recorded in the iOS release config.
 - [x] Add Keychain token storage.
 - [~] Add encrypted local database foundation.
-  - iOS now has a file-protected Today draft store for the first daily-entry cache step.
-  - Full encrypted database selection, migrations, outbox tables, and logout wipe remain open.
+  - iOS now has an AES-GCM encrypted file-backed persistence layer for same-day Today drafts and foreground sync outbox records, with the encryption key stored in Keychain and files protected under Application Support.
+  - Full encrypted database selection, schema migrations, background sync, and multi-screen persistence remain open.
 - [x] Add API client generated from OpenAPI or bridged from KMP.
   - [x] Add native health-check smoke client.
   - [x] Add OpenAPI generator workspace/config for Swift.
@@ -311,7 +311,8 @@ Checklist:
   - iOS now loads symptom, trigger, and wellness strategy catalogues from generated OpenAPI clients, persists selected tracking IDs, optionally creates the first medication, saves reminder toggles, then marks intake complete.
 - [~] Add logout and local wipe.
   - [x] Clear Keychain tokens on logout.
-  - [ ] Wipe encrypted local database once native persistence is introduced.
+  - [x] Wipe encrypted Today drafts, local outbox records, and the local persistence encryption key on logout/session rejection.
+  - [ ] Extend wipe coverage to the full encrypted local database once that database is introduced.
 - [ ] Add accessibility coverage for every onboarding and auth screen.
 
 Exit criteria:
@@ -328,7 +329,7 @@ Goal: the primary clinical loop works offline, syncs correctly, and escalates sa
 Checklist:
 
 - [~] Implement local daily-entry draft creation.
-  - iOS persists same-day Today check-in drafts before attempting network writes and restores them on screen load.
+  - iOS persists encrypted same-day Today check-in drafts before attempting network writes and restores them on screen load.
 - [~] Implement all expanded clinical domains:
   - [x] Mood.
   - [ ] Coping/wellbeing.
@@ -348,13 +349,15 @@ Checklist:
     - iOS currently captures stress score and notes; structured life-event handling remains open.
   - [ ] Triggers, symptoms, and wellness strategies.
 - [ ] Implement local validation before submit.
-- [ ] Write local outbox operations before network calls.
+- [~] Write local outbox operations before network calls.
+  - iOS queues encrypted Today save, submit, and save-then-submit operations before attempting network writes, then flushes them during foreground Today loads.
 - [ ] Submit safety-relevant signals as high-priority sync operations.
 - [~] Display crisis resources locally even when offline.
   - iOS reads backend crisis resources and displays them in the Care tab; offline cache remains open.
 - [~] Add safety plan read/sign support once backend contract is finalized.
   - iOS reads the authenticated patient safety plan and handles no-plan `404` as an empty state; patient signature/acknowledgement remains open.
-- [ ] Add sync status UI that reflects actual outbox state.
+- [~] Add sync status UI that reflects actual outbox state.
+  - iOS Today displays queued local sync operation counts; background sync status and conflict-specific states remain open.
 - [ ] Add conflict behavior for same-day edits across devices.
 
 Exit criteria:
@@ -580,8 +583,8 @@ Checklist:
 - [x] Verify `npm run native:ios:build`.
 - [ ] Replace generic assessment item labels with approved/licensed instrument content and scoring fixtures.
 - [~] Add offline local persistence, draft restore, outbox, and conflict handling.
-  - iOS Today draft restore and local save status are implemented with file protection.
-  - General outbox, encrypted database migration, conflict handling, and multi-screen persistence remain open.
+  - iOS Today draft restore, local save status, encrypted draft storage, encrypted foreground outbox, and save-then-submit replay are implemented.
+  - General database migration, background sync, conflict handling, and multi-screen persistence remain open.
 - [ ] Add C-SSRS safety handoff before clinical pilot use.
 
 ### Slice 7 - iOS consent, safety, and notification infrastructure
@@ -609,13 +612,16 @@ Checklist:
 
 - [x] Make `DailyEntryDraft` codable with backend-aligned coding keys.
 - [x] Add a file-protected iOS draft store under Application Support for same-day Today drafts.
+- [x] Encrypt persisted Today draft payloads with a Keychain-backed AES-GCM local persistence key.
 - [x] Restore a saved local draft when Today opens.
 - [x] Save Today inputs locally before attempting the network save.
 - [x] Surface local draft sync state in the Today UI.
 - [x] Delete the local draft after successful submit.
 - [x] Verify `npm run native:ios:build`.
-- [ ] Promote this file-backed draft cache into the selected encrypted database/outbox design.
-- [ ] Add retry/sync worker semantics for queued local writes.
+- [~] Promote this file-backed draft cache into the selected encrypted database/outbox design.
+  - Today drafts and outbox records now share encrypted local file storage; a full database and migration model remains open.
+- [~] Add retry/sync worker semantics for queued local writes.
+  - Today foreground loads flush queued save, submit, and save-then-submit operations; background scheduling, backoff, conflict metadata, and priority lanes remain open.
 - [ ] Add simulator/unit coverage for draft restore, pending upload, and submitted-delete behavior.
 
 ### Slice 9 - iOS invite registration, MFA continuation, and intake gate
@@ -636,6 +642,23 @@ Checklist:
 - [x] Add medication, symptom, trigger, wellness strategy, and reminder onboarding steps.
 - [x] Verify `npm run native:ios:build`.
 - [ ] Add simulator/UI coverage for invite deep link, invalid invite errors, MFA continuation, and intake completion.
+
+### Slice 10 - iOS encrypted local persistence and Today outbox
+
+Reason: the native Today workflow needs durable PHI protection and replayable offline writes before the app can be considered safe for clinical pilot workflows.
+
+Checklist:
+
+- [x] Add a reusable encrypted local file store backed by a Keychain-held AES-GCM key.
+- [x] Migrate the Today draft store from plaintext JSON to encrypted storage while preserving plaintext migration for existing local development drafts.
+- [x] Add an encrypted local outbox store for daily-entry save, submit, and save-then-submit operations.
+- [x] Queue Today writes before network attempts so failed foreground saves/submits are replayable.
+- [x] Flush queued Today operations when the Today screen loads.
+- [x] Surface queued operation counts in the Today status UI.
+- [x] Wipe encrypted Today drafts, outbox records, and the local persistence key on logout/session rejection.
+- [x] Verify `npm run native:ios:build`.
+- [ ] Add unit/simulator coverage for encrypted draft migration, outbox ordering, save-then-submit replay, and logout wipe.
+- [ ] Promote the foreground flusher into a broader sync engine with retry backoff, background triggers, conflict records, and safety-priority lanes.
 
 ## 7. Live Database Verification Plan
 
@@ -710,4 +733,6 @@ The native split is complete only when:
 - [x] Implement first iOS local Today draft persistence slice.
 - [x] Implement iOS invite registration, MFA continuation, and consent/intake screens.
   - Invite registration, MFA continuation, required consent gating, primary/emergency-contact intake, medication setup, symptom/trigger/wellness preferences, and reminder toggles are implemented.
-- [ ] Choose iOS encrypted persistence stack and start daily-entry local cache/outbox.
+- [x] Start iOS encrypted persistence stack and daily-entry local cache/outbox.
+  - AES-GCM encrypted file-backed persistence now protects Today drafts and outbox records; broader encrypted database, migrations, and background sync are still planned.
+- [ ] Add iOS persistence/outbox simulator or unit coverage before expanding the same pattern to additional clinical screens.

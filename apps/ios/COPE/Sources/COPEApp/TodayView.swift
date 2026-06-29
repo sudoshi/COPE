@@ -7,6 +7,7 @@ final class TodayViewModel: ObservableObject {
     @Published private(set) var entry: DailyEntrySummary?
     @Published private(set) var localDraftMessage: String?
     @Published private(set) var localDraftNeedsSync = false
+    @Published private(set) var queuedOperationCount = 0
     @Published var errorMessage: String?
     @Published var successMessage: String?
     @Published var moodScore = 6
@@ -18,13 +19,16 @@ final class TodayViewModel: ObservableObject {
 
     private let apiClient: APIClient
     private let draftStore: DailyEntryDraftStore
+    private let outboxStore: LocalOutboxStore
 
     init(
         apiClient: APIClient,
-        draftStore: DailyEntryDraftStore = .shared
+        draftStore: DailyEntryDraftStore = .shared,
+        outboxStore: LocalOutboxStore = .shared
     ) {
         self.apiClient = apiClient
         self.draftStore = draftStore
+        self.outboxStore = outboxStore
     }
 
     func load() async {
@@ -33,6 +37,8 @@ final class TodayViewModel: ObservableObject {
         successMessage = nil
 
         let restoredLocalDraft = await restoreLocalDraft()
+        await refreshOutboxStatus()
+        await flushPendingOutbox()
 
         do {
             entry = try await apiClient.todayDailyEntry()
@@ -58,6 +64,7 @@ final class TodayViewModel: ObservableObject {
         successMessage = nil
         let draft = currentDraft
         let localSaved = await saveLocalDraft(draft, pendingServerSave: true)
+        await enqueueSaveOperation(draft)
 
         do {
             let result = try await apiClient.saveDailyEntry(draft)
@@ -74,6 +81,7 @@ final class TodayViewModel: ObservableObject {
                 journalComplete: entry?.journalComplete
             )
             _ = await saveLocalDraft(draft, pendingServerSave: false)
+            await deleteOutboxOperations(kind: .dailyEntrySave, entryDate: draft.entryDate)
             successMessage = "Draft saved."
         } catch {
             errorMessage = localSaved
@@ -85,16 +93,22 @@ final class TodayViewModel: ObservableObject {
     }
 
     func submit() async {
+        isSaving = true
+        errorMessage = nil
+        successMessage = nil
+
         if entry == nil {
-            await saveDraft()
+            let createdEntry = await createEntryForSubmit()
+            if !createdEntry {
+                isSaving = false
+                return
+            }
         }
 
         guard let entry else {
+            isSaving = false
             return
         }
-
-        isSaving = true
-        errorMessage = nil
 
         do {
             let result = try await apiClient.submitDailyEntry(id: entry.id)
@@ -111,11 +125,15 @@ final class TodayViewModel: ObservableObject {
                 journalComplete: entry.journalComplete
             )
             try? await draftStore.deleteDraft(for: entry.entryDate)
+            await deleteOutboxOperations(kind: .dailyEntrySubmit, entryDate: entry.entryDate)
             localDraftMessage = nil
             localDraftNeedsSync = false
             successMessage = "Check-in submitted."
         } catch {
-            errorMessage = SessionViewModel.message(for: error)
+            await enqueueSubmitOperation(entryID: entry.id, entryDate: entry.entryDate, error: error)
+            localDraftNeedsSync = true
+            localDraftMessage = "Submission queued locally; waiting to sync."
+            errorMessage = "Saved locally. Connect to sync this check-in submission."
         }
 
         isSaving = false
@@ -174,6 +192,196 @@ final class TodayViewModel: ObservableObject {
         localDraftNeedsSync = stored.pendingServerSave
         let syncState = stored.pendingServerSave ? "waiting to sync" : "synced"
         localDraftMessage = "\(verb) at \(Self.timeString(stored.updatedAt)); \(syncState)."
+    }
+
+    private func createEntryForSubmit() async -> Bool {
+        let draft = currentDraft
+        let localSaved = await saveLocalDraft(draft, pendingServerSave: true)
+        let queued = await enqueueSaveAndSubmitOperation(draft)
+
+        do {
+            let result = try await apiClient.saveDailyEntry(draft)
+            entry = DailyEntrySummary(
+                id: result.id,
+                entryDate: result.entryDate,
+                mood: moodScore,
+                submittedAt: nil,
+                completionPct: entry?.completionPct,
+                coreComplete: true,
+                wellnessComplete: entry?.wellnessComplete,
+                triggersComplete: entry?.triggersComplete,
+                symptomsComplete: entry?.symptomsComplete,
+                journalComplete: entry?.journalComplete
+            )
+            _ = await saveLocalDraft(draft, pendingServerSave: false)
+            await deleteOutboxOperations(kind: .dailyEntrySaveAndSubmit, entryDate: draft.entryDate)
+            return true
+        } catch {
+            localDraftNeedsSync = localSaved || queued
+            localDraftMessage = queued
+                ? "Submission queued locally; waiting to sync."
+                : "Submission saved locally, but could not be queued for sync."
+            errorMessage = localSaved
+                ? "Saved locally. Connect to sync this check-in submission."
+                : SessionViewModel.message(for: error)
+            return false
+        }
+    }
+
+    private func enqueueSaveOperation(_ draft: DailyEntryDraft, error: Error? = nil) async {
+        do {
+            _ = try await outboxStore.enqueueDailyEntrySave(draft, lastError: error.map(SessionViewModel.message(for:)))
+            await refreshOutboxStatus()
+        } catch {
+            errorMessage = "Draft was saved locally, but the sync queue could not be updated."
+        }
+    }
+
+    @discardableResult
+    private func enqueueSaveAndSubmitOperation(_ draft: DailyEntryDraft, error: Error? = nil) async -> Bool {
+        do {
+            _ = try await outboxStore.enqueueDailyEntrySaveAndSubmit(
+                draft,
+                lastError: error.map(SessionViewModel.message(for:))
+            )
+            await refreshOutboxStatus()
+            return true
+        } catch {
+            errorMessage = "Submission could not be added to the sync queue."
+            return false
+        }
+    }
+
+    private func enqueueSubmitOperation(entryID: String, entryDate: String, error: Error? = nil) async {
+        do {
+            _ = try await outboxStore.enqueueDailyEntrySubmit(
+                entryID: entryID,
+                entryDate: entryDate,
+                lastError: error.map(SessionViewModel.message(for:))
+            )
+            await refreshOutboxStatus()
+        } catch {
+            errorMessage = "Submission could not be added to the sync queue."
+        }
+    }
+
+    private func deleteOutboxOperations(kind: LocalOutboxOperationKind, entryDate: String) async {
+        do {
+            try await outboxStore.deleteOperations(kind: kind, entryDate: entryDate)
+            await refreshOutboxStatus()
+        } catch {
+            errorMessage = "The local sync queue could not be updated."
+        }
+    }
+
+    private func refreshOutboxStatus() async {
+        do {
+            queuedOperationCount = try await outboxStore.pendingOperations().count
+            if queuedOperationCount > 0 {
+                localDraftNeedsSync = true
+            }
+        } catch {
+            queuedOperationCount = 0
+        }
+    }
+
+    private func flushPendingOutbox() async {
+        do {
+            let operations = try await outboxStore.pendingOperations()
+            guard !operations.isEmpty else {
+                return
+            }
+
+            for operation in operations {
+                switch operation.kind {
+                case .dailyEntrySave:
+                    guard let draft = operation.draft else {
+                        try await outboxStore.deleteOperation(id: operation.id)
+                        continue
+                    }
+
+                    let result = try await apiClient.saveDailyEntry(draft)
+                    try await outboxStore.deleteOperation(id: operation.id)
+                    if draft.entryDate == Self.todayString() {
+                        entry = DailyEntrySummary(
+                            id: result.id,
+                            entryDate: result.entryDate,
+                            mood: draft.moodScore,
+                            submittedAt: nil,
+                            completionPct: entry?.completionPct,
+                            coreComplete: true,
+                            wellnessComplete: entry?.wellnessComplete,
+                            triggersComplete: entry?.triggersComplete,
+                            symptomsComplete: entry?.symptomsComplete,
+                            journalComplete: entry?.journalComplete
+                        )
+                        _ = await saveLocalDraft(draft, pendingServerSave: false)
+                    }
+
+                case .dailyEntrySaveAndSubmit:
+                    guard let draft = operation.draft else {
+                        try await outboxStore.deleteOperation(id: operation.id)
+                        continue
+                    }
+
+                    let savedEntry = try await apiClient.saveDailyEntry(draft)
+                    let submittedEntry = try await apiClient.submitDailyEntry(id: savedEntry.id)
+                    try await outboxStore.deleteOperation(id: operation.id)
+                    if draft.entryDate == Self.todayString() {
+                        entry = DailyEntrySummary(
+                            id: savedEntry.id,
+                            entryDate: savedEntry.entryDate,
+                            mood: draft.moodScore,
+                            submittedAt: submittedEntry.submittedAt,
+                            completionPct: entry?.completionPct,
+                            coreComplete: true,
+                            wellnessComplete: entry?.wellnessComplete,
+                            triggersComplete: entry?.triggersComplete,
+                            symptomsComplete: entry?.symptomsComplete,
+                            journalComplete: entry?.journalComplete
+                        )
+                        try? await draftStore.deleteDraft(for: draft.entryDate)
+                    }
+
+                case .dailyEntrySubmit:
+                    guard let entryID = operation.entryID else {
+                        try await outboxStore.deleteOperation(id: operation.id)
+                        continue
+                    }
+
+                    let result = try await apiClient.submitDailyEntry(id: entryID)
+                    try await outboxStore.deleteOperation(id: operation.id)
+                    if operation.entryDate == Self.todayString() {
+                        entry = DailyEntrySummary(
+                            id: entryID,
+                            entryDate: operation.entryDate,
+                            mood: entry?.mood ?? moodScore,
+                            submittedAt: result.submittedAt,
+                            completionPct: entry?.completionPct,
+                            coreComplete: entry?.coreComplete,
+                            wellnessComplete: entry?.wellnessComplete,
+                            triggersComplete: entry?.triggersComplete,
+                            symptomsComplete: entry?.symptomsComplete,
+                            journalComplete: entry?.journalComplete
+                        )
+                        try? await draftStore.deleteDraft(for: operation.entryDate)
+                    }
+                }
+            }
+
+            await refreshOutboxStatus()
+            if queuedOperationCount == 0 {
+                localDraftNeedsSync = false
+                localDraftMessage = nil
+                successMessage = "Local changes synced."
+            }
+        } catch {
+            await refreshOutboxStatus()
+            if queuedOperationCount > 0 {
+                localDraftNeedsSync = true
+                localDraftMessage = "\(queuedOperationCount) local change\(queuedOperationCount == 1 ? "" : "s") waiting to sync."
+            }
+        }
     }
 
     private static func todayString() -> String {
@@ -262,6 +470,16 @@ struct TodayView: View {
             )
             .font(.system(size: 13, weight: .medium))
             .foregroundStyle(model.localDraftNeedsSync ? CopeColor.warning : CopeColor.success)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
+        if model.queuedOperationCount > 0 {
+            Label(
+                "\(model.queuedOperationCount) queued sync operation\(model.queuedOperationCount == 1 ? "" : "s")",
+                systemImage: "arrow.triangle.2.circlepath"
+            )
+            .font(.system(size: 13, weight: .medium))
+            .foregroundStyle(CopeColor.warning)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
 

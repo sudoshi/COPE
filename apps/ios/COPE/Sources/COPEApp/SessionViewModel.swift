@@ -33,6 +33,7 @@ final class SessionViewModel: ObservableObject {
             }
         } catch {
             try? await apiClient.logout()
+            await wipeLocalPatientData()
             isAuthenticated = false
             profile = nil
             requiredConsentsSatisfied = nil
@@ -319,6 +320,7 @@ final class SessionViewModel: ObservableObject {
 
     func signOut() async {
         try? await apiClient.logout()
+        await wipeLocalPatientData()
         isAuthenticated = false
         profile = nil
         pendingMFAToken = nil
@@ -341,6 +343,7 @@ final class SessionViewModel: ObservableObject {
     private func completePatientSession(_ session: AuthSession) async throws {
         guard session.role == "patient" else {
             try? await apiClient.logout()
+            await wipeLocalPatientData()
             throw APIClientError.patientRoleRequired
         }
 
@@ -348,6 +351,12 @@ final class SessionViewModel: ObservableObject {
         isAuthenticated = true
         try await refreshProfile()
         await refreshRequiredConsentStatus()
+    }
+
+    private func wipeLocalPatientData() async {
+        try? await DailyEntryDraftStore.shared.deleteAllDrafts()
+        try? await LocalOutboxStore.shared.deleteAll()
+        try? await LocalOutboxStore.shared.deleteEncryptionKey()
     }
 
     static func message(for error: Error) -> String {

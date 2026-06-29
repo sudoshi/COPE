@@ -10,25 +10,19 @@ actor DailyEntryDraftStore {
     static let shared = DailyEntryDraftStore()
 
     private let fileManager: FileManager
-    private let encoder: JSONEncoder
-    private let decoder: JSONDecoder
+    private let secureStore: EncryptedLocalFileStore
 
-    init(fileManager: FileManager = .default) {
+    init(
+        fileManager: FileManager = .default,
+        secureStore: EncryptedLocalFileStore = EncryptedLocalFileStore()
+    ) {
         self.fileManager = fileManager
-        encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        self.secureStore = secureStore
     }
 
     func loadDraft(for entryDate: String) throws -> StoredDailyEntryDraft? {
         let url = try draftURL(for: entryDate)
-        guard fileManager.fileExists(atPath: url.path) else {
-            return nil
-        }
-
-        let data = try Data(contentsOf: url)
-        return try decoder.decode(StoredDailyEntryDraft.self, from: data)
+        return try secureStore.load(StoredDailyEntryDraft.self, from: url)
     }
 
     @discardableResult
@@ -39,20 +33,18 @@ actor DailyEntryDraftStore {
             pendingServerSave: pendingServerSave
         )
         let url = try draftURL(for: draft.entryDate)
-        let data = try encoder.encode(record)
 
-        try fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try data.write(to: url, options: [.atomic])
-        try fileManager.setAttributes([.protectionKey: FileProtectionType.complete], ofItemAtPath: url.path)
+        try secureStore.save(record, to: url)
         return record
     }
 
     func deleteDraft(for entryDate: String) throws {
         let url = try draftURL(for: entryDate)
-        guard fileManager.fileExists(atPath: url.path) else {
-            return
-        }
-        try fileManager.removeItem(at: url)
+        try secureStore.deleteFile(at: url)
+    }
+
+    func deleteAllDrafts() throws {
+        try secureStore.deleteDirectory(at: storageDirectory())
     }
 
     private func draftURL(for entryDate: String) throws -> URL {
