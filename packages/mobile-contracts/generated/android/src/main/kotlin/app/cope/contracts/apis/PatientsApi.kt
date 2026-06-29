@@ -31,6 +31,11 @@ import app.cope.contracts.models.ApiV1AuthLoginPost401Response
 import app.cope.contracts.models.ApiV1PatientsMeGet200Response
 import app.cope.contracts.models.ApiV1PatientsMeIntakePatchRequest
 import app.cope.contracts.models.ApiV1PatientsMePatchRequest
+import app.cope.contracts.models.ApiV1PatientsMeStrategiesGet200Response
+import app.cope.contracts.models.ApiV1PatientsMeSymptomsGet200Response
+import app.cope.contracts.models.ApiV1PatientsMeSymptomsPost201Response
+import app.cope.contracts.models.ApiV1PatientsMeSymptomsPostRequest
+import app.cope.contracts.models.ApiV1PatientsMeTriggersGet200Response
 
 import com.squareup.moshi.Json
 
@@ -269,6 +274,651 @@ open class PatientsApi(basePath: kotlin.String = defaultBasePath, client: Call.F
         return RequestConfig(
             method = RequestMethod.PATCH,
             path = "/api/v1/patients/me",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * GET /api/v1/patients/me/strategies
+     * List authenticated patient tracked wellness strategies
+     * 
+     * @return ApiV1PatientsMeStrategiesGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun apiV1PatientsMeStrategiesGet() : ApiV1PatientsMeStrategiesGet200Response = withContext(Dispatchers.IO) {
+        val localVarResponse = apiV1PatientsMeStrategiesGetWithHttpInfo()
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ApiV1PatientsMeStrategiesGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * GET /api/v1/patients/me/strategies
+     * List authenticated patient tracked wellness strategies
+     * 
+     * @return ApiResponse<ApiV1PatientsMeStrategiesGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun apiV1PatientsMeStrategiesGetWithHttpInfo() : ApiResponse<ApiV1PatientsMeStrategiesGet200Response?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiV1PatientsMeStrategiesGetRequestConfig()
+
+        return@withContext request<Unit, ApiV1PatientsMeStrategiesGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation apiV1PatientsMeStrategiesGet
+     *
+     * @return RequestConfig
+     */
+    fun apiV1PatientsMeStrategiesGetRequestConfig() : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/api/v1/patients/me/strategies",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * POST /api/v1/patients/me/strategies
+     * Add a wellness strategy to authenticated patient tracking
+     * 
+     * @param apiV1PatientsMeSymptomsPostRequest 
+     * @return ApiV1PatientsMeSymptomsPost201Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun apiV1PatientsMeStrategiesPost(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) : ApiV1PatientsMeSymptomsPost201Response = withContext(Dispatchers.IO) {
+        val localVarResponse = apiV1PatientsMeStrategiesPostWithHttpInfo(apiV1PatientsMeSymptomsPostRequest = apiV1PatientsMeSymptomsPostRequest)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ApiV1PatientsMeSymptomsPost201Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * POST /api/v1/patients/me/strategies
+     * Add a wellness strategy to authenticated patient tracking
+     * 
+     * @param apiV1PatientsMeSymptomsPostRequest 
+     * @return ApiResponse<ApiV1PatientsMeSymptomsPost201Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun apiV1PatientsMeStrategiesPostWithHttpInfo(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) : ApiResponse<ApiV1PatientsMeSymptomsPost201Response?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiV1PatientsMeStrategiesPostRequestConfig(apiV1PatientsMeSymptomsPostRequest = apiV1PatientsMeSymptomsPostRequest)
+
+        return@withContext request<ApiV1PatientsMeSymptomsPostRequest, ApiV1PatientsMeSymptomsPost201Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation apiV1PatientsMeStrategiesPost
+     *
+     * @param apiV1PatientsMeSymptomsPostRequest 
+     * @return RequestConfig
+     */
+    fun apiV1PatientsMeStrategiesPostRequestConfig(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) : RequestConfig<ApiV1PatientsMeSymptomsPostRequest> {
+        val localVariableBody = apiV1PatientsMeSymptomsPostRequest
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/api/v1/patients/me/strategies",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * DELETE /api/v1/patients/me/strategies/{strategyId}
+     * Remove a wellness strategy from authenticated patient tracking
+     * 
+     * @param strategyId 
+     * @return void
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun apiV1PatientsMeStrategiesStrategyIdDelete(strategyId: java.util.UUID) : Unit = withContext(Dispatchers.IO) {
+        val localVarResponse = apiV1PatientsMeStrategiesStrategyIdDeleteWithHttpInfo(strategyId = strategyId)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> Unit
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * DELETE /api/v1/patients/me/strategies/{strategyId}
+     * Remove a wellness strategy from authenticated patient tracking
+     * 
+     * @param strategyId 
+     * @return ApiResponse<Unit?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun apiV1PatientsMeStrategiesStrategyIdDeleteWithHttpInfo(strategyId: java.util.UUID) : ApiResponse<Unit?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiV1PatientsMeStrategiesStrategyIdDeleteRequestConfig(strategyId = strategyId)
+
+        return@withContext request<Unit, Unit>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation apiV1PatientsMeStrategiesStrategyIdDelete
+     *
+     * @param strategyId 
+     * @return RequestConfig
+     */
+    fun apiV1PatientsMeStrategiesStrategyIdDeleteRequestConfig(strategyId: java.util.UUID) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.DELETE,
+            path = "/api/v1/patients/me/strategies/{strategyId}".replace("{"+"strategyId"+"}", encodeURIComponent(strategyId.toString())),
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * GET /api/v1/patients/me/symptoms
+     * List authenticated patient tracked symptoms
+     * 
+     * @return ApiV1PatientsMeSymptomsGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun apiV1PatientsMeSymptomsGet() : ApiV1PatientsMeSymptomsGet200Response = withContext(Dispatchers.IO) {
+        val localVarResponse = apiV1PatientsMeSymptomsGetWithHttpInfo()
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ApiV1PatientsMeSymptomsGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * GET /api/v1/patients/me/symptoms
+     * List authenticated patient tracked symptoms
+     * 
+     * @return ApiResponse<ApiV1PatientsMeSymptomsGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun apiV1PatientsMeSymptomsGetWithHttpInfo() : ApiResponse<ApiV1PatientsMeSymptomsGet200Response?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiV1PatientsMeSymptomsGetRequestConfig()
+
+        return@withContext request<Unit, ApiV1PatientsMeSymptomsGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation apiV1PatientsMeSymptomsGet
+     *
+     * @return RequestConfig
+     */
+    fun apiV1PatientsMeSymptomsGetRequestConfig() : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/api/v1/patients/me/symptoms",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * POST /api/v1/patients/me/symptoms
+     * Add a symptom to authenticated patient tracking
+     * 
+     * @param apiV1PatientsMeSymptomsPostRequest 
+     * @return ApiV1PatientsMeSymptomsPost201Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun apiV1PatientsMeSymptomsPost(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) : ApiV1PatientsMeSymptomsPost201Response = withContext(Dispatchers.IO) {
+        val localVarResponse = apiV1PatientsMeSymptomsPostWithHttpInfo(apiV1PatientsMeSymptomsPostRequest = apiV1PatientsMeSymptomsPostRequest)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ApiV1PatientsMeSymptomsPost201Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * POST /api/v1/patients/me/symptoms
+     * Add a symptom to authenticated patient tracking
+     * 
+     * @param apiV1PatientsMeSymptomsPostRequest 
+     * @return ApiResponse<ApiV1PatientsMeSymptomsPost201Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun apiV1PatientsMeSymptomsPostWithHttpInfo(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) : ApiResponse<ApiV1PatientsMeSymptomsPost201Response?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiV1PatientsMeSymptomsPostRequestConfig(apiV1PatientsMeSymptomsPostRequest = apiV1PatientsMeSymptomsPostRequest)
+
+        return@withContext request<ApiV1PatientsMeSymptomsPostRequest, ApiV1PatientsMeSymptomsPost201Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation apiV1PatientsMeSymptomsPost
+     *
+     * @param apiV1PatientsMeSymptomsPostRequest 
+     * @return RequestConfig
+     */
+    fun apiV1PatientsMeSymptomsPostRequestConfig(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) : RequestConfig<ApiV1PatientsMeSymptomsPostRequest> {
+        val localVariableBody = apiV1PatientsMeSymptomsPostRequest
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/api/v1/patients/me/symptoms",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * DELETE /api/v1/patients/me/symptoms/{symptomId}
+     * Remove a symptom from authenticated patient tracking
+     * 
+     * @param symptomId 
+     * @return void
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun apiV1PatientsMeSymptomsSymptomIdDelete(symptomId: java.util.UUID) : Unit = withContext(Dispatchers.IO) {
+        val localVarResponse = apiV1PatientsMeSymptomsSymptomIdDeleteWithHttpInfo(symptomId = symptomId)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> Unit
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * DELETE /api/v1/patients/me/symptoms/{symptomId}
+     * Remove a symptom from authenticated patient tracking
+     * 
+     * @param symptomId 
+     * @return ApiResponse<Unit?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun apiV1PatientsMeSymptomsSymptomIdDeleteWithHttpInfo(symptomId: java.util.UUID) : ApiResponse<Unit?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiV1PatientsMeSymptomsSymptomIdDeleteRequestConfig(symptomId = symptomId)
+
+        return@withContext request<Unit, Unit>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation apiV1PatientsMeSymptomsSymptomIdDelete
+     *
+     * @param symptomId 
+     * @return RequestConfig
+     */
+    fun apiV1PatientsMeSymptomsSymptomIdDeleteRequestConfig(symptomId: java.util.UUID) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.DELETE,
+            path = "/api/v1/patients/me/symptoms/{symptomId}".replace("{"+"symptomId"+"}", encodeURIComponent(symptomId.toString())),
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * GET /api/v1/patients/me/triggers
+     * List authenticated patient tracked triggers
+     * 
+     * @return ApiV1PatientsMeTriggersGet200Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun apiV1PatientsMeTriggersGet() : ApiV1PatientsMeTriggersGet200Response = withContext(Dispatchers.IO) {
+        val localVarResponse = apiV1PatientsMeTriggersGetWithHttpInfo()
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ApiV1PatientsMeTriggersGet200Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * GET /api/v1/patients/me/triggers
+     * List authenticated patient tracked triggers
+     * 
+     * @return ApiResponse<ApiV1PatientsMeTriggersGet200Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun apiV1PatientsMeTriggersGetWithHttpInfo() : ApiResponse<ApiV1PatientsMeTriggersGet200Response?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiV1PatientsMeTriggersGetRequestConfig()
+
+        return@withContext request<Unit, ApiV1PatientsMeTriggersGet200Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation apiV1PatientsMeTriggersGet
+     *
+     * @return RequestConfig
+     */
+    fun apiV1PatientsMeTriggersGetRequestConfig() : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/api/v1/patients/me/triggers",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * POST /api/v1/patients/me/triggers
+     * Add a trigger to authenticated patient tracking
+     * 
+     * @param apiV1PatientsMeSymptomsPostRequest 
+     * @return ApiV1PatientsMeSymptomsPost201Response
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun apiV1PatientsMeTriggersPost(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) : ApiV1PatientsMeSymptomsPost201Response = withContext(Dispatchers.IO) {
+        val localVarResponse = apiV1PatientsMeTriggersPostWithHttpInfo(apiV1PatientsMeSymptomsPostRequest = apiV1PatientsMeSymptomsPostRequest)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ApiV1PatientsMeSymptomsPost201Response
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * POST /api/v1/patients/me/triggers
+     * Add a trigger to authenticated patient tracking
+     * 
+     * @param apiV1PatientsMeSymptomsPostRequest 
+     * @return ApiResponse<ApiV1PatientsMeSymptomsPost201Response?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun apiV1PatientsMeTriggersPostWithHttpInfo(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) : ApiResponse<ApiV1PatientsMeSymptomsPost201Response?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiV1PatientsMeTriggersPostRequestConfig(apiV1PatientsMeSymptomsPostRequest = apiV1PatientsMeSymptomsPostRequest)
+
+        return@withContext request<ApiV1PatientsMeSymptomsPostRequest, ApiV1PatientsMeSymptomsPost201Response>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation apiV1PatientsMeTriggersPost
+     *
+     * @param apiV1PatientsMeSymptomsPostRequest 
+     * @return RequestConfig
+     */
+    fun apiV1PatientsMeTriggersPostRequestConfig(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) : RequestConfig<ApiV1PatientsMeSymptomsPostRequest> {
+        val localVariableBody = apiV1PatientsMeSymptomsPostRequest
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/api/v1/patients/me/triggers",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * DELETE /api/v1/patients/me/triggers/{triggerId}
+     * Remove a trigger from authenticated patient tracking
+     * 
+     * @param triggerId 
+     * @return void
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun apiV1PatientsMeTriggersTriggerIdDelete(triggerId: java.util.UUID) : Unit = withContext(Dispatchers.IO) {
+        val localVarResponse = apiV1PatientsMeTriggersTriggerIdDeleteWithHttpInfo(triggerId = triggerId)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> Unit
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * DELETE /api/v1/patients/me/triggers/{triggerId}
+     * Remove a trigger from authenticated patient tracking
+     * 
+     * @param triggerId 
+     * @return ApiResponse<Unit?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun apiV1PatientsMeTriggersTriggerIdDeleteWithHttpInfo(triggerId: java.util.UUID) : ApiResponse<Unit?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiV1PatientsMeTriggersTriggerIdDeleteRequestConfig(triggerId = triggerId)
+
+        return@withContext request<Unit, Unit>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation apiV1PatientsMeTriggersTriggerIdDelete
+     *
+     * @param triggerId 
+     * @return RequestConfig
+     */
+    fun apiV1PatientsMeTriggersTriggerIdDeleteRequestConfig(triggerId: java.util.UUID) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.DELETE,
+            path = "/api/v1/patients/me/triggers/{triggerId}".replace("{"+"triggerId"+"}", encodeURIComponent(triggerId.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = true,

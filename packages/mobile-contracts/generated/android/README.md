@@ -52,6 +52,9 @@ All URIs are relative to *http://localhost:3000*
 | *AuthApi* | [**apiV1AuthMfaVerifyPost**](docs/AuthApi.md#apiv1authmfaverifypost) | **POST** /api/v1/auth/mfa/verify | Verify a TOTP MFA code using a partial MFA token |
 | *AuthApi* | [**apiV1AuthRefreshPost**](docs/AuthApi.md#apiv1authrefreshpost) | **POST** /api/v1/auth/refresh | Rotate a refresh token and issue a new access token |
 | *AuthApi* | [**apiV1AuthRegisterPost**](docs/AuthApi.md#apiv1authregisterpost) | **POST** /api/v1/auth/register | Register an invited patient account |
+| *CataloguesApi* | [**apiV1CataloguesStrategiesGet**](docs/CataloguesApi.md#apiv1cataloguesstrategiesget) | **GET** /api/v1/catalogues/strategies | List wellness strategy catalogue options for the authenticated patient |
+| *CataloguesApi* | [**apiV1CataloguesSymptomsGet**](docs/CataloguesApi.md#apiv1cataloguessymptomsget) | **GET** /api/v1/catalogues/symptoms | List symptom catalogue options for the authenticated patient |
+| *CataloguesApi* | [**apiV1CataloguesTriggersGet**](docs/CataloguesApi.md#apiv1cataloguestriggersget) | **GET** /api/v1/catalogues/triggers | List trigger catalogue options for the authenticated patient |
 | *ConsentApi* | [**apiV1ConsentGet**](docs/ConsentApi.md#apiv1consentget) | **GET** /api/v1/consent/ | List latest patient consent records by type |
 | *ConsentApi* | [**apiV1ConsentPost**](docs/ConsentApi.md#apiv1consentpost) | **POST** /api/v1/consent/ | Grant or update a patient consent record |
 | *ConsentApi* | [**apiV1ConsentTypeDelete**](docs/ConsentApi.md#apiv1consenttypedelete) | **DELETE** /api/v1/consent/{type} | Revoke an app-revocable patient consent type |
@@ -74,6 +77,15 @@ All URIs are relative to *http://localhost:3000*
 | *PatientsApi* | [**apiV1PatientsMeGet**](docs/PatientsApi.md#apiv1patientsmeget) | **GET** /api/v1/patients/me | Get the authenticated patient profile |
 | *PatientsApi* | [**apiV1PatientsMeIntakePatch**](docs/PatientsApi.md#apiv1patientsmeintakepatch) | **PATCH** /api/v1/patients/me/intake | Update authenticated patient onboarding intake fields |
 | *PatientsApi* | [**apiV1PatientsMePatch**](docs/PatientsApi.md#apiv1patientsmepatch) | **PATCH** /api/v1/patients/me | Update authenticated patient profile preferences |
+| *PatientsApi* | [**apiV1PatientsMeStrategiesGet**](docs/PatientsApi.md#apiv1patientsmestrategiesget) | **GET** /api/v1/patients/me/strategies | List authenticated patient tracked wellness strategies |
+| *PatientsApi* | [**apiV1PatientsMeStrategiesPost**](docs/PatientsApi.md#apiv1patientsmestrategiespost) | **POST** /api/v1/patients/me/strategies | Add a wellness strategy to authenticated patient tracking |
+| *PatientsApi* | [**apiV1PatientsMeStrategiesStrategyIdDelete**](docs/PatientsApi.md#apiv1patientsmestrategiesstrategyiddelete) | **DELETE** /api/v1/patients/me/strategies/{strategyId} | Remove a wellness strategy from authenticated patient tracking |
+| *PatientsApi* | [**apiV1PatientsMeSymptomsGet**](docs/PatientsApi.md#apiv1patientsmesymptomsget) | **GET** /api/v1/patients/me/symptoms | List authenticated patient tracked symptoms |
+| *PatientsApi* | [**apiV1PatientsMeSymptomsPost**](docs/PatientsApi.md#apiv1patientsmesymptomspost) | **POST** /api/v1/patients/me/symptoms | Add a symptom to authenticated patient tracking |
+| *PatientsApi* | [**apiV1PatientsMeSymptomsSymptomIdDelete**](docs/PatientsApi.md#apiv1patientsmesymptomssymptomiddelete) | **DELETE** /api/v1/patients/me/symptoms/{symptomId} | Remove a symptom from authenticated patient tracking |
+| *PatientsApi* | [**apiV1PatientsMeTriggersGet**](docs/PatientsApi.md#apiv1patientsmetriggersget) | **GET** /api/v1/patients/me/triggers | List authenticated patient tracked triggers |
+| *PatientsApi* | [**apiV1PatientsMeTriggersPost**](docs/PatientsApi.md#apiv1patientsmetriggerspost) | **POST** /api/v1/patients/me/triggers | Add a trigger to authenticated patient tracking |
+| *PatientsApi* | [**apiV1PatientsMeTriggersTriggerIdDelete**](docs/PatientsApi.md#apiv1patientsmetriggerstriggeriddelete) | **DELETE** /api/v1/patients/me/triggers/{triggerId} | Remove a trigger from authenticated patient tracking |
 | *SafetyApi* | [**apiV1SafetyMyPlanGet**](docs/SafetyApi.md#apiv1safetymyplanget) | **GET** /api/v1/safety/my-plan | Get authenticated patient safety plan |
 | *SafetyApi* | [**apiV1SafetyResourcesGet**](docs/SafetyApi.md#apiv1safetyresourcesget) | **GET** /api/v1/safety/resources | Get public crisis and safety resources |
 | *SyncApi* | [**apiV1SyncPullGet**](docs/SyncApi.md#apiv1syncpullget) | **GET** /api/v1/sync/pull | Pull WatermelonDB-compatible offline changes |
@@ -97,6 +109,12 @@ All URIs are relative to *http://localhost:3000*
  - [app.cope.contracts.models.ApiV1AuthRegisterPost201ResponseData](docs/ApiV1AuthRegisterPost201ResponseData.md)
  - [app.cope.contracts.models.ApiV1AuthRegisterPost201ResponseDataUser](docs/ApiV1AuthRegisterPost201ResponseDataUser.md)
  - [app.cope.contracts.models.ApiV1AuthRegisterPostRequest](docs/ApiV1AuthRegisterPostRequest.md)
+ - [app.cope.contracts.models.ApiV1CataloguesStrategiesGet200Response](docs/ApiV1CataloguesStrategiesGet200Response.md)
+ - [app.cope.contracts.models.ApiV1CataloguesStrategiesGet200ResponseDataInner](docs/ApiV1CataloguesStrategiesGet200ResponseDataInner.md)
+ - [app.cope.contracts.models.ApiV1CataloguesSymptomsGet200Response](docs/ApiV1CataloguesSymptomsGet200Response.md)
+ - [app.cope.contracts.models.ApiV1CataloguesSymptomsGet200ResponseDataInner](docs/ApiV1CataloguesSymptomsGet200ResponseDataInner.md)
+ - [app.cope.contracts.models.ApiV1CataloguesTriggersGet200Response](docs/ApiV1CataloguesTriggersGet200Response.md)
+ - [app.cope.contracts.models.ApiV1CataloguesTriggersGet200ResponseDataInner](docs/ApiV1CataloguesTriggersGet200ResponseDataInner.md)
  - [app.cope.contracts.models.ApiV1ConsentGet200Response](docs/ApiV1ConsentGet200Response.md)
  - [app.cope.contracts.models.ApiV1ConsentGet200ResponseDataInner](docs/ApiV1ConsentGet200ResponseDataInner.md)
  - [app.cope.contracts.models.ApiV1ConsentPostRequest](docs/ApiV1ConsentPostRequest.md)
@@ -112,6 +130,15 @@ All URIs are relative to *http://localhost:3000*
  - [app.cope.contracts.models.ApiV1PatientsMeGet200Response](docs/ApiV1PatientsMeGet200Response.md)
  - [app.cope.contracts.models.ApiV1PatientsMeIntakePatchRequest](docs/ApiV1PatientsMeIntakePatchRequest.md)
  - [app.cope.contracts.models.ApiV1PatientsMePatchRequest](docs/ApiV1PatientsMePatchRequest.md)
+ - [app.cope.contracts.models.ApiV1PatientsMeStrategiesGet200Response](docs/ApiV1PatientsMeStrategiesGet200Response.md)
+ - [app.cope.contracts.models.ApiV1PatientsMeStrategiesGet200ResponseDataInner](docs/ApiV1PatientsMeStrategiesGet200ResponseDataInner.md)
+ - [app.cope.contracts.models.ApiV1PatientsMeSymptomsGet200Response](docs/ApiV1PatientsMeSymptomsGet200Response.md)
+ - [app.cope.contracts.models.ApiV1PatientsMeSymptomsGet200ResponseDataInner](docs/ApiV1PatientsMeSymptomsGet200ResponseDataInner.md)
+ - [app.cope.contracts.models.ApiV1PatientsMeSymptomsPost201Response](docs/ApiV1PatientsMeSymptomsPost201Response.md)
+ - [app.cope.contracts.models.ApiV1PatientsMeSymptomsPost201ResponseData](docs/ApiV1PatientsMeSymptomsPost201ResponseData.md)
+ - [app.cope.contracts.models.ApiV1PatientsMeSymptomsPostRequest](docs/ApiV1PatientsMeSymptomsPostRequest.md)
+ - [app.cope.contracts.models.ApiV1PatientsMeTriggersGet200Response](docs/ApiV1PatientsMeTriggersGet200Response.md)
+ - [app.cope.contracts.models.ApiV1PatientsMeTriggersGet200ResponseDataInner](docs/ApiV1PatientsMeTriggersGet200ResponseDataInner.md)
  - [app.cope.contracts.models.ApiV1SyncPullGet200Response](docs/ApiV1SyncPullGet200Response.md)
  - [app.cope.contracts.models.ApiV1SyncPullGet200ResponseData](docs/ApiV1SyncPullGet200ResponseData.md)
  - [app.cope.contracts.models.ApiV1SyncPullGet200ResponseDataChanges](docs/ApiV1SyncPullGet200ResponseDataChanges.md)

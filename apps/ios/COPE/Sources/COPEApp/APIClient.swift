@@ -32,6 +32,78 @@ struct PatientIntakeUpdate: Equatable {
     let markComplete: Bool
 }
 
+enum MedicationFrequencyOption: String, CaseIterable, Identifiable {
+    case onceDailyMorning = "once_daily_morning"
+    case onceDailyEvening = "once_daily_evening"
+    case onceDailyBedtime = "once_daily_bedtime"
+    case twiceDaily = "twice_daily"
+    case threeTimesDaily = "three_times_daily"
+    case asNeeded = "as_needed"
+    case weekly = "weekly"
+    case other = "other"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .onceDailyMorning:
+            return "Morning"
+        case .onceDailyEvening:
+            return "Evening"
+        case .onceDailyBedtime:
+            return "Bedtime"
+        case .twiceDaily:
+            return "Twice daily"
+        case .threeTimesDaily:
+            return "Three times daily"
+        case .asNeeded:
+            return "As needed"
+        case .weekly:
+            return "Weekly"
+        case .other:
+            return "Other"
+        }
+    }
+
+    var apiValue: ApiV1MedicationsPostRequest.Frequency {
+        switch self {
+        case .onceDailyMorning:
+            return .onceDailyMorning
+        case .onceDailyEvening:
+            return .onceDailyEvening
+        case .onceDailyBedtime:
+            return .onceDailyBedtime
+        case .twiceDaily:
+            return .twiceDaily
+        case .threeTimesDaily:
+            return .threeTimesDaily
+        case .asNeeded:
+            return .asNeeded
+        case .weekly:
+            return .weekly
+        case .other:
+            return .other
+        }
+    }
+}
+
+struct MedicationSetupDraft: Equatable {
+    let medicationName: String
+    let dose: Double?
+    let doseUnit: String?
+    let frequency: MedicationFrequencyOption
+    let frequencyOther: String?
+    let instructions: String?
+}
+
+struct OnboardingCatalogueItem: Equatable, Hashable, Identifiable {
+    let id: UUID
+    let name: String
+    let category: String?
+    let isSafetySymptom: Bool
+    let hasQualityRating: Bool
+}
+
 struct PatientProfileSummary: Decodable, Equatable {
     let id: String
     let firstName: String
@@ -498,6 +570,92 @@ actor APIClient {
         return try await currentPatient()
     }
 
+    func symptomCatalogue() async throws -> [OnboardingCatalogueItem] {
+        let response = try await executeAuthorized {
+            try await CataloguesAPI.apiV1CataloguesSymptomsGet()
+        }
+
+        return response.data.map {
+            OnboardingCatalogueItem(
+                id: $0.symptomId,
+                name: $0.name,
+                category: $0.category,
+                isSafetySymptom: $0.isSafetySymptom,
+                hasQualityRating: false
+            )
+        }
+    }
+
+    func triggerCatalogue() async throws -> [OnboardingCatalogueItem] {
+        let response = try await executeAuthorized {
+            try await CataloguesAPI.apiV1CataloguesTriggersGet()
+        }
+
+        return response.data.map {
+            OnboardingCatalogueItem(
+                id: $0.triggerId,
+                name: $0.name,
+                category: $0.category,
+                isSafetySymptom: false,
+                hasQualityRating: false
+            )
+        }
+    }
+
+    func strategyCatalogue() async throws -> [OnboardingCatalogueItem] {
+        let response = try await executeAuthorized {
+            try await CataloguesAPI.apiV1CataloguesStrategiesGet()
+        }
+
+        return response.data.map {
+            OnboardingCatalogueItem(
+                id: $0.strategyId,
+                name: $0.name,
+                category: $0.category,
+                isSafetySymptom: false,
+                hasQualityRating: $0.hasQualityRating
+            )
+        }
+    }
+
+    func addTrackedSymptom(id: UUID) async throws {
+        let request = ApiV1PatientsMeSymptomsPostRequest(id: id)
+        _ = try await executeAuthorized {
+            try await PatientsAPI.apiV1PatientsMeSymptomsPost(apiV1PatientsMeSymptomsPostRequest: request)
+        }
+    }
+
+    func addTrackedTrigger(id: UUID) async throws {
+        let request = ApiV1PatientsMeSymptomsPostRequest(id: id)
+        _ = try await executeAuthorized {
+            try await PatientsAPI.apiV1PatientsMeTriggersPost(apiV1PatientsMeSymptomsPostRequest: request)
+        }
+    }
+
+    func addTrackedStrategy(id: UUID) async throws {
+        let request = ApiV1PatientsMeSymptomsPostRequest(id: id)
+        _ = try await executeAuthorized {
+            try await PatientsAPI.apiV1PatientsMeStrategiesPost(apiV1PatientsMeSymptomsPostRequest: request)
+        }
+    }
+
+    func createMedication(_ medication: MedicationSetupDraft) async throws {
+        let request = ApiV1MedicationsPostRequest(
+            medicationName: medication.medicationName,
+            dose: medication.dose,
+            doseUnit: medication.doseUnit,
+            frequency: medication.frequency.apiValue,
+            frequencyOther: medication.frequencyOther,
+            instructions: medication.instructions,
+            prescribedAt: nil,
+            showInApp: true
+        )
+
+        _ = try await executeAuthorized {
+            try await MedicationsAPI.apiV1MedicationsPost(apiV1MedicationsPostRequest: request)
+        }
+    }
+
     func todayDailyEntry() async throws -> DailyEntrySummary? {
         do {
             let response = try await executeAuthorized {
@@ -783,6 +941,9 @@ enum APIClientError: Error, LocalizedError {
     case invalidAuthResponse
     case invalidURL
     case serverMessage(String)
+    case missingMedicationName
+    case invalidMedicationDose
+    case missingMedicationFrequencyDetail
     case unsupportedAssessmentScale
     case unsupportedConsentType
 
@@ -802,6 +963,12 @@ enum APIClientError: Error, LocalizedError {
             return "The API URL is not valid."
         case let .serverMessage(message):
             return message
+        case .missingMedicationName:
+            return "Enter the medication name or turn off medication setup."
+        case .invalidMedicationDose:
+            return "Enter a medication dose greater than zero."
+        case .missingMedicationFrequencyDetail:
+            return "Enter the medication frequency details."
         case .unsupportedAssessmentScale:
             return "This assessment is not supported by the mobile contract yet."
         case .unsupportedConsentType:

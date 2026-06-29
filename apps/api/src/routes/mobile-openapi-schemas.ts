@@ -438,6 +438,272 @@ export const updatePatientIntakeRouteSchema = {
   },
 } as const;
 
+const addTrackedItemBody = {
+  type: 'object',
+  required: ['id'],
+  additionalProperties: false,
+  properties: {
+    id: uuid,
+  },
+} as const;
+
+const trackedItemDeleteParams = (name: string) => ({
+  type: 'object',
+  required: [name],
+  additionalProperties: false,
+  properties: {
+    [name]: uuid,
+  },
+}) as const;
+
+const trackedItemMutationResponse = {
+  type: 'object',
+  required: ['success', 'data'],
+  additionalProperties: true,
+  properties: {
+    success: { type: 'boolean' },
+    data: {
+      type: 'object',
+      additionalProperties: true,
+      properties: {
+        id: uuid,
+        symptom_id: uuid,
+        trigger_id: uuid,
+        strategy_id: uuid,
+        added_at: isoDateTime,
+      },
+    },
+  },
+} as const;
+
+const patientSymptomItem = {
+  type: 'object',
+  required: ['id', 'symptom_id', 'name', 'is_safety_symptom', 'display_order', 'added_at'],
+  additionalProperties: true,
+  properties: {
+    id: uuid,
+    symptom_id: uuid,
+    name: { type: 'string' },
+    is_safety_symptom: { type: 'boolean' },
+    display_order: { type: ['integer', 'null'] },
+    added_at: isoDateTime,
+  },
+} as const;
+
+const patientTriggerItem = {
+  type: 'object',
+  required: ['id', 'trigger_id', 'name', 'display_order', 'added_at'],
+  additionalProperties: true,
+  properties: {
+    id: uuid,
+    trigger_id: uuid,
+    name: { type: 'string' },
+    category: { type: ['string', 'null'] },
+    display_order: { type: ['integer', 'null'] },
+    added_at: isoDateTime,
+  },
+} as const;
+
+const patientStrategyItem = {
+  type: 'object',
+  required: ['id', 'strategy_id', 'name', 'display_order', 'added_at'],
+  additionalProperties: true,
+  properties: {
+    id: uuid,
+    strategy_id: uuid,
+    name: { type: 'string' },
+    category: { type: ['string', 'null'] },
+    display_order: { type: ['integer', 'null'] },
+    added_at: isoDateTime,
+  },
+} as const;
+
+const triggerCatalogueItem = {
+  type: 'object',
+  required: ['trigger_id', 'name'],
+  additionalProperties: true,
+  properties: {
+    trigger_id: uuid,
+    name: { type: 'string' },
+    category: { type: ['string', 'null'] },
+    icon_key: { type: ['string', 'null'] },
+  },
+} as const;
+
+const symptomCatalogueItem = {
+  type: 'object',
+  required: ['symptom_id', 'name', 'is_safety_symptom'],
+  additionalProperties: true,
+  properties: {
+    symptom_id: uuid,
+    name: { type: 'string' },
+    category: { type: ['string', 'null'] },
+    icon_key: { type: ['string', 'null'] },
+    is_safety_symptom: { type: 'boolean' },
+  },
+} as const;
+
+const strategyCatalogueItem = {
+  type: 'object',
+  required: ['strategy_id', 'name', 'has_quality_rating'],
+  additionalProperties: true,
+  properties: {
+    strategy_id: uuid,
+    name: { type: 'string' },
+    category: { type: ['string', 'null'] },
+    icon_key: { type: ['string', 'null'] },
+    has_quality_rating: { type: 'boolean' },
+  },
+} as const;
+
+const arrayDataResponse = (items: object) => ({
+  type: 'object',
+  required: ['success', 'data'],
+  additionalProperties: true,
+  properties: {
+    success: { type: 'boolean' },
+    data: {
+      type: 'array',
+      items,
+    },
+  },
+}) as const;
+
+export const listPatientSymptomsRouteSchema = {
+  tags: ['patients'],
+  summary: 'List authenticated patient tracked symptoms',
+  security: authHeader,
+  response: {
+    200: arrayDataResponse(patientSymptomItem),
+    403: errorResponse,
+  },
+} as const;
+
+export const addPatientSymptomRouteSchema = {
+  tags: ['patients'],
+  summary: 'Add a symptom to authenticated patient tracking',
+  security: authHeader,
+  body: addTrackedItemBody,
+  response: {
+    201: trackedItemMutationResponse,
+    400: errorResponse,
+    403: errorResponse,
+    404: errorResponse,
+  },
+} as const;
+
+export const deletePatientSymptomRouteSchema = {
+  tags: ['patients'],
+  summary: 'Remove a symptom from authenticated patient tracking',
+  security: authHeader,
+  params: trackedItemDeleteParams('symptomId'),
+  response: {
+    204: { type: 'null' },
+    400: errorResponse,
+    403: errorResponse,
+  },
+} as const;
+
+export const listPatientTriggersRouteSchema = {
+  tags: ['patients'],
+  summary: 'List authenticated patient tracked triggers',
+  security: authHeader,
+  response: {
+    200: arrayDataResponse(patientTriggerItem),
+    403: errorResponse,
+  },
+} as const;
+
+export const addPatientTriggerRouteSchema = {
+  tags: ['patients'],
+  summary: 'Add a trigger to authenticated patient tracking',
+  security: authHeader,
+  body: addTrackedItemBody,
+  response: {
+    201: trackedItemMutationResponse,
+    400: errorResponse,
+    403: errorResponse,
+    404: errorResponse,
+  },
+} as const;
+
+export const deletePatientTriggerRouteSchema = {
+  tags: ['patients'],
+  summary: 'Remove a trigger from authenticated patient tracking',
+  security: authHeader,
+  params: trackedItemDeleteParams('triggerId'),
+  response: {
+    204: { type: 'null' },
+    400: errorResponse,
+    403: errorResponse,
+  },
+} as const;
+
+export const listPatientStrategiesRouteSchema = {
+  tags: ['patients'],
+  summary: 'List authenticated patient tracked wellness strategies',
+  security: authHeader,
+  response: {
+    200: arrayDataResponse(patientStrategyItem),
+    403: errorResponse,
+  },
+} as const;
+
+export const addPatientStrategyRouteSchema = {
+  tags: ['patients'],
+  summary: 'Add a wellness strategy to authenticated patient tracking',
+  security: authHeader,
+  body: addTrackedItemBody,
+  response: {
+    201: trackedItemMutationResponse,
+    400: errorResponse,
+    403: errorResponse,
+    404: errorResponse,
+  },
+} as const;
+
+export const deletePatientStrategyRouteSchema = {
+  tags: ['patients'],
+  summary: 'Remove a wellness strategy from authenticated patient tracking',
+  security: authHeader,
+  params: trackedItemDeleteParams('strategyId'),
+  response: {
+    204: { type: 'null' },
+    400: errorResponse,
+    403: errorResponse,
+  },
+} as const;
+
+export const listTriggerCatalogueRouteSchema = {
+  tags: ['catalogues'],
+  summary: 'List trigger catalogue options for the authenticated patient',
+  security: authHeader,
+  response: {
+    200: arrayDataResponse(triggerCatalogueItem),
+    403: errorResponse,
+  },
+} as const;
+
+export const listSymptomCatalogueRouteSchema = {
+  tags: ['catalogues'],
+  summary: 'List symptom catalogue options for the authenticated patient',
+  security: authHeader,
+  response: {
+    200: arrayDataResponse(symptomCatalogueItem),
+    403: errorResponse,
+  },
+} as const;
+
+export const listStrategyCatalogueRouteSchema = {
+  tags: ['catalogues'],
+  summary: 'List wellness strategy catalogue options for the authenticated patient',
+  security: authHeader,
+  response: {
+    200: arrayDataResponse(strategyCatalogueItem),
+    403: errorResponse,
+  },
+} as const;
+
 export const createJournalEntryRouteSchema = {
   tags: ['journal'],
   summary: 'Create or upsert today journal entry',

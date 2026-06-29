@@ -136,7 +136,19 @@ final class SessionViewModel: ObservableObject {
         primaryConcern: String,
         emergencyContactName: String,
         emergencyContactPhone: String,
-        emergencyContactRelationship: String
+        emergencyContactRelationship: String,
+        addMedication: Bool = false,
+        medicationName: String = "",
+        medicationDose: String = "",
+        medicationDoseUnit: String = "mg",
+        medicationFrequency: MedicationFrequencyOption = .onceDailyMorning,
+        medicationFrequencyOther: String = "",
+        medicationInstructions: String = "",
+        selectedSymptomIDs: Set<UUID> = [],
+        selectedTriggerIDs: Set<UUID> = [],
+        selectedStrategyIDs: Set<UUID> = [],
+        dailyReminderEnabled: Bool = true,
+        medicationReminderEnabled: Bool = true
     ) async {
         let trimmedConcern = primaryConcern.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedConcern.isEmpty else {
@@ -144,10 +156,74 @@ final class SessionViewModel: ObservableObject {
             return
         }
 
+        let medicationDraft: MedicationSetupDraft?
+        if addMedication {
+            let trimmedMedicationName = medicationName.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmedMedicationName.isEmpty else {
+                errorMessage = APIClientError.missingMedicationName.localizedDescription
+                return
+            }
+
+            let trimmedDose = medicationDose.trimmingCharacters(in: .whitespacesAndNewlines)
+            let dose: Double?
+            if trimmedDose.isEmpty {
+                dose = nil
+            } else if let parsedDose = Double(trimmedDose), parsedDose > 0 {
+                dose = parsedDose
+            } else {
+                errorMessage = APIClientError.invalidMedicationDose.localizedDescription
+                return
+            }
+
+            let trimmedFrequencyOther = medicationFrequencyOther.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard medicationFrequency != .other || !trimmedFrequencyOther.isEmpty else {
+                errorMessage = APIClientError.missingMedicationFrequencyDetail.localizedDescription
+                return
+            }
+
+            medicationDraft = MedicationSetupDraft(
+                medicationName: trimmedMedicationName,
+                dose: dose,
+                doseUnit: medicationDoseUnit.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty ?? "mg",
+                frequency: medicationFrequency,
+                frequencyOther: trimmedFrequencyOther.nilIfEmpty,
+                instructions: medicationInstructions.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
+            )
+        } else {
+            medicationDraft = nil
+        }
+
         isLoading = true
         errorMessage = nil
 
         do {
+            if let medicationDraft {
+                try await apiClient.createMedication(medicationDraft)
+            }
+
+            for id in selectedSymptomIDs.sorted(by: { $0.uuidString < $1.uuidString }) {
+                try await apiClient.addTrackedSymptom(id: id)
+            }
+
+            for id in selectedTriggerIDs.sorted(by: { $0.uuidString < $1.uuidString }) {
+                try await apiClient.addTrackedTrigger(id: id)
+            }
+
+            for id in selectedStrategyIDs.sorted(by: { $0.uuidString < $1.uuidString }) {
+                try await apiClient.addTrackedStrategy(id: id)
+            }
+
+            _ = try await apiClient.updateNotificationPreferences(
+                NotificationPreferenceUpdate(
+                    dailyReminderEnabled: dailyReminderEnabled,
+                    dailyReminderTime: nil,
+                    medicationReminderEnabled: medicationReminderEnabled,
+                    streakNotifications: nil,
+                    appointmentReminders: nil,
+                    pushToken: nil
+                )
+            )
+
             profile = try await apiClient.updateIntake(
                 PatientIntakeUpdate(
                     primaryConcern: trimmedConcern,

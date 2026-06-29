@@ -123,4 +123,349 @@ open class PatientsAPI {
 
         return localVariableRequestBuilder.init(method: "PATCH", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
     }
+
+    /**
+     List authenticated patient tracked wellness strategies
+     
+     - returns: ApiV1PatientsMeStrategiesGet200Response
+     */
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    open class func apiV1PatientsMeStrategiesGet() async throws -> ApiV1PatientsMeStrategiesGet200Response {
+        return try await apiV1PatientsMeStrategiesGetWithRequestBuilder().execute().body
+    }
+
+    /**
+     List authenticated patient tracked wellness strategies
+     - GET /api/v1/patients/me/strategies
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - returns: RequestBuilder<ApiV1PatientsMeStrategiesGet200Response> 
+     */
+    open class func apiV1PatientsMeStrategiesGetWithRequestBuilder() -> RequestBuilder<ApiV1PatientsMeStrategiesGet200Response> {
+        let localVariablePath = "/api/v1/patients/me/strategies"
+        let localVariableURLString = COPEOpenAPIAPI.basePath + localVariablePath
+        let localVariableParameters: [String: Any]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<ApiV1PatientsMeStrategiesGet200Response>.Type = COPEOpenAPIAPI.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
+
+    /**
+     Add a wellness strategy to authenticated patient tracking
+     
+     - parameter apiV1PatientsMeSymptomsPostRequest: (body)  
+     - returns: ApiV1PatientsMeSymptomsPost201Response
+     */
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    open class func apiV1PatientsMeStrategiesPost(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) async throws -> ApiV1PatientsMeSymptomsPost201Response {
+        return try await apiV1PatientsMeStrategiesPostWithRequestBuilder(apiV1PatientsMeSymptomsPostRequest: apiV1PatientsMeSymptomsPostRequest).execute().body
+    }
+
+    /**
+     Add a wellness strategy to authenticated patient tracking
+     - POST /api/v1/patients/me/strategies
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter apiV1PatientsMeSymptomsPostRequest: (body)  
+     - returns: RequestBuilder<ApiV1PatientsMeSymptomsPost201Response> 
+     */
+    open class func apiV1PatientsMeStrategiesPostWithRequestBuilder(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) -> RequestBuilder<ApiV1PatientsMeSymptomsPost201Response> {
+        let localVariablePath = "/api/v1/patients/me/strategies"
+        let localVariableURLString = COPEOpenAPIAPI.basePath + localVariablePath
+        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: apiV1PatientsMeSymptomsPostRequest)
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            "Content-Type": "application/json",
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<ApiV1PatientsMeSymptomsPost201Response>.Type = COPEOpenAPIAPI.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "POST", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
+
+    /**
+     Remove a wellness strategy from authenticated patient tracking
+     
+     - parameter strategyId: (path)  
+     - returns: Void
+     */
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    open class func apiV1PatientsMeStrategiesStrategyIdDelete(strategyId: UUID) async throws {
+        return try await apiV1PatientsMeStrategiesStrategyIdDeleteWithRequestBuilder(strategyId: strategyId).execute().body
+    }
+
+    /**
+     Remove a wellness strategy from authenticated patient tracking
+     - DELETE /api/v1/patients/me/strategies/{strategyId}
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter strategyId: (path)  
+     - returns: RequestBuilder<Void> 
+     */
+    open class func apiV1PatientsMeStrategiesStrategyIdDeleteWithRequestBuilder(strategyId: UUID) -> RequestBuilder<Void> {
+        var localVariablePath = "/api/v1/patients/me/strategies/{strategyId}"
+        let strategyIdPreEscape = "\(APIHelper.mapValueToPathItem(strategyId))"
+        let strategyIdPostEscape = strategyIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{strategyId}", with: strategyIdPostEscape, options: .literal, range: nil)
+        let localVariableURLString = COPEOpenAPIAPI.basePath + localVariablePath
+        let localVariableParameters: [String: Any]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<Void>.Type = COPEOpenAPIAPI.requestBuilderFactory.getNonDecodableBuilder()
+
+        return localVariableRequestBuilder.init(method: "DELETE", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
+
+    /**
+     List authenticated patient tracked symptoms
+     
+     - returns: ApiV1PatientsMeSymptomsGet200Response
+     */
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    open class func apiV1PatientsMeSymptomsGet() async throws -> ApiV1PatientsMeSymptomsGet200Response {
+        return try await apiV1PatientsMeSymptomsGetWithRequestBuilder().execute().body
+    }
+
+    /**
+     List authenticated patient tracked symptoms
+     - GET /api/v1/patients/me/symptoms
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - returns: RequestBuilder<ApiV1PatientsMeSymptomsGet200Response> 
+     */
+    open class func apiV1PatientsMeSymptomsGetWithRequestBuilder() -> RequestBuilder<ApiV1PatientsMeSymptomsGet200Response> {
+        let localVariablePath = "/api/v1/patients/me/symptoms"
+        let localVariableURLString = COPEOpenAPIAPI.basePath + localVariablePath
+        let localVariableParameters: [String: Any]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<ApiV1PatientsMeSymptomsGet200Response>.Type = COPEOpenAPIAPI.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
+
+    /**
+     Add a symptom to authenticated patient tracking
+     
+     - parameter apiV1PatientsMeSymptomsPostRequest: (body)  
+     - returns: ApiV1PatientsMeSymptomsPost201Response
+     */
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    open class func apiV1PatientsMeSymptomsPost(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) async throws -> ApiV1PatientsMeSymptomsPost201Response {
+        return try await apiV1PatientsMeSymptomsPostWithRequestBuilder(apiV1PatientsMeSymptomsPostRequest: apiV1PatientsMeSymptomsPostRequest).execute().body
+    }
+
+    /**
+     Add a symptom to authenticated patient tracking
+     - POST /api/v1/patients/me/symptoms
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter apiV1PatientsMeSymptomsPostRequest: (body)  
+     - returns: RequestBuilder<ApiV1PatientsMeSymptomsPost201Response> 
+     */
+    open class func apiV1PatientsMeSymptomsPostWithRequestBuilder(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) -> RequestBuilder<ApiV1PatientsMeSymptomsPost201Response> {
+        let localVariablePath = "/api/v1/patients/me/symptoms"
+        let localVariableURLString = COPEOpenAPIAPI.basePath + localVariablePath
+        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: apiV1PatientsMeSymptomsPostRequest)
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            "Content-Type": "application/json",
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<ApiV1PatientsMeSymptomsPost201Response>.Type = COPEOpenAPIAPI.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "POST", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
+
+    /**
+     Remove a symptom from authenticated patient tracking
+     
+     - parameter symptomId: (path)  
+     - returns: Void
+     */
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    open class func apiV1PatientsMeSymptomsSymptomIdDelete(symptomId: UUID) async throws {
+        return try await apiV1PatientsMeSymptomsSymptomIdDeleteWithRequestBuilder(symptomId: symptomId).execute().body
+    }
+
+    /**
+     Remove a symptom from authenticated patient tracking
+     - DELETE /api/v1/patients/me/symptoms/{symptomId}
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter symptomId: (path)  
+     - returns: RequestBuilder<Void> 
+     */
+    open class func apiV1PatientsMeSymptomsSymptomIdDeleteWithRequestBuilder(symptomId: UUID) -> RequestBuilder<Void> {
+        var localVariablePath = "/api/v1/patients/me/symptoms/{symptomId}"
+        let symptomIdPreEscape = "\(APIHelper.mapValueToPathItem(symptomId))"
+        let symptomIdPostEscape = symptomIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{symptomId}", with: symptomIdPostEscape, options: .literal, range: nil)
+        let localVariableURLString = COPEOpenAPIAPI.basePath + localVariablePath
+        let localVariableParameters: [String: Any]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<Void>.Type = COPEOpenAPIAPI.requestBuilderFactory.getNonDecodableBuilder()
+
+        return localVariableRequestBuilder.init(method: "DELETE", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
+
+    /**
+     List authenticated patient tracked triggers
+     
+     - returns: ApiV1PatientsMeTriggersGet200Response
+     */
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    open class func apiV1PatientsMeTriggersGet() async throws -> ApiV1PatientsMeTriggersGet200Response {
+        return try await apiV1PatientsMeTriggersGetWithRequestBuilder().execute().body
+    }
+
+    /**
+     List authenticated patient tracked triggers
+     - GET /api/v1/patients/me/triggers
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - returns: RequestBuilder<ApiV1PatientsMeTriggersGet200Response> 
+     */
+    open class func apiV1PatientsMeTriggersGetWithRequestBuilder() -> RequestBuilder<ApiV1PatientsMeTriggersGet200Response> {
+        let localVariablePath = "/api/v1/patients/me/triggers"
+        let localVariableURLString = COPEOpenAPIAPI.basePath + localVariablePath
+        let localVariableParameters: [String: Any]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<ApiV1PatientsMeTriggersGet200Response>.Type = COPEOpenAPIAPI.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
+
+    /**
+     Add a trigger to authenticated patient tracking
+     
+     - parameter apiV1PatientsMeSymptomsPostRequest: (body)  
+     - returns: ApiV1PatientsMeSymptomsPost201Response
+     */
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    open class func apiV1PatientsMeTriggersPost(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) async throws -> ApiV1PatientsMeSymptomsPost201Response {
+        return try await apiV1PatientsMeTriggersPostWithRequestBuilder(apiV1PatientsMeSymptomsPostRequest: apiV1PatientsMeSymptomsPostRequest).execute().body
+    }
+
+    /**
+     Add a trigger to authenticated patient tracking
+     - POST /api/v1/patients/me/triggers
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter apiV1PatientsMeSymptomsPostRequest: (body)  
+     - returns: RequestBuilder<ApiV1PatientsMeSymptomsPost201Response> 
+     */
+    open class func apiV1PatientsMeTriggersPostWithRequestBuilder(apiV1PatientsMeSymptomsPostRequest: ApiV1PatientsMeSymptomsPostRequest) -> RequestBuilder<ApiV1PatientsMeSymptomsPost201Response> {
+        let localVariablePath = "/api/v1/patients/me/triggers"
+        let localVariableURLString = COPEOpenAPIAPI.basePath + localVariablePath
+        let localVariableParameters = JSONEncodingHelper.encodingParameters(forEncodableObject: apiV1PatientsMeSymptomsPostRequest)
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            "Content-Type": "application/json",
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<ApiV1PatientsMeSymptomsPost201Response>.Type = COPEOpenAPIAPI.requestBuilderFactory.getBuilder()
+
+        return localVariableRequestBuilder.init(method: "POST", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
+
+    /**
+     Remove a trigger from authenticated patient tracking
+     
+     - parameter triggerId: (path)  
+     - returns: Void
+     */
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    open class func apiV1PatientsMeTriggersTriggerIdDelete(triggerId: UUID) async throws {
+        return try await apiV1PatientsMeTriggersTriggerIdDeleteWithRequestBuilder(triggerId: triggerId).execute().body
+    }
+
+    /**
+     Remove a trigger from authenticated patient tracking
+     - DELETE /api/v1/patients/me/triggers/{triggerId}
+     - Bearer Token:
+       - type: http
+       - name: bearerAuth
+     - parameter triggerId: (path)  
+     - returns: RequestBuilder<Void> 
+     */
+    open class func apiV1PatientsMeTriggersTriggerIdDeleteWithRequestBuilder(triggerId: UUID) -> RequestBuilder<Void> {
+        var localVariablePath = "/api/v1/patients/me/triggers/{triggerId}"
+        let triggerIdPreEscape = "\(APIHelper.mapValueToPathItem(triggerId))"
+        let triggerIdPostEscape = triggerIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        localVariablePath = localVariablePath.replacingOccurrences(of: "{triggerId}", with: triggerIdPostEscape, options: .literal, range: nil)
+        let localVariableURLString = COPEOpenAPIAPI.basePath + localVariablePath
+        let localVariableParameters: [String: Any]? = nil
+
+        let localVariableUrlComponents = URLComponents(string: localVariableURLString)
+
+        let localVariableNillableHeaders: [String: Any?] = [
+            :
+        ]
+
+        let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
+
+        let localVariableRequestBuilder: RequestBuilder<Void>.Type = COPEOpenAPIAPI.requestBuilderFactory.getNonDecodableBuilder()
+
+        return localVariableRequestBuilder.init(method: "DELETE", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: true)
+    }
 }

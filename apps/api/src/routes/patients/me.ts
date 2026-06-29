@@ -20,7 +20,16 @@ import { z } from 'zod';
 import { sql } from '@cope/db';
 import { UuidSchema, IntakeSchema } from '@cope/shared';
 import {
+  addPatientStrategyRouteSchema,
+  addPatientSymptomRouteSchema,
+  addPatientTriggerRouteSchema,
+  deletePatientStrategyRouteSchema,
+  deletePatientSymptomRouteSchema,
+  deletePatientTriggerRouteSchema,
   getPatientMeRouteSchema,
+  listPatientStrategiesRouteSchema,
+  listPatientSymptomsRouteSchema,
+  listPatientTriggersRouteSchema,
   updatePatientIntakeRouteSchema,
   updatePatientMeRouteSchema,
 } from '../mobile-openapi-schemas.js';
@@ -141,7 +150,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   // ===========================================================================
 
   // GET /patients/me/symptoms
-  fastify.get('/symptoms', auth, async (request, reply) => {
+  fastify.get('/symptoms', { ...auth, schema: listPatientSymptomsRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
@@ -159,7 +168,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   });
 
   // POST /patients/me/symptoms
-  fastify.post('/symptoms', auth, async (request, reply) => {
+  fastify.post('/symptoms', { ...auth, schema: addPatientSymptomRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
@@ -186,7 +195,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   });
 
   // DELETE /patients/me/symptoms/:symptomId
-  fastify.delete('/symptoms/:symptomId', auth, async (request, reply) => {
+  fastify.delete('/symptoms/:symptomId', { ...auth, schema: deletePatientSymptomRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
@@ -209,7 +218,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   // ===========================================================================
 
   // GET /patients/me/triggers
-  fastify.get('/triggers', auth, async (request, reply) => {
+  fastify.get('/triggers', { ...auth, schema: listPatientTriggersRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
@@ -227,7 +236,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   });
 
   // POST /patients/me/triggers
-  fastify.post('/triggers', auth, async (request, reply) => {
+  fastify.post('/triggers', { ...auth, schema: addPatientTriggerRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
@@ -253,7 +262,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   });
 
   // DELETE /patients/me/triggers/:triggerId
-  fastify.delete('/triggers/:triggerId', auth, async (request, reply) => {
+  fastify.delete('/triggers/:triggerId', { ...auth, schema: deletePatientTriggerRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
@@ -276,7 +285,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   // ===========================================================================
 
   // GET /patients/me/strategies
-  fastify.get('/strategies', auth, async (request, reply) => {
+  fastify.get('/strategies', { ...auth, schema: listPatientStrategiesRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
@@ -294,7 +303,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   });
 
   // POST /patients/me/strategies
-  fastify.post('/strategies', auth, async (request, reply) => {
+  fastify.post('/strategies', { ...auth, schema: addPatientStrategyRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }
@@ -320,7 +329,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
   });
 
   // DELETE /patients/me/strategies/:strategyId
-  fastify.delete('/strategies/:strategyId', auth, async (request, reply) => {
+  fastify.delete('/strategies/:strategyId', { ...auth, schema: deletePatientStrategyRouteSchema }, async (request, reply) => {
     if (request.user.role !== 'patient') {
       return reply.status(403).send({ success: false, error: { code: 'FORBIDDEN', message: 'Patient access only' } });
     }

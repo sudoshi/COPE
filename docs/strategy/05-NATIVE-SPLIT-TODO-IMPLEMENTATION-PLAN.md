@@ -181,6 +181,18 @@ Checklist:
   - [x] `PUT /notifications/prefs`
   - [x] `POST /notifications/push-token` dedicated token registration endpoint
     - Current implementation replaces the single stored patient token; a true multi-device token table remains a later migration.
+  - [x] `GET /catalogues/symptoms`
+  - [x] `GET /catalogues/triggers`
+  - [x] `GET /catalogues/strategies`
+  - [x] `GET /patients/me/symptoms`
+  - [x] `POST /patients/me/symptoms`
+  - [x] `DELETE /patients/me/symptoms/:symptomId`
+  - [x] `GET /patients/me/triggers`
+  - [x] `POST /patients/me/triggers`
+  - [x] `DELETE /patients/me/triggers/:triggerId`
+  - [x] `GET /patients/me/strategies`
+  - [x] `POST /patients/me/strategies`
+  - [x] `DELETE /patients/me/strategies/:strategyId`
 - [~] Normalize consent types across API, database, mobile UI, docs, and native contract.
 - [~] Normalize LOINC/FHIR/OMOP use:
   - [x] Distinguish questionnaire panel codes from total-score observation codes.
@@ -291,10 +303,12 @@ Checklist:
 - [~] Implement intake:
   - [x] Primary concern.
   - [x] Emergency contact.
-  - [ ] Medication setup.
-  - [ ] Symptom preferences.
-  - [ ] Trigger preferences.
-  - [ ] Reminder preferences.
+  - [x] Medication setup.
+  - [x] Symptom preferences.
+  - [x] Trigger preferences.
+  - [x] Wellness strategy preferences.
+  - [x] Reminder preferences.
+  - iOS now loads symptom, trigger, and wellness strategy catalogues from generated OpenAPI clients, persists selected tracking IDs, optionally creates the first medication, saves reminder toggles, then marks intake complete.
 - [~] Add logout and local wipe.
   - [x] Clear Keychain tokens on logout.
   - [ ] Wipe encrypted local database once native persistence is introduced.
@@ -618,8 +632,9 @@ Checklist:
 - [x] Add primary-concern and emergency-contact intake submission.
 - [x] Align backend intake completion with the `onboarding_complete` profile flag consumed by `/patients/me`.
 - [x] Add required consent acceptance to invite registration and required consent gating to onboarding instead of only authenticated Care-tab controls.
+- [x] Add generated mobile contracts for catalogue options and patient tracked symptom/trigger/strategy preferences.
+- [x] Add medication, symptom, trigger, wellness strategy, and reminder onboarding steps.
 - [x] Verify `npm run native:ios:build`.
-- [ ] Add medication, symptom, trigger, and reminder onboarding steps.
 - [ ] Add simulator/UI coverage for invite deep link, invalid invite errors, MFA continuation, and intake completion.
 
 ## 7. Live Database Verification Plan
@@ -693,7 +708,6 @@ The native split is complete only when:
 - [x] Implement first iOS clinical workflow slice: network-backed Today save/submit and pending assessment submit.
 - [x] Implement first iOS consent/safety/notification infrastructure slice.
 - [x] Implement first iOS local Today draft persistence slice.
-- [~] Implement iOS invite registration, MFA continuation, and consent/intake screens.
-  - Invite registration, MFA continuation, required consent gating, and primary/emergency-contact intake gate are implemented.
-  - Medication, symptom, trigger, and reminder intake remain open.
+- [x] Implement iOS invite registration, MFA continuation, and consent/intake screens.
+  - Invite registration, MFA continuation, required consent gating, primary/emergency-contact intake, medication setup, symptom/trigger/wellness preferences, and reminder toggles are implemented.
 - [ ] Choose iOS encrypted persistence stack and start daily-entry local cache/outbox.

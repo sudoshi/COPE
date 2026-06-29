@@ -33,6 +33,9 @@ Class | Method | HTTP request | Description
 *AuthAPI* | [**apiV1AuthMfaVerifyPost**](docs/AuthAPI.md#apiv1authmfaverifypost) | **POST** /api/v1/auth/mfa/verify | Verify a TOTP MFA code using a partial MFA token
 *AuthAPI* | [**apiV1AuthRefreshPost**](docs/AuthAPI.md#apiv1authrefreshpost) | **POST** /api/v1/auth/refresh | Rotate a refresh token and issue a new access token
 *AuthAPI* | [**apiV1AuthRegisterPost**](docs/AuthAPI.md#apiv1authregisterpost) | **POST** /api/v1/auth/register | Register an invited patient account
+*CataloguesAPI* | [**apiV1CataloguesStrategiesGet**](docs/CataloguesAPI.md#apiv1cataloguesstrategiesget) | **GET** /api/v1/catalogues/strategies | List wellness strategy catalogue options for the authenticated patient
+*CataloguesAPI* | [**apiV1CataloguesSymptomsGet**](docs/CataloguesAPI.md#apiv1cataloguessymptomsget) | **GET** /api/v1/catalogues/symptoms | List symptom catalogue options for the authenticated patient
+*CataloguesAPI* | [**apiV1CataloguesTriggersGet**](docs/CataloguesAPI.md#apiv1cataloguestriggersget) | **GET** /api/v1/catalogues/triggers | List trigger catalogue options for the authenticated patient
 *ConsentAPI* | [**apiV1ConsentGet**](docs/ConsentAPI.md#apiv1consentget) | **GET** /api/v1/consent/ | List latest patient consent records by type
 *ConsentAPI* | [**apiV1ConsentPost**](docs/ConsentAPI.md#apiv1consentpost) | **POST** /api/v1/consent/ | Grant or update a patient consent record
 *ConsentAPI* | [**apiV1ConsentTypeDelete**](docs/ConsentAPI.md#apiv1consenttypedelete) | **DELETE** /api/v1/consent/{type} | Revoke an app-revocable patient consent type
@@ -55,6 +58,15 @@ Class | Method | HTTP request | Description
 *PatientsAPI* | [**apiV1PatientsMeGet**](docs/PatientsAPI.md#apiv1patientsmeget) | **GET** /api/v1/patients/me | Get the authenticated patient profile
 *PatientsAPI* | [**apiV1PatientsMeIntakePatch**](docs/PatientsAPI.md#apiv1patientsmeintakepatch) | **PATCH** /api/v1/patients/me/intake | Update authenticated patient onboarding intake fields
 *PatientsAPI* | [**apiV1PatientsMePatch**](docs/PatientsAPI.md#apiv1patientsmepatch) | **PATCH** /api/v1/patients/me | Update authenticated patient profile preferences
+*PatientsAPI* | [**apiV1PatientsMeStrategiesGet**](docs/PatientsAPI.md#apiv1patientsmestrategiesget) | **GET** /api/v1/patients/me/strategies | List authenticated patient tracked wellness strategies
+*PatientsAPI* | [**apiV1PatientsMeStrategiesPost**](docs/PatientsAPI.md#apiv1patientsmestrategiespost) | **POST** /api/v1/patients/me/strategies | Add a wellness strategy to authenticated patient tracking
+*PatientsAPI* | [**apiV1PatientsMeStrategiesStrategyIdDelete**](docs/PatientsAPI.md#apiv1patientsmestrategiesstrategyiddelete) | **DELETE** /api/v1/patients/me/strategies/{strategyId} | Remove a wellness strategy from authenticated patient tracking
+*PatientsAPI* | [**apiV1PatientsMeSymptomsGet**](docs/PatientsAPI.md#apiv1patientsmesymptomsget) | **GET** /api/v1/patients/me/symptoms | List authenticated patient tracked symptoms
+*PatientsAPI* | [**apiV1PatientsMeSymptomsPost**](docs/PatientsAPI.md#apiv1patientsmesymptomspost) | **POST** /api/v1/patients/me/symptoms | Add a symptom to authenticated patient tracking
+*PatientsAPI* | [**apiV1PatientsMeSymptomsSymptomIdDelete**](docs/PatientsAPI.md#apiv1patientsmesymptomssymptomiddelete) | **DELETE** /api/v1/patients/me/symptoms/{symptomId} | Remove a symptom from authenticated patient tracking
+*PatientsAPI* | [**apiV1PatientsMeTriggersGet**](docs/PatientsAPI.md#apiv1patientsmetriggersget) | **GET** /api/v1/patients/me/triggers | List authenticated patient tracked triggers
+*PatientsAPI* | [**apiV1PatientsMeTriggersPost**](docs/PatientsAPI.md#apiv1patientsmetriggerspost) | **POST** /api/v1/patients/me/triggers | Add a trigger to authenticated patient tracking
+*PatientsAPI* | [**apiV1PatientsMeTriggersTriggerIdDelete**](docs/PatientsAPI.md#apiv1patientsmetriggerstriggeriddelete) | **DELETE** /api/v1/patients/me/triggers/{triggerId} | Remove a trigger from authenticated patient tracking
 *SafetyAPI* | [**apiV1SafetyMyPlanGet**](docs/SafetyAPI.md#apiv1safetymyplanget) | **GET** /api/v1/safety/my-plan | Get authenticated patient safety plan
 *SafetyAPI* | [**apiV1SafetyResourcesGet**](docs/SafetyAPI.md#apiv1safetyresourcesget) | **GET** /api/v1/safety/resources | Get public crisis and safety resources
 *SyncAPI* | [**apiV1SyncPullGet**](docs/SyncAPI.md#apiv1syncpullget) | **GET** /api/v1/sync/pull | Pull WatermelonDB-compatible offline changes
@@ -77,6 +89,12 @@ Class | Method | HTTP request | Description
  - [ApiV1AuthRegisterPost201ResponseData](docs/ApiV1AuthRegisterPost201ResponseData.md)
  - [ApiV1AuthRegisterPost201ResponseDataUser](docs/ApiV1AuthRegisterPost201ResponseDataUser.md)
  - [ApiV1AuthRegisterPostRequest](docs/ApiV1AuthRegisterPostRequest.md)
+ - [ApiV1CataloguesStrategiesGet200Response](docs/ApiV1CataloguesStrategiesGet200Response.md)
+ - [ApiV1CataloguesStrategiesGet200ResponseDataInner](docs/ApiV1CataloguesStrategiesGet200ResponseDataInner.md)
+ - [ApiV1CataloguesSymptomsGet200Response](docs/ApiV1CataloguesSymptomsGet200Response.md)
+ - [ApiV1CataloguesSymptomsGet200ResponseDataInner](docs/ApiV1CataloguesSymptomsGet200ResponseDataInner.md)
+ - [ApiV1CataloguesTriggersGet200Response](docs/ApiV1CataloguesTriggersGet200Response.md)
+ - [ApiV1CataloguesTriggersGet200ResponseDataInner](docs/ApiV1CataloguesTriggersGet200ResponseDataInner.md)
  - [ApiV1ConsentGet200Response](docs/ApiV1ConsentGet200Response.md)
  - [ApiV1ConsentGet200ResponseDataInner](docs/ApiV1ConsentGet200ResponseDataInner.md)
  - [ApiV1ConsentPostRequest](docs/ApiV1ConsentPostRequest.md)
@@ -92,6 +110,15 @@ Class | Method | HTTP request | Description
  - [ApiV1PatientsMeGet200Response](docs/ApiV1PatientsMeGet200Response.md)
  - [ApiV1PatientsMeIntakePatchRequest](docs/ApiV1PatientsMeIntakePatchRequest.md)
  - [ApiV1PatientsMePatchRequest](docs/ApiV1PatientsMePatchRequest.md)
+ - [ApiV1PatientsMeStrategiesGet200Response](docs/ApiV1PatientsMeStrategiesGet200Response.md)
+ - [ApiV1PatientsMeStrategiesGet200ResponseDataInner](docs/ApiV1PatientsMeStrategiesGet200ResponseDataInner.md)
+ - [ApiV1PatientsMeSymptomsGet200Response](docs/ApiV1PatientsMeSymptomsGet200Response.md)
+ - [ApiV1PatientsMeSymptomsGet200ResponseDataInner](docs/ApiV1PatientsMeSymptomsGet200ResponseDataInner.md)
+ - [ApiV1PatientsMeSymptomsPost201Response](docs/ApiV1PatientsMeSymptomsPost201Response.md)
+ - [ApiV1PatientsMeSymptomsPost201ResponseData](docs/ApiV1PatientsMeSymptomsPost201ResponseData.md)
+ - [ApiV1PatientsMeSymptomsPostRequest](docs/ApiV1PatientsMeSymptomsPostRequest.md)
+ - [ApiV1PatientsMeTriggersGet200Response](docs/ApiV1PatientsMeTriggersGet200Response.md)
+ - [ApiV1PatientsMeTriggersGet200ResponseDataInner](docs/ApiV1PatientsMeTriggersGet200ResponseDataInner.md)
  - [ApiV1SyncPullGet200Response](docs/ApiV1SyncPullGet200Response.md)
  - [ApiV1SyncPullGet200ResponseData](docs/ApiV1SyncPullGet200ResponseData.md)
  - [ApiV1SyncPullGet200ResponseDataChanges](docs/ApiV1SyncPullGet200ResponseDataChanges.md)

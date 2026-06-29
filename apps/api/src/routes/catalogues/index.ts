@@ -7,6 +7,11 @@
 
 import type { FastifyInstance } from 'fastify';
 import { sql } from '@cope/db';
+import {
+  listStrategyCatalogueRouteSchema,
+  listSymptomCatalogueRouteSchema,
+  listTriggerCatalogueRouteSchema,
+} from '../mobile-openapi-schemas.js';
 
 export default async function catalogueRoutes(fastify: FastifyInstance): Promise<void> {
   const patientOnly = { preHandler: [fastify.requireRole(['patient'])] };
@@ -16,7 +21,7 @@ export default async function catalogueRoutes(fastify: FastifyInstance): Promise
   // Returns the patient's personalised trigger list.
   // Falls back to system-wide triggers when no patient_triggers exist yet.
   // ---------------------------------------------------------------------------
-  fastify.get('/triggers', patientOnly, async (request, reply) => {
+  fastify.get('/triggers', { ...patientOnly, schema: listTriggerCatalogueRouteSchema }, async (request, reply) => {
     const patientId = request.user.sub;
 
     let rows = await sql<{
@@ -48,7 +53,7 @@ export default async function catalogueRoutes(fastify: FastifyInstance): Promise
   // GET /catalogues/symptoms
   // Returns the patient's symptom list with safety flags.
   // ---------------------------------------------------------------------------
-  fastify.get('/symptoms', patientOnly, async (request, reply) => {
+  fastify.get('/symptoms', { ...patientOnly, schema: listSymptomCatalogueRouteSchema }, async (request, reply) => {
     const patientId = request.user.sub;
 
     let rows = await sql<{
@@ -83,7 +88,7 @@ export default async function catalogueRoutes(fastify: FastifyInstance): Promise
   // GET /catalogues/strategies
   // Returns the patient's wellness strategies.
   // ---------------------------------------------------------------------------
-  fastify.get('/strategies', patientOnly, async (request, reply) => {
+  fastify.get('/strategies', { ...patientOnly, schema: listStrategyCatalogueRouteSchema }, async (request, reply) => {
     const patientId = request.user.sub;
 
     let rows = await sql<{
