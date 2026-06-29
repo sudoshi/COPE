@@ -114,7 +114,7 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
       return reply.status(400).send({ success: false, error: { code: 'VALIDATION_ERROR', message: 'No fields to update' } });
     }
 
-    const [updated] = await sql<{ id: string; intake_complete: boolean }[]>`
+    const [updated] = await sql<{ id: string; intake_complete: boolean; onboarding_complete: boolean }[]>`
       UPDATE patients
       SET
         primary_concern                = COALESCE(${updates.primary_concern ?? null}, primary_concern),
@@ -122,10 +122,11 @@ export default async function patientMeRoutes(fastify: FastifyInstance): Promise
         emergency_contact_phone        = COALESCE(${updates.emergency_contact_phone ?? null}, emergency_contact_phone),
         emergency_contact_relationship = COALESCE(${updates.emergency_contact_relationship ?? null}, emergency_contact_relationship),
         intake_complete                = CASE WHEN ${updates.mark_complete ?? false} THEN TRUE ELSE intake_complete END,
+        onboarding_complete            = CASE WHEN ${updates.mark_complete ?? false} THEN TRUE ELSE onboarding_complete END,
         updated_at                     = NOW()
       WHERE id = ${request.user.sub}
         AND is_active = TRUE
-      RETURNING id, intake_complete
+      RETURNING id, intake_complete, onboarding_complete
     `;
 
     if (!updated) {

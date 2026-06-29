@@ -250,7 +250,8 @@ iOS checklist:
   - [x] Add root authenticated/unauthenticated switch.
   - [x] Add login form wired to native API client.
   - [x] Add first authenticated `/patients/me` profile screen.
-  - [ ] Add onboarding, tab, modal, and deep-link structure.
+  - [x] Add onboarding gate, authenticated tabs, MFA modal flow, and `cope://invite?token=...` deep-link handling.
+  - [ ] Add universal link association once production invite domains are finalized.
 - [x] Add design tokens from existing COPE visual system.
 - [ ] Add accessibility audit and screenshot test path.
 
@@ -274,19 +275,22 @@ Goal: patient can enter through invite, register, consent, complete intake, and 
 
 Checklist:
 
-- [ ] Implement invite deep link handling.
+- [x] Implement invite deep link handling.
+  - iOS registers the `cope` URL scheme and prefills invite tokens from `cope://invite?token=...`.
 - [~] Implement sign-in and MFA.
   - [x] Implement iOS email/password sign-in using generated OpenAPI `POST /auth/login`.
-  - [ ] Implement iOS MFA verification UI and partial-token continuation.
-- [ ] Implement invite validation and registration.
+  - [x] Implement iOS MFA verification UI and partial-token continuation.
+- [~] Implement invite validation and registration.
+  - iOS now supports invite-code registration through `POST /auth/register`; invalid, expired, used, and email-mismatch states are surfaced from backend errors.
+  - A separate pre-registration invite validation endpoint is still not present in the mobile contract.
 - [x] Implement secure session persistence and refresh.
 - [x] Enforce patient-only app role handling.
 - [~] Implement required consent screens using backend consent enum.
-  - iOS now has authenticated consent controls backed by the generated consent contract; invite/onboarding gating remains open.
+  - iOS now has authenticated consent controls backed by the generated consent contract; required consent gating inside onboarding remains open.
 - [x] Implement optional consent controls for research, AI insights, journal sharing, emergency contact sharing, and push notifications.
-- [ ] Implement intake:
-  - [ ] Primary concern.
-  - [ ] Emergency contact.
+- [~] Implement intake:
+  - [x] Primary concern.
+  - [x] Emergency contact.
   - [ ] Medication setup.
   - [ ] Symptom preferences.
   - [ ] Trigger preferences.
@@ -600,6 +604,24 @@ Checklist:
 - [ ] Add retry/sync worker semantics for queued local writes.
 - [ ] Add simulator/unit coverage for draft restore, pending upload, and submitted-delete behavior.
 
+### Slice 9 - iOS invite registration, MFA continuation, and intake gate
+
+Reason: a TestFlight pilot user must be able to enter the native app through the same invite and onboarding path used by the backend, not only by signing into a pre-created account.
+
+Checklist:
+
+- [x] Add flexible auth-response decoding for MFA partial-token responses where the backend intentionally omits a full access token.
+- [x] Add iOS registration flow for invited patients using `POST /auth/register`.
+- [x] Add `cope://invite?token=...` URL scheme registration and token prefill.
+- [x] Add MFA verification sheet using the partial-token bearer flow.
+- [x] Gate authenticated patients with incomplete onboarding into a native intake screen before showing tabs.
+- [x] Add primary-concern and emergency-contact intake submission.
+- [x] Align backend intake completion with the `onboarding_complete` profile flag consumed by `/patients/me`.
+- [x] Verify `npm run native:ios:build`.
+- [ ] Add required consent gating to onboarding instead of only authenticated Care-tab controls.
+- [ ] Add medication, symptom, trigger, and reminder onboarding steps.
+- [ ] Add simulator/UI coverage for invite deep link, invalid invite errors, MFA continuation, and intake completion.
+
 ## 7. Live Database Verification Plan
 
 The live database should be used for verification, not as the source of truth for undocumented behavior.
@@ -671,5 +693,7 @@ The native split is complete only when:
 - [x] Implement first iOS clinical workflow slice: network-backed Today save/submit and pending assessment submit.
 - [x] Implement first iOS consent/safety/notification infrastructure slice.
 - [x] Implement first iOS local Today draft persistence slice.
-- [ ] Implement iOS invite registration, MFA continuation, and consent/intake screens.
+- [~] Implement iOS invite registration, MFA continuation, and consent/intake screens.
+  - Invite registration, MFA continuation, and primary/emergency-contact intake gate are implemented.
+  - Required consent gating plus medication, symptom, trigger, and reminder intake remain open.
 - [ ] Choose iOS encrypted persistence stack and start daily-entry local cache/outbox.

@@ -7,6 +7,8 @@ final class SessionViewModel: ObservableObject {
     @Published private(set) var isAuthenticated = false
     @Published private(set) var isLoading = false
     @Published private(set) var profile: PatientProfileSummary?
+    @Published private(set) var pendingMFAToken: String?
+    @Published private(set) var pendingInviteToken: String?
     @Published var errorMessage: String?
 
     let apiClient: APIClient
@@ -46,14 +48,8 @@ final class SessionViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            let session = try await apiClient.login(email: trimmedEmail, password: password)
-            guard session.role == "patient" else {
-                try? await apiClient.logout()
-                throw APIClientError.patientRoleRequired
-            }
-
-            isAuthenticated = true
-            try await refreshProfile()
+            let result = try await apiClient.login(email: trimmedEmail, password: password)
+            try await completeAuthentication(result)
         } catch {
             isAuthenticated = false
             profile = nil
@@ -61,6 +57,131 @@ final class SessionViewModel: ObservableObject {
         }
 
         isLoading = false
+    }
+
+    func register(_ registration: PatientRegistration) async {
+        guard !registration.inviteToken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            errorMessage = "Enter your invite code."
+            return
+        }
+
+        guard !registration.email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !registration.firstName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !registration.lastName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !registration.dateOfBirth.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !registration.password.isEmpty else {
+            errorMessage = "Complete every required registration field."
+            return
+        }
+
+        guard registration.password.count >= 12 else {
+            errorMessage = "Use a password with at least 12 characters."
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let result = try await apiClient.register(registration)
+            pendingInviteToken = nil
+            try await completeAuthentication(result)
+        } catch {
+            isAuthenticated = false
+            profile = nil
+            errorMessage = Self.message(for: error)
+        }
+
+        isLoading = false
+    }
+
+    func verifyMFA(code: String) async {
+        let trimmedCode = code.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedCode.count == 6, trimmedCode.allSatisfy(\.isNumber) else {
+            errorMessage = "Enter the 6-digit verification code."
+            return
+        }
+
+        guard let pendingMFAToken else {
+            errorMessage = "Start sign-in again to request a verification code."
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let session = try await apiClient.verifyMFA(code: trimmedCode, partialToken: pendingMFAToken)
+            try await completePatientSession(session)
+        } catch {
+            isAuthenticated = false
+            profile = nil
+            errorMessage = Self.message(for: error)
+        }
+
+        isLoading = false
+    }
+
+    func cancelMFA() {
+        pendingMFAToken = nil
+        errorMessage = nil
+    }
+
+    func completeIntake(
+        primaryConcern: String,
+        emergencyContactName: String,
+        emergencyContactPhone: String,
+        emergencyContactRelationship: String
+    ) async {
+        let trimmedConcern = primaryConcern.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedConcern.isEmpty else {
+            errorMessage = "Describe your primary concern before continuing."
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            profile = try await apiClient.updateIntake(
+                PatientIntakeUpdate(
+                    primaryConcern: trimmedConcern,
+                    emergencyContactName: emergencyContactName.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty,
+                    emergencyContactPhone: emergencyContactPhone.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty,
+                    emergencyContactRelationship: emergencyContactRelationship.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty,
+                    markComplete: true
+                )
+            )
+        } catch {
+            errorMessage = Self.message(for: error)
+        }
+
+        isLoading = false
+    }
+
+    func handleOpenURL(_ url: URL) {
+        guard url.scheme?.lowercased() == "cope" else {
+            return
+        }
+
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return
+        }
+
+        let isInviteURL = components.host?.lowercased() == "invite" ||
+            components.path.lowercased().contains("invite")
+        guard isInviteURL else {
+            return
+        }
+
+        let token = components.queryItems?
+            .first(where: { $0.name == "token" || $0.name == "invite_token" })?
+            .value?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if let token, !token.isEmpty {
+            pendingInviteToken = token
+        }
     }
 
     func refreshProfile() async throws {
@@ -72,7 +193,30 @@ final class SessionViewModel: ObservableObject {
         try? await apiClient.logout()
         isAuthenticated = false
         profile = nil
+        pendingMFAToken = nil
         errorMessage = nil
+    }
+
+    private func completeAuthentication(_ result: AuthFlowResult) async throws {
+        switch result {
+        case let .authenticated(session):
+            try await completePatientSession(session)
+        case let .mfaRequired(partialToken):
+            isAuthenticated = false
+            profile = nil
+            pendingMFAToken = partialToken
+        }
+    }
+
+    private func completePatientSession(_ session: AuthSession) async throws {
+        guard session.role == "patient" else {
+            try? await apiClient.logout()
+            throw APIClientError.patientRoleRequired
+        }
+
+        pendingMFAToken = nil
+        isAuthenticated = true
+        try await refreshProfile()
     }
 
     static func message(for error: Error) -> String {

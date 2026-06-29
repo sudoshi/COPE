@@ -12,10 +12,22 @@ struct RootView: View {
                 ProgressView()
                     .tint(CopeColor.primary)
             } else if session.isAuthenticated {
-                PatientHomeView()
+                if let profile = session.profile {
+                    if profile.onboardingComplete {
+                        PatientHomeView()
+                    } else {
+                        OnboardingIntakeView()
+                    }
+                } else {
+                    ProgressView()
+                        .tint(CopeColor.primary)
+                }
             } else {
                 LoginView()
             }
+        }
+        .onOpenURL { url in
+            session.handleOpenURL(url)
         }
     }
 }

@@ -9,6 +9,29 @@ struct AuthSession: Equatable {
     let patientID: UUID?
 }
 
+enum AuthFlowResult: Equatable {
+    case authenticated(AuthSession)
+    case mfaRequired(partialToken: String)
+}
+
+struct PatientRegistration: Equatable {
+    let inviteToken: String
+    let email: String
+    let password: String
+    let firstName: String
+    let lastName: String
+    let dateOfBirth: String
+    let timezone: String
+}
+
+struct PatientIntakeUpdate: Equatable {
+    let primaryConcern: String?
+    let emergencyContactName: String?
+    let emergencyContactPhone: String?
+    let emergencyContactRelationship: String?
+    let markComplete: Bool
+}
+
 struct PatientProfileSummary: Decodable, Equatable {
     let id: String
     let firstName: String
@@ -315,6 +338,57 @@ private struct APIResponseDataEnvelope<Value: Decodable>: Decodable {
     let data: Value
 }
 
+private struct AuthResponseEnvelope: Decodable {
+    let success: Bool?
+    let data: AuthResponseData?
+    let error: AuthResponseError?
+}
+
+private struct AuthResponseError: Decodable {
+    let code: String?
+    let message: String?
+}
+
+private struct AuthResponseData: Decodable {
+    let accessToken: String?
+    let refreshToken: String?
+    let patientId: UUID?
+    let clinicianId: UUID?
+    let orgId: UUID?
+    let role: String?
+    let mfaRequired: Bool?
+    let partialToken: String?
+    let mustChangePassword: Bool?
+    let user: AuthResponseUser?
+
+    private enum CodingKeys: String, CodingKey {
+        case accessToken = "access_token"
+        case refreshToken = "refresh_token"
+        case patientId = "patient_id"
+        case clinicianId = "clinician_id"
+        case orgId = "org_id"
+        case role
+        case mfaRequired = "mfa_required"
+        case partialToken = "partial_token"
+        case mustChangePassword = "must_change_password"
+        case user
+    }
+}
+
+private struct AuthResponseUser: Decodable {
+    let id: UUID
+    let email: String
+    let role: String
+    let orgId: UUID
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case email
+        case role
+        case orgId = "org_id"
+    }
+}
+
 actor APIClient {
     private let configuration: AppConfiguration
     private let tokenStore: TokenStore
@@ -339,31 +413,58 @@ actor APIClient {
         return true
     }
 
-    func login(email: String, password: String) async throws -> AuthSession {
+    func login(email: String, password: String) async throws -> AuthFlowResult {
         clearAuthorizationHeader()
 
         let request = ApiV1AuthLoginPostRequest(
             email: email.trimmingCharacters(in: .whitespacesAndNewlines),
             password: password
         )
-        let response = try await AuthAPI.apiV1AuthLoginPost(apiV1AuthLoginPostRequest: request)
-        let data = response.data
+        let data = try await performAuthRequest(
+            path: "/api/v1/auth/login",
+            body: request,
+            acceptedStatusCodes: [200]
+        )
+        return try completeAuthResponse(data)
+    }
 
-        if data.mfaRequired == true {
-            throw APIClientError.mfaRequired
+    func register(_ registration: PatientRegistration) async throws -> AuthFlowResult {
+        clearAuthorizationHeader()
+
+        let request = ApiV1AuthRegisterPostRequest(
+            inviteToken: registration.inviteToken.trimmingCharacters(in: .whitespacesAndNewlines),
+            email: registration.email.trimmingCharacters(in: .whitespacesAndNewlines),
+            password: registration.password,
+            firstName: registration.firstName.trimmingCharacters(in: .whitespacesAndNewlines),
+            lastName: registration.lastName.trimmingCharacters(in: .whitespacesAndNewlines),
+            dateOfBirth: registration.dateOfBirth.trimmingCharacters(in: .whitespacesAndNewlines),
+            timezone: registration.timezone
+        )
+        let data = try await performAuthRequest(
+            path: "/api/v1/auth/register",
+            body: request,
+            acceptedStatusCodes: [201]
+        )
+        return try completeAuthResponse(data)
+    }
+
+    func verifyMFA(code: String, partialToken: String) async throws -> AuthSession {
+        clearAuthorizationHeader()
+
+        let request = ApiV1AuthMfaVerifyPostRequest(code: code.trimmingCharacters(in: .whitespacesAndNewlines))
+        let data = try await performAuthRequest(
+            path: "/api/v1/auth/mfa/verify",
+            body: request,
+            bearerToken: partialToken,
+            acceptedStatusCodes: [200]
+        )
+        let result = try completeAuthResponse(data)
+
+        guard case let .authenticated(session) = result else {
+            throw APIClientError.invalidAuthResponse
         }
 
-        let tokens = AuthTokens(accessToken: data.accessToken, refreshToken: data.refreshToken)
-        try tokenStore.saveTokens(tokens)
-        applyAuthorizationHeader(accessToken: tokens.accessToken)
-
-        return AuthSession(
-            userID: data.user.id,
-            email: data.user.email,
-            role: data.user.role,
-            organizationID: data.user.orgId,
-            patientID: data.patientId
-        )
+        return session
     }
 
     func currentPatient() async throws -> PatientProfileSummary {
@@ -372,6 +473,23 @@ actor APIClient {
         }
 
         return try Self.decodeData(from: response, as: PatientProfileSummary.self)
+    }
+
+    func updateIntake(_ update: PatientIntakeUpdate) async throws -> PatientProfileSummary {
+        let request = ApiV1PatientsMeIntakePatchRequest(
+            primaryConcern: update.primaryConcern,
+            emergencyContactName: update.emergencyContactName,
+            emergencyContactPhone: update.emergencyContactPhone,
+            emergencyContactRelationship: update.emergencyContactRelationship,
+            markComplete: update.markComplete
+        )
+
+        let response = try await executeAuthorized {
+            try await PatientsAPI.apiV1PatientsMeIntakePatch(apiV1PatientsMeIntakePatchRequest: request)
+        }
+
+        _ = response
+        return try await currentPatient()
     }
 
     func todayDailyEntry() async throws -> DailyEntrySummary? {
@@ -522,6 +640,78 @@ actor APIClient {
         try tokenStore.deleteTokens()
     }
 
+    private func performAuthRequest<RequestBody: Encodable>(
+        path: String,
+        body: RequestBody,
+        bearerToken: String? = nil,
+        acceptedStatusCodes: Set<Int>
+    ) async throws -> AuthResponseData {
+        guard let url = URL(string: configuration.apiBaseURL.absoluteString + path) else {
+            throw APIClientError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        if let bearerToken {
+            request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+        }
+
+        request.httpBody = try JSONEncoder().encode(body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIClientError.invalidAuthResponse
+        }
+
+        let envelope = try? JSONDecoder().decode(AuthResponseEnvelope.self, from: data)
+
+        guard acceptedStatusCodes.contains(httpResponse.statusCode) else {
+            throw APIClientError.serverMessage(
+                envelope?.error?.message ?? "Authentication request failed."
+            )
+        }
+
+        guard let payload = envelope?.data else {
+            throw APIClientError.invalidAuthResponse
+        }
+
+        return payload
+    }
+
+    private func completeAuthResponse(_ data: AuthResponseData) throws -> AuthFlowResult {
+        if data.mfaRequired == true {
+            guard let partialToken = data.partialToken, !partialToken.isEmpty else {
+                throw APIClientError.invalidAuthResponse
+            }
+
+            return .mfaRequired(partialToken: partialToken)
+        }
+
+        guard let accessToken = data.accessToken,
+              let role = data.role,
+              let organizationID = data.orgId,
+              let user = data.user else {
+            throw APIClientError.invalidAuthResponse
+        }
+
+        let tokens = AuthTokens(accessToken: accessToken, refreshToken: data.refreshToken)
+        try tokenStore.saveTokens(tokens)
+        applyAuthorizationHeader(accessToken: tokens.accessToken)
+
+        return .authenticated(
+            AuthSession(
+                userID: user.id,
+                email: user.email,
+                role: role,
+                organizationID: organizationID,
+                patientID: data.patientId
+            )
+        )
+    }
+
     private func executeAuthorized<T>(_ operation: () async throws -> T) async throws -> T {
         guard let tokens = try tokenStore.loadTokens() else {
             throw APIClientError.missingSession
@@ -573,9 +763,9 @@ actor APIClient {
         return status == statusCode
     }
 
-    private static func decodeData<T: Decodable>(from response: ApiV1PatientsMeGet200Response, as type: T.Type) throws -> T {
+    private static func decodeData<Response: Encodable, Value: Decodable>(from response: Response, as type: Value.Type) throws -> Value {
         let encoded = try JSONEncoder().encode(response)
-        return try JSONDecoder().decode(APIResponseDataEnvelope<T>.self, from: encoded).data
+        return try JSONDecoder().decode(APIResponseDataEnvelope<Value>.self, from: encoded).data
     }
 }
 
@@ -584,6 +774,9 @@ enum APIClientError: Error, LocalizedError {
     case missingSession
     case patientRoleRequired
     case invalidIdentifier
+    case invalidAuthResponse
+    case invalidURL
+    case serverMessage(String)
     case unsupportedAssessmentScale
     case unsupportedConsentType
 
@@ -597,6 +790,12 @@ enum APIClientError: Error, LocalizedError {
             return "The iOS app currently supports patient accounts only."
         case .invalidIdentifier:
             return "The selected record is no longer valid."
+        case .invalidAuthResponse:
+            return "The authentication response could not be completed."
+        case .invalidURL:
+            return "The API URL is not valid."
+        case let .serverMessage(message):
+            return message
         case .unsupportedAssessmentScale:
             return "This assessment is not supported by the mobile contract yet."
         case .unsupportedConsentType:
