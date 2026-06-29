@@ -467,6 +467,12 @@ private struct AuthResponseUser: Decodable {
     }
 }
 
+protocol DailyEntryAPIProviding: Sendable {
+    func todayDailyEntry() async throws -> DailyEntrySummary?
+    func saveDailyEntry(_ draft: DailyEntryDraft) async throws -> DailyEntryWriteResult
+    func submitDailyEntry(id: String) async throws -> DailyEntrySubmitResult
+}
+
 actor APIClient {
     private let configuration: AppConfiguration
     private let tokenStore: TokenStore
@@ -932,6 +938,8 @@ actor APIClient {
         return try JSONDecoder().decode(APIResponseDataEnvelope<Value>.self, from: encoded).data
     }
 }
+
+extension APIClient: DailyEntryAPIProviding {}
 
 enum APIClientError: Error, LocalizedError {
     case mfaRequired

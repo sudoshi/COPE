@@ -585,7 +585,7 @@ Checklist:
 - [x] Verify `npm run native:ios:build`.
 - [ ] Replace generic assessment item labels with approved/licensed instrument content and scoring fixtures.
 - [~] Add offline local persistence, draft restore, outbox, and conflict handling.
-  - iOS Today draft restore, local save status, encrypted draft storage, encrypted foreground outbox, and save-then-submit replay are implemented.
+  - iOS Today draft restore, local save status, encrypted draft storage, encrypted foreground outbox, save replay, and save-then-submit replay are implemented.
   - General database migration, background sync, conflict handling, and multi-screen persistence remain open.
 - [ ] Add C-SSRS safety handoff before clinical pilot use.
 
@@ -625,7 +625,8 @@ Checklist:
 - [~] Add retry/sync worker semantics for queued local writes.
   - Today foreground loads flush queued save, submit, and save-then-submit operations; background scheduling, backoff, conflict metadata, and priority lanes remain open.
 - [~] Add simulator/unit coverage for draft restore, pending upload, and submitted-delete behavior.
-  - XCTest coverage now verifies encrypted draft persistence/deletion and encrypted outbox storage; Today view restore and submitted-delete behavior still need view-model-level coverage.
+  - XCTest coverage now verifies encrypted draft persistence/deletion, encrypted outbox storage, Today offline save replay, and save-then-submit replay that clears the local draft after submission.
+  - Direct submitted-entry reload/delete coverage and UI automation remain open.
 
 ### Slice 9 - iOS invite registration, MFA continuation, and intake gate
 
@@ -660,9 +661,8 @@ Checklist:
 - [x] Surface queued operation counts in the Today status UI.
 - [x] Wipe encrypted Today drafts, outbox records, and the local persistence key on logout/session rejection.
 - [x] Verify `npm run native:ios:build`.
-- [~] Add unit/simulator coverage for encrypted draft migration, outbox ordering, save-then-submit replay, and logout wipe.
-  - XCTest coverage now verifies plaintext draft migration to encrypted storage, encrypted draft storage, outbox upsert/delete behavior, save-then-submit outbox persistence, and logout/session-wipe deletion plus key rotation.
-  - Full Today view replay against mocked API save/submit calls remains open.
+- [x] Add unit/simulator coverage for encrypted draft migration, outbox ordering, save-then-submit replay, and logout wipe.
+  - XCTest coverage now verifies plaintext draft migration to encrypted storage, encrypted draft storage, outbox upsert/delete behavior, save-then-submit outbox persistence, logout/session-wipe deletion plus key rotation, and Today view-model replay against mocked API save/submit calls.
 - [x] Verify `npm run native:ios:test`.
 - [ ] Promote the foreground flusher into a broader sync engine with retry backoff, background triggers, conflict records, and safety-priority lanes.
 
@@ -743,4 +743,5 @@ The native split is complete only when:
   - AES-GCM encrypted file-backed persistence now protects Today drafts and outbox records; broader encrypted database, migrations, and background sync are still planned.
 - [x] Add first iOS persistence/outbox simulator or unit coverage before expanding the same pattern to additional clinical screens.
   - XCTest target now covers encrypted draft migration, encrypted draft/outbox persistence, outbox mutation semantics, and local wipe key rotation.
-- [ ] Add Today view-model replay coverage with a mocked API client before promoting the foreground flusher to a broader sync engine.
+- [x] Add Today view-model replay coverage with a mocked API client before promoting the foreground flusher to a broader sync engine.
+  - TodayViewModelTests now cover offline daily-entry save replay and offline save-then-submit replay through encrypted temp stores, a deterministic clock, and an actor-backed mocked API client.

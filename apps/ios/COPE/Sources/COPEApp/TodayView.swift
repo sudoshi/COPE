@@ -17,18 +17,21 @@ final class TodayViewModel: ObservableObject {
     @Published var suicidalIdeation = 0
     @Published var notes = ""
 
-    private let apiClient: APIClient
+    private let apiClient: any DailyEntryAPIProviding
     private let draftStore: DailyEntryDraftStore
     private let outboxStore: LocalOutboxStore
+    private let now: @Sendable () -> Date
 
     init(
-        apiClient: APIClient,
+        apiClient: any DailyEntryAPIProviding,
         draftStore: DailyEntryDraftStore = .shared,
-        outboxStore: LocalOutboxStore = .shared
+        outboxStore: LocalOutboxStore = .shared,
+        now: @escaping @Sendable () -> Date = Date.init
     ) {
         self.apiClient = apiClient
         self.draftStore = draftStore
         self.outboxStore = outboxStore
+        self.now = now
     }
 
     func load() async {
@@ -141,7 +144,7 @@ final class TodayViewModel: ObservableObject {
 
     private var currentDraft: DailyEntryDraft {
         DailyEntryDraft(
-            entryDate: Self.todayString(),
+            entryDate: todayEntryDate,
             moodScore: moodScore,
             sleepHours: sleepHours,
             anxietyScore: anxietyScore,
@@ -153,7 +156,7 @@ final class TodayViewModel: ObservableObject {
 
     private func restoreLocalDraft() async -> Bool {
         do {
-            guard let stored = try await draftStore.loadDraft(for: Self.todayString()) else {
+            guard let stored = try await draftStore.loadDraft(for: todayEntryDate) else {
                 localDraftMessage = nil
                 localDraftNeedsSync = false
                 return false
@@ -302,7 +305,7 @@ final class TodayViewModel: ObservableObject {
 
                     let result = try await apiClient.saveDailyEntry(draft)
                     try await outboxStore.deleteOperation(id: operation.id)
-                    if draft.entryDate == Self.todayString() {
+                    if draft.entryDate == todayEntryDate {
                         entry = DailyEntrySummary(
                             id: result.id,
                             entryDate: result.entryDate,
@@ -327,7 +330,7 @@ final class TodayViewModel: ObservableObject {
                     let savedEntry = try await apiClient.saveDailyEntry(draft)
                     let submittedEntry = try await apiClient.submitDailyEntry(id: savedEntry.id)
                     try await outboxStore.deleteOperation(id: operation.id)
-                    if draft.entryDate == Self.todayString() {
+                    if draft.entryDate == todayEntryDate {
                         entry = DailyEntrySummary(
                             id: savedEntry.id,
                             entryDate: savedEntry.entryDate,
@@ -351,7 +354,7 @@ final class TodayViewModel: ObservableObject {
 
                     let result = try await apiClient.submitDailyEntry(id: entryID)
                     try await outboxStore.deleteOperation(id: operation.id)
-                    if operation.entryDate == Self.todayString() {
+                    if operation.entryDate == todayEntryDate {
                         entry = DailyEntrySummary(
                             id: entryID,
                             entryDate: operation.entryDate,
@@ -384,12 +387,16 @@ final class TodayViewModel: ObservableObject {
         }
     }
 
-    private static func todayString() -> String {
+    private var todayEntryDate: String {
+        Self.dayString(from: now())
+    }
+
+    private static func dayString(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: Date())
+        return formatter.string(from: date)
     }
 
     private static func timeString(_ date: Date) -> String {
@@ -403,7 +410,7 @@ final class TodayViewModel: ObservableObject {
 struct TodayView: View {
     @StateObject private var model: TodayViewModel
 
-    init(apiClient: APIClient) {
+    init(apiClient: any DailyEntryAPIProviding) {
         _model = StateObject(wrappedValue: TodayViewModel(apiClient: apiClient))
     }
 
