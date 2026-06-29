@@ -15,6 +15,11 @@ struct PatientHomeView: View {
                     Label("Assessments", systemImage: "list.clipboard")
                 }
 
+            CareView(apiClient: session.apiClient)
+                .tabItem {
+                    Label("Care", systemImage: "cross.case.fill")
+                }
+
             ProfileTabView()
                 .tabItem {
                     Label("Profile", systemImage: "person.crop.circle")

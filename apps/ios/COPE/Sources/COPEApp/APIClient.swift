@@ -138,6 +138,169 @@ struct AssessmentSubmissionResult: Decodable, Equatable, Identifiable {
     }
 }
 
+enum PatientConsentType: String, CaseIterable, Identifiable {
+    case journalSharing = "journal_sharing"
+    case dataResearch = "data_research"
+    case aiInsights = "ai_insights"
+    case emergencyContact = "emergency_contact"
+    case pushNotifications = "push_notifications"
+
+    var id: String { rawValue }
+}
+
+struct ConsentRecord: Equatable, Identifiable {
+    let id: UUID
+    let type: PatientConsentType?
+    let rawType: String
+    let granted: Bool
+    let grantedAt: Date
+    let expiresAt: Date?
+    let revokedAt: Date?
+
+    init(response: ApiV1ConsentGet200ResponseDataInner) {
+        id = response.id
+        rawType = response.consentType.rawValue
+        type = PatientConsentType(rawValue: response.consentType.rawValue)
+        granted = response.granted
+        grantedAt = response.grantedAt
+        expiresAt = response.expiresAt
+        revokedAt = response.revokedAt
+    }
+}
+
+struct SafetyResource: Decodable, Equatable, Identifiable {
+    let id: String
+    let name: String
+    let phone: String?
+    let textTo: String?
+    let textKeyword: String?
+    let url: String?
+    let description: String?
+    let available247: Bool
+    let type: String
+
+    var urlValue: URL? {
+        guard let url else { return nil }
+        return URL(string: url)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case phone
+        case textTo = "text_to"
+        case textKeyword = "text_keyword"
+        case url
+        case description
+        case available247 = "available_24_7"
+        case type
+    }
+}
+
+struct SafetyResourcesResponse: Decodable, Equatable {
+    let resources: [SafetyResource]
+    let disclaimer: String?
+}
+
+struct SafetyPlanContact: Decodable, Equatable, Hashable {
+    let name: String?
+    let phone: String?
+    let relationship: String?
+    let location: String?
+    let note: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case name
+        case phone
+        case relationship
+        case location
+        case note
+    }
+}
+
+struct SafetyPlan: Decodable, Equatable, Identifiable {
+    let id: String
+    let warningSigns: [String]
+    let internalCopingStrategies: [String]
+    let supportContacts: [SafetyPlanContact]
+    let socialDistractions: [SafetyPlanContact]
+    let crisisLinePhone: String?
+    let crisisLineName: String?
+    let erAddress: String?
+    let emergencySteps: String?
+    let reasonsForLiving: [String]
+    let patientSignatureAt: String?
+    let clinicianSignatureAt: String?
+    let updatedAt: String?
+
+    var isAcknowledged: Bool {
+        patientSignatureAt != nil
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case warningSigns = "warning_signs"
+        case internalCopingStrategies = "internal_coping_strategies"
+        case supportContacts = "support_contacts"
+        case socialDistractions = "social_distractions"
+        case crisisLinePhone = "crisis_line_phone"
+        case crisisLineName = "crisis_line_name"
+        case erAddress = "er_address"
+        case emergencySteps = "emergency_steps"
+        case reasonsForLiving = "reasons_for_living"
+        case patientSignatureAt = "patient_signature_at"
+        case clinicianSignatureAt = "clinician_signature_at"
+        case updatedAt = "updated_at"
+    }
+}
+
+struct SafetyPlanResponse: Decodable, Equatable {
+    let plan: SafetyPlan
+    let resources: [SafetyResource]
+    let disclaimer: String?
+}
+
+struct NotificationPreferences: Decodable, Equatable {
+    let id: String?
+    let dailyReminderEnabled: Bool
+    let dailyReminderTime: String
+    let medicationReminderEnabled: Bool
+    let streakNotifications: Bool
+    let appointmentReminders: Bool
+    let pushToken: String?
+    let updatedAt: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case dailyReminderEnabled = "daily_reminder_enabled"
+        case dailyReminderTime = "daily_reminder_time"
+        case medicationReminderEnabled = "medication_reminder_enabled"
+        case streakNotifications = "streak_notifications"
+        case appointmentReminders = "appointment_reminders"
+        case pushToken = "push_token"
+        case updatedAt = "updated_at"
+    }
+}
+
+struct NotificationPreferenceUpdate: Equatable {
+    let dailyReminderEnabled: Bool?
+    let dailyReminderTime: String?
+    let medicationReminderEnabled: Bool?
+    let streakNotifications: Bool?
+    let appointmentReminders: Bool?
+    let pushToken: String?
+}
+
+struct PushTokenRegistration: Decodable, Equatable {
+    let pushToken: String?
+    let updatedAt: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case pushToken = "push_token"
+        case updatedAt = "updated_at"
+    }
+}
+
 private struct APIResponseDataEnvelope<Value: Decodable>: Decodable {
     let data: Value
 }
@@ -272,6 +435,78 @@ actor APIClient {
         return try Self.decodeData(from: response, as: AssessmentSubmissionResult.self)
     }
 
+    func consentRecords() async throws -> [ConsentRecord] {
+        let response = try await executeAuthorized {
+            try await ConsentAPI.apiV1ConsentGet()
+        }
+
+        return response.data.map(ConsentRecord.init(response:))
+    }
+
+    func updateConsent(type: PatientConsentType, granted: Bool) async throws {
+        guard let consentType = ApiV1ConsentPostRequest.ConsentType(rawValue: type.rawValue) else {
+            throw APIClientError.unsupportedConsentType
+        }
+
+        let request = ApiV1ConsentPostRequest(consentType: consentType, granted: granted)
+        _ = try await executeAuthorized {
+            try await ConsentAPI.apiV1ConsentPost(apiV1ConsentPostRequest: request)
+        }
+    }
+
+    func safetyResources() async throws -> SafetyResourcesResponse {
+        let response = try await SafetyAPI.apiV1SafetyResourcesGet()
+        return try Self.decodeData(from: response, as: SafetyResourcesResponse.self)
+    }
+
+    func mySafetyPlan() async throws -> SafetyPlanResponse? {
+        do {
+            let response = try await executeAuthorized {
+                try await SafetyAPI.apiV1SafetyMyPlanGet()
+            }
+            return try Self.decodeData(from: response, as: SafetyPlanResponse.self)
+        } catch {
+            if isStatus(error, 404) {
+                return nil
+            }
+            throw error
+        }
+    }
+
+    func notificationPreferences() async throws -> NotificationPreferences {
+        let response = try await executeAuthorized {
+            try await NotificationsAPI.apiV1NotificationsPrefsGet()
+        }
+
+        return try Self.decodeData(from: response, as: NotificationPreferences.self)
+    }
+
+    func updateNotificationPreferences(_ update: NotificationPreferenceUpdate) async throws -> NotificationPreferences {
+        let request = ApiV1NotificationsPrefsPutRequest(
+            dailyReminderEnabled: update.dailyReminderEnabled,
+            dailyReminderTime: update.dailyReminderTime,
+            medicationReminderEnabled: update.medicationReminderEnabled,
+            streakNotifications: update.streakNotifications,
+            appointmentReminders: update.appointmentReminders,
+            pushToken: update.pushToken
+        )
+
+        let response = try await executeAuthorized {
+            try await NotificationsAPI.apiV1NotificationsPrefsPut(apiV1NotificationsPrefsPutRequest: request)
+        }
+
+        return try Self.decodeData(from: response, as: NotificationPreferences.self)
+    }
+
+    func registerPushToken(_ token: String) async throws -> PushTokenRegistration {
+        let request = ApiV1NotificationsPushTokenPostRequest(pushToken: token)
+        let response = try await executeAuthorized {
+            try await NotificationsAPI.apiV1NotificationsPushTokenPost(apiV1NotificationsPushTokenPostRequest: request)
+        }
+
+        return try Self.decodeData(from: response, as: PushTokenRegistration.self)
+    }
+
     func logout() throws {
         clearAuthorizationHeader()
         try tokenStore.deleteTokens()
@@ -340,6 +575,7 @@ enum APIClientError: Error, LocalizedError {
     case patientRoleRequired
     case invalidIdentifier
     case unsupportedAssessmentScale
+    case unsupportedConsentType
 
     var errorDescription: String? {
         switch self {
@@ -353,6 +589,8 @@ enum APIClientError: Error, LocalizedError {
             return "The selected record is no longer valid."
         case .unsupportedAssessmentScale:
             return "This assessment is not supported by the mobile contract yet."
+        case .unsupportedConsentType:
+            return "This consent option is not supported by the mobile contract yet."
         }
     }
 }

@@ -2,7 +2,7 @@
 
 **Date:** 2026-06-29
 
-**Status:** Native split foundation merged into draft PR; iOS auth/profile slice in progress
+**Status:** Native split foundation merged into draft PR; iOS auth, clinical workflow, consent, safety, and notification plumbing slices in progress
 
 **Scope:** Replace the current Expo/React Native patient app with native Android and iOS apps.
 
@@ -279,8 +279,9 @@ Checklist:
 - [ ] Implement invite validation and registration.
 - [x] Implement secure session persistence and refresh.
 - [x] Enforce patient-only app role handling.
-- [ ] Implement required consent screens using backend consent enum.
-- [ ] Implement optional consent controls for research, AI insights, journal sharing, and emergency contact sharing.
+- [~] Implement required consent screens using backend consent enum.
+  - iOS now has authenticated consent controls backed by the generated consent contract; invite/onboarding gating remains open.
+- [x] Implement optional consent controls for research, AI insights, journal sharing, emergency contact sharing, and push notifications.
 - [ ] Implement intake:
   - [ ] Primary concern.
   - [ ] Emergency contact.
@@ -328,8 +329,10 @@ Checklist:
 - [ ] Implement local validation before submit.
 - [ ] Write local outbox operations before network calls.
 - [ ] Submit safety-relevant signals as high-priority sync operations.
-- [ ] Display crisis resources locally even when offline.
-- [ ] Add safety plan read/sign support once backend contract is finalized.
+- [~] Display crisis resources locally even when offline.
+  - iOS reads backend crisis resources and displays them in the Care tab; offline cache remains open.
+- [~] Add safety plan read/sign support once backend contract is finalized.
+  - iOS reads the authenticated patient safety plan and handles no-plan `404` as an empty state; patient signature/acknowledgement remains open.
 - [ ] Add sync status UI that reflects actual outbox state.
 - [ ] Add conflict behavior for same-day edits across devices.
 
@@ -381,10 +384,14 @@ Assessment checklist:
 
 Notification checklist:
 
-- [ ] APNs and FCM native token registration.
+- [~] APNs and FCM native token registration.
+  - iOS APNs permission, entitlement, device-token callback, and backend token registration are wired.
+  - Backend push sending is still Expo-token oriented; APNs/FCM delivery-provider migration and token metadata remain open.
 - [ ] Multi-device token model if backend is extended.
-- [ ] Daily reminder scheduling.
-- [ ] Medication reminder scheduling.
+- [~] Daily reminder scheduling.
+  - iOS can update backend daily reminder preference; local OS scheduling remains open.
+- [~] Medication reminder scheduling.
+  - iOS can update backend medication reminder preference; local OS scheduling remains open.
 - [ ] Assessment request notifications.
 - [ ] No-PHI payload enforcement.
 
@@ -428,6 +435,7 @@ Checklist:
 - [ ] Add clinician web inbox or patient-detail messaging panel.
 - [ ] Add native patient messaging surface.
 - [ ] Add notification policy with no message body PHI in push payload.
+  - Backend assessment push payload policy is present; native APNs/FCM provider path still needs enforcement tests.
 - [ ] Add emergency disclaimers and safety routing for crisis content.
 - [ ] Add audit logs and retention policy.
 - [ ] Add read receipts only if clinically appropriate.
@@ -553,6 +561,23 @@ Checklist:
 - [ ] Add offline local persistence, draft restore, outbox, and conflict handling.
 - [ ] Add C-SSRS safety handoff before clinical pilot use.
 
+### Slice 7 - iOS consent, safety, and notification infrastructure
+
+Reason: the first usable native iOS pilot shell needs consent state, safety resources, and push-token registration before TestFlight use.
+
+Checklist:
+
+- [x] Add generated-client wrapper methods for consent list/update.
+- [x] Add generated-client wrapper methods for safety resources and authenticated safety-plan read.
+- [x] Add generated-client wrapper methods for notification preferences and push-token registration.
+- [x] Add an authenticated Care tab for safety plan, crisis resources, consent controls, and notification preferences.
+- [x] Add APNs permission flow, app delegate token callback bridge, remote-notification background mode, and `aps-environment` entitlement wiring.
+- [x] Verify `npm run native:ios:build`.
+- [ ] Add safety-plan patient acknowledgement/sign action once UI copy and clinical semantics are approved.
+- [ ] Add local crisis-resource cache so safety resources remain available offline.
+- [ ] Migrate backend push delivery from Expo-token assumptions to native APNs/FCM token metadata before real device notification delivery.
+- [ ] Add device/simulator tests for notification permission states and consent persistence.
+
 ## 7. Live Database Verification Plan
 
 The live database should be used for verification, not as the source of truth for undocumented behavior.
@@ -622,5 +647,6 @@ The native split is complete only when:
   - Proceeding with independent native clients plus generated-contract discipline for the first implementation track.
 - [x] Implement first iOS generated-client flow: auth/session plus `/patients/me`.
 - [x] Implement first iOS clinical workflow slice: network-backed Today save/submit and pending assessment submit.
+- [x] Implement first iOS consent/safety/notification infrastructure slice.
 - [ ] Implement iOS invite registration, MFA continuation, and consent/intake screens.
 - [ ] Choose iOS encrypted persistence stack and start daily-entry local cache/outbox.

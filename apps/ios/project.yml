@@ -30,18 +30,22 @@ targets:
     settings:
       base:
         INFOPLIST_FILE: COPE/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: COPE/Resources/COPE.entitlements
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: TKXPY255A2
       configs:
         Debug:
           PRODUCT_BUNDLE_IDENTIFIER: com.cope.app.dev
           COPE_API_BASE_URL: http://localhost:3000
+          APS_ENVIRONMENT: development
         Staging:
           PRODUCT_BUNDLE_IDENTIFIER: com.cope.app.staging
           COPE_API_BASE_URL: https://staging.cope.health
+          APS_ENVIRONMENT: development
         Release:
           PRODUCT_BUNDLE_IDENTIFIER: com.cope.app
           COPE_API_BASE_URL: https://app.cope.health
+          APS_ENVIRONMENT: production
     scheme:
       testTargets: []
 schemes:
