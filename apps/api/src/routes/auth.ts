@@ -658,7 +658,10 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
   // The clinician identity is read from the partial JWT (not the request body);
   // the code is checked against the locally stored TOTP secret.
   // ---------------------------------------------------------------------------
-  fastify.post('/mfa/verify', { schema: mfaVerifyRouteSchema }, async (request, reply) => {
+  fastify.post('/mfa/verify', {
+    schema: mfaVerifyRouteSchema,
+    config: { rateLimit: { max: 10, timeWindow: '1 minute' } },
+  }, async (request, reply) => {
     const body = MfaVerifyBodySchema.parse(request.body);
 
     try {
@@ -819,7 +822,10 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
   // ---------------------------------------------------------------------------
   // POST /refresh — rotate a first-party refresh token (clinician or patient)
   // ---------------------------------------------------------------------------
-  fastify.post('/refresh', { schema: refreshRouteSchema }, async (request, reply) => {
+  fastify.post('/refresh', {
+    schema: refreshRouteSchema,
+    config: { rateLimit: { max: 60, timeWindow: '1 minute' } },
+  }, async (request, reply) => {
     const body = RefreshTokenSchema.parse(request.body);
 
     const rotated = await rotateRefreshToken(body.refresh_token);
