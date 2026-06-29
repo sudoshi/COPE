@@ -2,7 +2,7 @@
 
 **Date:** 2026-06-29
 
-**Status:** Implementation planning started
+**Status:** Native split foundation merged into draft PR; iOS auth/profile slice in progress
 
 **Scope:** Replace the current Expo/React Native patient app with native Android and iOS apps.
 
@@ -236,14 +236,19 @@ iOS checklist:
   - [ ] Add unit and UI test scaffolds.
 - [x] Add build schemes for development, staging, and production.
   - Apple Team ID `TKXPY255A2` and App Store Connect App ID `6785638840` are recorded in the iOS release config.
-- [ ] Add Keychain token storage.
+- [x] Add Keychain token storage.
 - [ ] Add encrypted local database foundation.
-- [~] Add API client generated from OpenAPI or bridged from KMP.
+- [x] Add API client generated from OpenAPI or bridged from KMP.
   - [x] Add native health-check smoke client.
   - [x] Add OpenAPI generator workspace/config for Swift.
   - [x] Generate and build the Swift OpenAPI package.
-  - [ ] Wire generated Swift client into the iOS app target.
-- [ ] Add SwiftUI navigation shell for onboarding, tabs, modal flows, and universal/deep links.
+  - [x] Wire generated Swift client into the iOS app target.
+  - [x] Add app-layer wrapper for base URL, bearer headers, refresh retry, and profile decoding.
+- [~] Add SwiftUI navigation shell for onboarding, tabs, modal flows, and universal/deep links.
+  - [x] Add root authenticated/unauthenticated switch.
+  - [x] Add login form wired to native API client.
+  - [x] Add first authenticated `/patients/me` profile screen.
+  - [ ] Add onboarding, tab, modal, and deep-link structure.
 - [x] Add design tokens from existing COPE visual system.
 - [ ] Add accessibility audit and screenshot test path.
 
@@ -268,10 +273,12 @@ Goal: patient can enter through invite, register, consent, complete intake, and 
 Checklist:
 
 - [ ] Implement invite deep link handling.
-- [ ] Implement sign-in and MFA.
+- [~] Implement sign-in and MFA.
+  - [x] Implement iOS email/password sign-in using generated OpenAPI `POST /auth/login`.
+  - [ ] Implement iOS MFA verification UI and partial-token continuation.
 - [ ] Implement invite validation and registration.
-- [ ] Implement secure session persistence and refresh.
-- [ ] Enforce patient-only app role handling.
+- [x] Implement secure session persistence and refresh.
+- [x] Enforce patient-only app role handling.
 - [ ] Implement required consent screens using backend consent enum.
 - [ ] Implement optional consent controls for research, AI insights, journal sharing, and emergency contact sharing.
 - [ ] Implement intake:
@@ -281,7 +288,9 @@ Checklist:
   - [ ] Symptom preferences.
   - [ ] Trigger preferences.
   - [ ] Reminder preferences.
-- [ ] Add logout and local wipe.
+- [~] Add logout and local wipe.
+  - [x] Clear Keychain tokens on logout.
+  - [ ] Wipe encrypted local database once native persistence is introduced.
 - [ ] Add accessibility coverage for every onboarding and auth screen.
 
 Exit criteria:
@@ -504,6 +513,21 @@ Checklist:
   - Android: `npm run native:android:assemble`.
   - iOS: `npm run native:ios:build`.
 
+### Slice 5 - iOS auth/session and patient profile
+
+Reason: the iOS app needs the first real generated-client workflow before expanding into clinical surfaces.
+
+Checklist:
+
+- [x] Link `apps/ios` to the generated `COPEOpenAPI` Swift package through XcodeGen.
+- [x] Add environment-based API base URL configuration for dev/staging/production.
+- [x] Add Keychain-backed access/refresh token persistence.
+- [x] Add generated-client wrapper for login, refresh-on-401 retry, logout, and `/patients/me`.
+- [x] Add SwiftUI root session state and login screen.
+- [x] Add first authenticated profile screen backed by `GET /api/v1/patients/me`.
+- [x] Verify `npm run native:ios:build`.
+- [ ] Add UI test harness for login/profile once a stable simulator fixture account is available.
+
 ## 7. Live Database Verification Plan
 
 The live database should be used for verification, not as the source of truth for undocumented behavior.
@@ -571,3 +595,6 @@ The native split is complete only when:
 - [x] Verify live DB schema once dependencies or DB tooling are available.
 - [x] Decide KMP shared core versus fully independent native clients with generated contracts.
   - Proceeding with independent native clients plus generated-contract discipline for the first implementation track.
+- [x] Implement first iOS generated-client flow: auth/session plus `/patients/me`.
+- [ ] Implement iOS invite registration, MFA continuation, and consent/intake screens.
+- [ ] Choose iOS encrypted persistence stack and start daily-entry local cache/outbox.

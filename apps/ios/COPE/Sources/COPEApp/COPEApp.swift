@@ -2,9 +2,15 @@ import SwiftUI
 
 @main
 struct COPEApp: App {
+    @StateObject private var session = SessionViewModel()
+
     var body: some Scene {
         WindowGroup {
-            LoginView()
+            RootView()
+                .environmentObject(session)
+                .task {
+                    await session.restoreSession()
+                }
         }
     }
 }
