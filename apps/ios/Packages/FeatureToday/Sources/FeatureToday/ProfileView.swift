@@ -6,8 +6,11 @@ import DesignSystem
 public struct ProfileView: View {
     @State private var showOnboarding = false
     @State private var showJournal = false
+    private let model: ProfileModel
 
-    public init() {}
+    public init(model: ProfileModel = .sample) {
+        self.model = model
+    }
 
     public var body: some View {
         ScrollView {
@@ -17,7 +20,7 @@ public struct ProfileView: View {
                 settingsList
                 Button("Replay onboarding") { showOnboarding = true }
                     .buttonStyle(.copeSecondary)
-                Text("COPE v1.1 · 988 Suicide & Crisis Lifeline built in")
+                Text(model.versionFooter)
                     .font(CopeFont.figtree(11.5))
                     .foregroundStyle(CopeColor.ink3)
                     .frame(maxWidth: .infinity)
@@ -34,15 +37,15 @@ public struct ProfileView: View {
 
     private var header: some View {
         HStack(spacing: 14) {
-            Text("M")
+            Text(model.avatarInitial)
                 .font(CopeFont.fraunces(26))
                 .foregroundStyle(CopeColor.clay)
                 .frame(width: 60, height: 60)
                 .background(CopeColor.claySoft)
                 .clipShape(Circle())
             VStack(alignment: .leading, spacing: 2) {
-                Text("Maya Thompson").font(CopeFont.title).foregroundStyle(CopeColor.ink)
-                Text("Bayview Behavioral Health").font(CopeFont.caption).foregroundStyle(CopeColor.ink2)
+                Text(model.name).font(CopeFont.title).foregroundStyle(CopeColor.ink)
+                Text(model.org).font(CopeFont.caption).foregroundStyle(CopeColor.ink2)
             }
         }
     }
@@ -54,7 +57,7 @@ public struct ProfileView: View {
                     Image(systemName: "lock.fill").font(.system(size: 16, weight: .semibold)).foregroundStyle(CopeColor.tealInk)
                     Text("Your privacy, in plain terms").font(CopeFont.sectionTitle).foregroundStyle(CopeColor.ink)
                 }
-                Text("Your journals and messages are encrypted. We never sell or advertise on your data — ever.")
+                Text(model.privacyBody)
                     .font(CopeFont.callout).foregroundStyle(CopeColor.ink2)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.bottom, 6)
@@ -75,7 +78,7 @@ public struct ProfileView: View {
             divider
             row("bell.fill", "Notifications & reminders")
             divider
-            SettingsRow(icon: "faceid", title: "Face ID & app lock", value: "On", showsChevron: false) {}
+            SettingsRow(icon: "faceid", title: "Face ID & app lock", value: model.faceIDEnabled ? "On" : "Off", showsChevron: false) {}
             divider
             row("heart.text.square.fill", "Apple Health data")
             divider

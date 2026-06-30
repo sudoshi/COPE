@@ -1,10 +1,9 @@
 import SwiftUI
 import DesignSystem
 
-/// The gold-standard Today / Home dashboard (build bible §6.3), rendered with
-/// demo data so it can be previewed without a backend. This is the calm landing
-/// surface: greeting, the hero check-in card, gentle streak + 7-day mood, and
-/// the "today" list with the safety affordance always one tap away.
+/// The gold-standard Today / Home dashboard (build bible §6.3). Data-driven via
+/// `TodayModel`; defaults to `.sample` so previews and the mock build keep
+/// working until the app injects real data.
 public struct TodayDashboardView: View {
     @State private var showCheckIn = false
     @State private var showSafety = false
@@ -12,10 +11,12 @@ public struct TodayDashboardView: View {
     @State private var showAssessment = false
     @State private var showPreVisit = false
 
+    private let model: TodayModel
     /// Switches the shell to the Care tab (the message row).
     private let onOpenCare: () -> Void
 
-    public init(onOpenCare: @escaping () -> Void = {}) {
+    public init(model: TodayModel = .sample, onOpenCare: @escaping () -> Void = {}) {
+        self.model = model
         self.onOpenCare = onOpenCare
     }
 
@@ -47,13 +48,13 @@ public struct TodayDashboardView: View {
     private var header: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 5) {
-                Text("Tuesday · Good morning").copeSectionLabel(CopeColor.teal)
-                Text("Hi, Maya")
+                Text(model.greeting).copeSectionLabel(CopeColor.teal)
+                Text("Hi, \(model.name)")
                     .font(CopeFont.display)
                     .foregroundStyle(CopeColor.ink)
             }
             Spacer()
-            Text("M")
+            Text(model.avatarInitial)
                 .font(CopeFont.fraunces(17))
                 .foregroundStyle(CopeColor.clay)
                 .frame(width: 44, height: 44)
@@ -71,12 +72,13 @@ public struct TodayDashboardView: View {
             showCheckIn = true
         } label: {
             VStack(alignment: .leading, spacing: 0) {
-                Text("Morning check-in").copeSectionLabel(.white.opacity(0.9))
-                Text("How are you feeling today?")
+                Text(model.heroLabel).copeSectionLabel(.white.opacity(0.9))
+                Text(model.heroQuestion)
                     .font(CopeFont.fraunces(22))
                     .foregroundStyle(.white)
                     .padding(.top, 7)
-                Text("A gentle 2-minute reflection. Just where you are — no right answers.")
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(model.heroSubtitle)
                     .font(CopeFont.callout)
                     .foregroundStyle(.white.opacity(0.9))
                     .fixedSize(horizontal: false, vertical: true)
@@ -127,10 +129,10 @@ public struct TodayDashboardView: View {
                 .font(CopeFont.figtree(12, .medium))
                 .foregroundStyle(CopeColor.ink2)
             HStack(alignment: .firstTextBaseline, spacing: 5) {
-                Text("11")
+                Text("\(model.streakDays)")
                     .font(CopeFont.numberMedium)
                     .foregroundStyle(CopeColor.ink)
-                Text("days · 1 freeze left")
+                Text(model.streakDetail)
                     .font(CopeFont.figtree(12))
                     .foregroundStyle(CopeColor.ink3)
             }
@@ -144,7 +146,7 @@ public struct TodayDashboardView: View {
                 .font(CopeFont.figtree(12, .medium))
                 .foregroundStyle(CopeColor.ink2)
             HStack(alignment: .bottom, spacing: 3) {
-                ForEach(Array(Self.weekMoods.enumerated()), id: \.offset) { _, mood in
+                ForEach(Array(model.weekMoods.enumerated()), id: \.offset) { _, mood in
                     Capsule()
                         .fill(CopeMood.color(for: mood))
                         .frame(height: CGFloat(mood) / 10 * 26)
@@ -156,38 +158,47 @@ public struct TodayDashboardView: View {
         .copeCard(padding: 14)
     }
 
-    private static let weekMoods = [3, 5, 4, 7, 6, 8, 7]
-
     // MARK: Today list
 
     private var todayList: some View {
         VStack(spacing: 10) {
-            TodayRow(
-                icon: "pills.fill", iconTint: .teal,
-                title: "Morning medications",
-                subtitle: "Lamotrigine · Sertraline · 1 of 3 taken",
-                trailing: .badge("2 due")
-            ) { showMeds = true }
-            TodayRow(
-                icon: "checkmark.seal.fill", iconTint: .clay,
-                title: "Weekly PHQ-9 check",
-                subtitle: "From Dr. Alvarez · 5 minutes · due today",
-                trailing: .chevron
-            ) { showAssessment = true }
-            TodayRow(
-                icon: "bubble.left.and.bubble.right.fill", iconTint: .teal,
-                title: "Dr. Alvarez replied",
-                subtitle: "“So glad the new dose is settling in…”",
-                trailing: .chevron, showsUnread: true
-            ) { onOpenCare() }
-            TodayRow(
-                icon: "calendar", iconTint: .clay,
-                title: "Visit Thursday — let's prepare",
-                subtitle: "Pick what to talk about with Dr. Alvarez",
-                trailing: .chevron
-            ) { showPreVisit = true }
+            ForEach(model.tasks) { task in
+                TodayRow(
+                    icon: icon(for: task.kind),
+                    iconTint: tint(for: task.kind),
+                    title: task.title,
+                    subtitle: task.subtitle,
+                    trailing: task.badge.map { .badge($0) } ?? .chevron,
+                    showsUnread: task.showsUnread
+                ) { handle(task.kind) }
+            }
             SafetyButton { showSafety = true }
                 .padding(.top, 6)
+        }
+    }
+
+    private func icon(for kind: TodayTask.Kind) -> String {
+        switch kind {
+        case .medications: return "pills.fill"
+        case .assessment: return "checkmark.seal.fill"
+        case .message: return "bubble.left.and.bubble.right.fill"
+        case .preVisit: return "calendar"
+        }
+    }
+
+    private func tint(for kind: TodayTask.Kind) -> TodayRow.IconTint {
+        switch kind {
+        case .medications, .message: return .teal
+        case .assessment, .preVisit: return .clay
+        }
+    }
+
+    private func handle(_ kind: TodayTask.Kind) {
+        switch kind {
+        case .medications: showMeds = true
+        case .assessment: showAssessment = true
+        case .message: onOpenCare()
+        case .preVisit: showPreVisit = true
         }
     }
 }

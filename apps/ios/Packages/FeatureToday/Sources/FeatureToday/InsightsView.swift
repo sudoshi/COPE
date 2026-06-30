@@ -4,7 +4,11 @@ import DesignSystem
 
 /// Insights tab (build bible §6.7): a calm read of patterns. Demo data for now.
 public struct InsightsView: View {
-    public init() {}
+    private let model: InsightsModel
+
+    public init(model: InsightsModel = .sample) {
+        self.model = model
+    }
 
     private struct MoodPoint: Identifiable {
         let id = UUID()
@@ -12,9 +16,9 @@ public struct InsightsView: View {
         let value: Double
     }
 
-    private let mood: [MoodPoint] = [
-        4.8, 4.5, 5.0, 4.6, 5.4, 5.0, 5.8, 6.0, 5.6, 6.4, 6.2, 6.6, 6.4, 7.0
-    ].enumerated().map { MoodPoint(day: $0.offset, value: $0.element) }
+    private var mood: [MoodPoint] {
+        model.mood.enumerated().map { MoodPoint(day: $0.offset, value: $0.element) }
+    }
 
     public var body: some View {
         ScrollView {
@@ -66,7 +70,7 @@ public struct InsightsView: View {
             .chartYScale(domain: 0...10)
             .frame(height: 96)
             HStack {
-                Text("Jun 8"); Spacer(); Text("Today")
+                Text(model.moodStartLabel); Spacer(); Text(model.moodEndLabel)
             }
             .font(CopeFont.figtree(11)).foregroundStyle(CopeColor.ink3)
         }
@@ -85,9 +89,9 @@ public struct InsightsView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
                     Text("A pattern worth noticing").copeSectionLabel(CopeColor.tealInk)
                 }
-                (Text("On days you moved your body, your mood the next morning was ")
-                 + Text("+1.8 higher").foregroundColor(CopeColor.teal)
-                 + Text(" on average."))
+                (Text(model.correlationLead)
+                 + Text(model.correlationHighlight).foregroundColor(CopeColor.teal)
+                 + Text(model.correlationTail))
                     .font(CopeFont.sectionTitle)
                     .foregroundStyle(CopeColor.ink)
                     .fixedSize(horizontal: false, vertical: true)
@@ -100,11 +104,11 @@ public struct InsightsView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Sleep, avg").font(CopeFont.figtree(12.5, .medium)).foregroundStyle(CopeColor.ink2)
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
-                    Text("6.8").font(CopeFont.numberMedium).foregroundStyle(CopeColor.ink)
+                    Text(model.sleepAvg).font(CopeFont.numberMedium).foregroundStyle(CopeColor.ink)
                     Text("h").font(CopeFont.figtree(14)).foregroundStyle(CopeColor.ink3)
                 }
                 HStack(alignment: .bottom, spacing: 3) {
-                    ForEach([0.6, 0.8, 0.5, 0.9, 0.7, 0.85], id: \.self) { h in
+                    ForEach(Array(model.sleepBars.enumerated()), id: \.offset) { _, h in
                         Capsule().fill(CopeColor.teal.opacity(0.55)).frame(height: 24 * h)
                     }
                 }
@@ -115,10 +119,10 @@ public struct InsightsView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("PHQ-9").font(CopeFont.figtree(12.5, .medium)).foregroundStyle(CopeColor.ink2)
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Text("9").font(CopeFont.numberMedium).foregroundStyle(CopeColor.ink)
-                    Text("↓ from 14").font(CopeFont.figtree(12, .semibold)).foregroundStyle(CopeColor.teal)
+                    Text(model.phq9Score).font(CopeFont.numberMedium).foregroundStyle(CopeColor.ink)
+                    Text(model.phq9Delta).font(CopeFont.figtree(12, .semibold)).foregroundStyle(CopeColor.teal)
                 }
-                Text("Moving from moderate toward mild")
+                Text(model.phq9Note)
                     .font(CopeFont.figtree(11.5)).foregroundStyle(CopeColor.ink3)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -137,7 +141,7 @@ public struct InsightsView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
                 Text("Weekly reflection").font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
             }
-            Text("Your sleep steadied this week and your mornings trended brighter. Anxiety still rises midweek — worth a word with Dr. Alvarez.")
+            Text(model.aiReflection)
                 .font(CopeFont.callout).foregroundStyle(CopeColor.ink2)
                 .fixedSize(horizontal: false, vertical: true)
             Label("Generated privately, with your consent · not a diagnosis", systemImage: "lock.fill")
