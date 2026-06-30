@@ -726,7 +726,13 @@ actor APIClient {
             try await AssessmentsAPI.apiV1AssessmentsPendingGet()
         }
 
-        return try Self.decodeData(from: response, as: [PendingAssessment].self)
+        // The API returns `data` as a JSON array, but some builds serialize it as
+        // an index-keyed object ({"0": {...}}). Tolerate both.
+        if let array = try? Self.decodeData(from: response, as: [PendingAssessment].self) {
+            return array
+        }
+        let keyed = try Self.decodeData(from: response, as: [String: PendingAssessment].self)
+        return keyed.sorted { (Int($0.key) ?? 0) < (Int($1.key) ?? 0) }.map(\.value)
     }
 
     func submitAssessment(scale: String, score: Int, itemResponses: [String: Int], notes: String?) async throws -> AssessmentSubmissionResult {

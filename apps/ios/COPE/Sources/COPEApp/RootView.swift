@@ -51,10 +51,7 @@ struct RootView: View {
         if session.isRestoring {
             loading
         } else if session.isAuthenticated, let profile = session.profile {
-            MainShellView(
-                today: Self.todayModel(for: profile),
-                profile: Self.profileModel(for: profile)
-            )
+            AuthenticatedHomeView(apiClient: session.apiClient, patient: profile)
         } else if session.isAuthenticated {
             loading
         } else if showLogin {
@@ -76,27 +73,6 @@ struct RootView: View {
         }
     }
 
-    private static func todayModel(for profile: PatientProfileSummary) -> TodayModel {
-        var model = TodayModel.sample
-        model.name = profile.displayName.split(separator: " ").first.map(String.init) ?? profile.displayName
-        model.greeting = greetingLine()
-        model.streakDays = profile.trackingStreak
-        return model
-    }
-
-    private static func profileModel(for profile: PatientProfileSummary) -> ProfileModel {
-        var model = ProfileModel.sample
-        model.name = profile.displayName
-        return model
-    }
-
-    private static func greetingLine() -> String {
-        let now = Date()
-        let weekday = now.formatted(.dateTime.weekday(.wide))
-        let hour = Calendar.current.component(.hour, from: now)
-        let timeOfDay = hour < 12 ? "Good morning" : (hour < 17 ? "Good afternoon" : "Good evening")
-        return "\(weekday) · \(timeOfDay)"
-    }
 
     private static var useLegacyAuthFlow: Bool {
         ProcessInfo.processInfo.environment["COPE_LEGACY_AUTH"] == "1"
