@@ -5,10 +5,21 @@ import DesignSystem
 /// Care · You — with a raised center check-in FAB presenting the check-in as a
 /// full-screen cover. Insights/Care/You are on-brand placeholders for now.
 public struct MainShellView: View {
-    @State private var tab: Tab = .today
+    @State private var tab: Tab
     @State private var showCheckIn = false
 
-    public init() {}
+    public init() {
+        var initial: Tab = .today
+        #if DEBUG
+        switch ProcessInfo.processInfo.environment["COPE_PREVIEW_TAB"] {
+        case "insights": initial = .insights
+        case "care": initial = .care
+        case "you": initial = .you
+        default: break
+        }
+        #endif
+        _tab = State(initialValue: initial)
+    }
 
     enum Tab: Hashable {
         case today, insights, care, you
@@ -32,26 +43,10 @@ public struct MainShellView: View {
     @ViewBuilder
     private var content: some View {
         switch tab {
-        case .today:
-            TodayDashboardView()
-        case .insights:
-            PlaceholderTab(
-                icon: "chart.line.uptrend.xyaxis",
-                title: "Insights",
-                subtitle: "Patterns from your check-ins — yours alone to share."
-            )
-        case .care:
-            PlaceholderTab(
-                icon: "bubble.left.and.bubble.right.fill",
-                title: "Your care team",
-                subtitle: "Secure two-way messaging with your team — coming next."
-            )
-        case .you:
-            PlaceholderTab(
-                icon: "person.crop.circle",
-                title: "You",
-                subtitle: "Privacy, consent, and app settings — coming next."
-            )
+        case .today: TodayDashboardView()
+        case .insights: InsightsView()
+        case .care: CareView()
+        case .you: ProfileView()
         }
     }
 
@@ -107,35 +102,6 @@ public struct MainShellView: View {
         .frame(width: 64)
         .offset(y: -18)
         .accessibilityLabel("Start check-in")
-    }
-}
-
-/// On-brand placeholder for tabs not yet built.
-private struct PlaceholderTab: View {
-    let icon: String
-    let title: String
-    let subtitle: String
-
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.system(size: 30, weight: .regular))
-                .foregroundStyle(CopeColor.tealInk)
-                .frame(width: 72, height: 72)
-                .background(CopeColor.tealSoft)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            Text(title)
-                .font(CopeFont.title)
-                .foregroundStyle(CopeColor.ink)
-            Text(subtitle)
-                .font(CopeFont.body)
-                .foregroundStyle(CopeColor.ink2)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: 280)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(24)
     }
 }
 

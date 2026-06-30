@@ -17,10 +17,10 @@ struct RootView: View {
     @ViewBuilder
     private var content: some View {
         #if DEBUG
-        if ProcessInfo.processInfo.environment["COPE_PREVIEW_SCREEN"] == "checkin" {
-            CheckInView()
-        } else {
-            defaultContent
+        switch ProcessInfo.processInfo.environment["COPE_PREVIEW_SCREEN"] {
+        case "checkin": CheckInView()
+        case "safety": SafetyPlanView()
+        default: defaultContent
         }
         #else
         defaultContent

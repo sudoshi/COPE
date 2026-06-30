@@ -7,6 +7,7 @@ import DesignSystem
 /// the "today" list with the safety affordance always one tap away.
 public struct TodayDashboardView: View {
     @State private var showCheckIn = false
+    @State private var showSafety = false
 
     public init() {}
 
@@ -28,6 +29,9 @@ public struct TodayDashboardView: View {
         .background(CopeColor.canvas.ignoresSafeArea())
         .copeFullCover(isPresented: $showCheckIn) {
             CheckInView()
+        }
+        .copeFullCover(isPresented: $showSafety) {
+            SafetyPlanView()
         }
     }
 
@@ -175,7 +179,7 @@ public struct TodayDashboardView: View {
                 subtitle: "Pick what to talk about with Dr. Alvarez",
                 trailing: .chevron
             ) {}
-            SafetyButton {}
+            SafetyButton { showSafety = true }
                 .padding(.top, 6)
         }
     }

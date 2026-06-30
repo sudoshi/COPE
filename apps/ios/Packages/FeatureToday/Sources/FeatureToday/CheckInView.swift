@@ -8,11 +8,9 @@ public struct CheckInView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
     @State private var model: CheckInViewModel
+    @State private var showSafety = false
 
-    /// Opens the safety plan from the C-SSRS escalation card.
-    private let onOpenSafety: () -> Void
-
-    public init(isBipolar: Bool = true, onOpenSafety: @escaping () -> Void = {}) {
+    public init(isBipolar: Bool = true) {
         let viewModel = CheckInViewModel(isBipolar: isBipolar)
         #if DEBUG
         // Lets the Simulator jump to a step / preset answers for screenshots,
@@ -26,7 +24,6 @@ public struct CheckInView: View {
         }
         #endif
         _model = State(initialValue: viewModel)
-        self.onOpenSafety = onOpenSafety
     }
 
     public var body: some View {
@@ -45,6 +42,7 @@ public struct CheckInView: View {
             footer
         }
         .background(CopeColor.canvas.ignoresSafeArea())
+        .copeFullCover(isPresented: $showSafety) { SafetyPlanView() }
     }
 
     // MARK: Chrome
@@ -288,7 +286,7 @@ public struct CheckInView: View {
                         .font(CopeFont.callout).foregroundStyle(CopeColor.ink2)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                Button("Open my safety plan") { onOpenSafety() }
+                Button("Open my safety plan") { showSafety = true }
                     .buttonStyle(.plain)
                     .font(CopeFont.bodyStrong).foregroundStyle(.white)
                     .frame(maxWidth: .infinity).padding(.vertical, 13)
