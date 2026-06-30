@@ -24,6 +24,17 @@ struct COPEApp: App {
                     #endif
 
                     await session.restoreSession()
+
+                    #if DEBUG
+                    // QA hook: auto sign-in from env so the Simulator can verify
+                    // the full login → real-data path without typing.
+                    let env = ProcessInfo.processInfo.environment
+                    if !session.isAuthenticated,
+                       let email = env["COPE_TEST_EMAIL"], !email.isEmpty,
+                       let password = env["COPE_TEST_PASSWORD"], !password.isEmpty {
+                        await session.signIn(email: email, password: password)
+                    }
+                    #endif
                 }
         }
     }
