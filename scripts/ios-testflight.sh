@@ -55,6 +55,23 @@ provisioning_args() {
   fi
 }
 
+# Signing flags for archive/export. When an App Store Connect API key is
+# configured, drive signing through it (headless — no Xcode account needed),
+# which is how TestFlight builds are produced. Falls back to -allowProvisioningUpdates.
+signing_args() {
+  local key_id="${APP_STORE_CONNECT_API_KEY_ID:-}"
+  local issuer="${APP_STORE_CONNECT_API_ISSUER_ID:-}"
+  local key_path="${APP_STORE_CONNECT_API_KEY_PATH:-$HOME/.appstoreconnect/private_keys/AuthKey_${key_id}.p8}"
+  if [[ -n "$key_id" && -n "$issuer" && -f "$key_path" ]]; then
+    printf '%s\n' "-allowProvisioningUpdates" \
+      "-authenticationKeyPath" "$key_path" \
+      "-authenticationKeyID" "$key_id" \
+      "-authenticationKeyIssuerID" "$issuer"
+  else
+    provisioning_args
+  fi
+}
+
 validate_release_config() {
   require_command node
 
@@ -73,7 +90,7 @@ validate_release_config() {
     exit 1
   fi
 
-  if [[ "$bundle_id" != "com.cope.app" ]]; then
+  if [[ "$bundle_id" != "com.acumenus-cope.app" ]]; then
     echo "Unexpected production bundle identifier in $CONFIG_PATH: $bundle_id" >&2
     exit 1
   fi
@@ -83,7 +100,7 @@ validate_release_config() {
     exit 1
   }
 
-  grep -q "PRODUCT_BUNDLE_IDENTIFIER: $bundle_id" "$PROJECT_SPEC" || {
+  grep -q "PRODUCT_BUNDLE_IDENTIFIER: $bundle_id" "$PROJECT_SPEC" || grep -q "PRODUCT_BUNDLE_IDENTIFIER: \"$bundle_id\"" "$PROJECT_SPEC" || {
     echo "XcodeGen spec does not use production bundle identifier $bundle_id" >&2
     exit 1
   }
@@ -116,7 +133,7 @@ archive_app() {
   local -a extra_args=()
   while IFS= read -r arg; do
     [[ -n "$arg" ]] && extra_args+=("$arg")
-  done < <(provisioning_args)
+  done < <(signing_args)
 
   xcodebuild \
     -project "$IOS_DIR/COPE.xcodeproj" \
@@ -142,7 +159,7 @@ export_app() {
   local -a extra_args=()
   while IFS= read -r arg; do
     [[ -n "$arg" ]] && extra_args+=("$arg")
-  done < <(provisioning_args)
+  done < <(signing_args)
 
   xcodebuild \
     -exportArchive \
