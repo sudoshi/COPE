@@ -10,7 +10,11 @@ public struct CheckInView: View {
     @State private var model: CheckInViewModel
     @State private var showSafety = false
 
-    public init(isBipolar: Bool = true) {
+    /// Emits the collected check-in when completed (app persists via the API).
+    private let onSubmit: (CheckInResult) -> Void
+
+    public init(isBipolar: Bool = true, onSubmit: @escaping (CheckInResult) -> Void = { _ in }) {
+        self.onSubmit = onSubmit
         let viewModel = CheckInViewModel(isBipolar: isBipolar)
         #if DEBUG
         // Lets the Simulator jump to a step / preset answers for screenshots,
@@ -79,7 +83,10 @@ public struct CheckInView: View {
     private var footer: some View {
         Button(model.ctaTitle) {
             withAnimation(.easeOut(duration: 0.25)) {
-                if model.advance() { dismiss() }
+                if model.advance() {
+                    onSubmit(model.result)
+                    dismiss()
+                }
             }
         }
         .buttonStyle(.copePrimary)

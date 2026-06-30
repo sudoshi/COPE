@@ -63,6 +63,25 @@ final class CheckInViewModel {
     var anxietyValue: Int { Int(anxiety.rounded()) }
     var siElevated: Bool { (suicidalIdeation ?? 0) >= 2 }
 
+    /// The collected check-in, for the app to persist (daily-entry API + outbox).
+    var result: CheckInResult {
+        CheckInResult(
+            mood: moodValue,
+            feelings: feelings.sorted(),
+            sleepHours: sleepHours,
+            sleepQuality: sleepQuality,
+            energy: energyValue,
+            anhedonia: anhedonia,
+            anxiety: anxietyValue,
+            bodyRegions: bodyRegions.sorted(),
+            bodyAllOver: bodyAllOver,
+            mania: mania,
+            triggers: triggers.sorted(),
+            suicidalIdeation: suicidalIdeation,
+            note: note
+        )
+    }
+
     var energyWord: String { Self.energyWords[clamp(energyValue, Self.energyWords.count)] }
     var anxietyWord: String { Self.anxietyWords[clamp(anxietyValue, Self.anxietyWords.count)] }
 

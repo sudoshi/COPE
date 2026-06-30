@@ -5,20 +5,25 @@ import DesignSystem
 /// thread with the care team. Demo content; live messages + WebSocket come next.
 public struct CareView: View {
     @State private var showSafety = false
-    public init() {}
+    private let model: CareModel
+    public init(model: CareModel = .sample) {
+        self.model = model
+    }
 
     public var body: some View {
         VStack(spacing: 0) {
             teamHeader
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("Tuesday")
+                    Text(model.dayLabel)
                         .font(CopeFont.figtree(11, .medium)).foregroundStyle(CopeColor.ink3)
                         .frame(maxWidth: .infinity)
-                    escalationTrustCard
-                    clinicianBubble("So glad the new dose is settling in. How have your mornings felt since we adjusted it?", time: "Dr. Alvarez · 9:02")
-                    structuredPrompt
-                    patientBubble("Better, honestly. Waking up feels less heavy. Still a rough patch around Wednesdays.", time: "You · 9:14 · Read")
+                    if let escalation = model.escalation {
+                        escalationTrustCard(escalation)
+                    }
+                    ForEach(model.messages) { message in
+                        messageView(message)
+                    }
                 }
                 .padding(.horizontal, CopeSpacing.screenH)
                 .padding(.vertical, 18)
@@ -29,18 +34,31 @@ public struct CareView: View {
         .copeFullCover(isPresented: $showSafety) { SafetyPlanView() }
     }
 
+    @ViewBuilder
+    private func messageView(_ message: CareMessage) -> some View {
+        switch message.role {
+        case .clinician: clinicianBubble(message.text, time: message.time)
+        case .patient: patientBubble(message.text, time: message.time)
+        case .prompt: structuredPrompt(label: message.promptLabel ?? "", question: message.text, replies: message.replies)
+        }
+    }
+
     private var teamHeader: some View {
         HStack(spacing: 12) {
             ZStack {
-                avatar("A", bg: CopeColor.tealSoft, fg: CopeColor.tealInk).offset(x: -10)
-                avatar("S", bg: CopeColor.claySoft, fg: CopeColor.clay).offset(x: 10)
+                ForEach(Array(model.teamInitials.enumerated()), id: \.offset) { idx, initial in
+                    avatar(initial,
+                           bg: idx == 1 ? CopeColor.claySoft : CopeColor.tealSoft,
+                           fg: idx == 1 ? CopeColor.clay : CopeColor.tealInk)
+                        .offset(x: CGFloat(idx) * 20 - 10)
+                }
             }
             .frame(width: 56)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Your care team").font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
+                Text(model.teamName).font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
                 HStack(spacing: 5) {
                     Circle().fill(CopeColor.teal).frame(width: 7, height: 7)
-                    Text("Usually replies within 1 business day").font(CopeFont.caption).foregroundStyle(CopeColor.ink2)
+                    Text(model.statusLine).font(CopeFont.caption).foregroundStyle(CopeColor.ink2)
                 }
             }
             Spacer()
@@ -60,14 +78,14 @@ public struct CareView: View {
             .overlay(Circle().strokeBorder(CopeColor.canvas, lineWidth: 2))
     }
 
-    private var escalationTrustCard: some View {
+    private func escalationTrustCard(_ escalation: CareModel.Escalation) -> some View {
         FeatureCard(tint: .teal) {
             VStack(alignment: .leading, spacing: 5) {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.shield.fill").font(.system(size: 14)).foregroundStyle(CopeColor.tealInk)
-                    Text("Your team is looking out for you").copeSectionLabel(CopeColor.tealInk)
+                    Text(escalation.title).copeSectionLabel(CopeColor.tealInk)
                 }
-                Text("After this morning's check-in, Sam was notified and will reach out today. You don't need to do anything.")
+                Text(escalation.body)
                     .font(CopeFont.callout).foregroundStyle(CopeColor.ink2)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -101,16 +119,16 @@ public struct CareView: View {
         .padding(.leading, 40)
     }
 
-    private var structuredPrompt: some View {
+    private func structuredPrompt(label: String, question: String, replies: [String]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Quick check-in").copeSectionLabel(CopeColor.clay)
-            Text("How are mornings feeling on the new dose?")
+            Text(label).copeSectionLabel(CopeColor.clay)
+            Text(question)
                 .font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 7) {
-                replyChip("Better", filled: true)
-                replyChip("Same", filled: false)
-                replyChip("Worse", filled: false)
+                ForEach(Array(replies.enumerated()), id: \.offset) { idx, reply in
+                    replyChip(reply, filled: idx == 0)
+                }
             }
         }
         .copeCard(padding: 15)

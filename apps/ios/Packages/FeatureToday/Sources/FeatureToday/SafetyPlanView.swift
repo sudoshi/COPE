@@ -7,7 +7,10 @@ import DesignSystem
 public struct SafetyPlanView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
-    public init() {}
+    private let model: SafetyPlanModel
+    public init(model: SafetyPlanModel = .sample) {
+        self.model = model
+    }
 
     public var body: some View {
         VStack(spacing: 0) {
@@ -27,27 +30,27 @@ public struct SafetyPlanView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 11) {
                     crisisCard
-                    Text("Built with Dr. Alvarez · Stanley-Brown safety plan")
+                    Text(model.builtWith)
                         .font(CopeFont.figtree(11.5)).foregroundStyle(CopeColor.ink3)
                         .frame(maxWidth: .infinity).padding(.vertical, 8)
                     section(1, "Signs a hard moment is coming") {
-                        Text("Racing thoughts late at night · Skipping meals · Pulling away from friends")
+                        Text(model.warningSigns)
                             .font(CopeFont.callout).foregroundStyle(CopeColor.ink2).fixedSize(horizontal: false, vertical: true)
                     }
                     section(2, "Things that help me cope") {
-                        Text("Walk by the water · Cold shower · Box breathing · Playlist “anchor”")
+                        Text(model.copingStrategies)
                             .font(CopeFont.callout).foregroundStyle(CopeColor.ink2).fixedSize(horizontal: false, vertical: true)
                     }
                     section(3, "Reasons to keep going") {
                         FlowLayout(spacing: 8) {
-                            ForEach(["My sister Nora", "Finishing my degree", "Pico (my dog)"], id: \.self) { pill($0) }
+                            ForEach(model.reasons, id: \.self) { pill($0) }
                         }
                     }
                     section(4, "People I can reach out to") {
-                        contactRow("Nora (sister)", subtitle: "Tap to call")
+                        ForEach(model.contacts) { contactRow($0) }
                     }
                     section(5, "Making my space safer") {
-                        Text("Medications stored with Nora · Crisis numbers saved to favorites")
+                        Text(model.saferSpace)
                             .font(CopeFont.callout).foregroundStyle(CopeColor.ink2).fixedSize(horizontal: false, vertical: true)
                     }
                 }
@@ -59,8 +62,8 @@ public struct SafetyPlanView: View {
 
     private var crisisCard: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("If you're in crisis right now").copeSectionLabel(.white.opacity(0.92))
-            Text("You deserve support this moment.")
+            Text(model.crisisHeadline).copeSectionLabel(.white.opacity(0.92))
+            Text(model.crisisSubtitle)
                 .font(CopeFont.fraunces(21)).foregroundStyle(.white)
                 .padding(.top, 5).padding(.bottom, 14)
             HStack(spacing: 9) {
@@ -104,13 +107,13 @@ public struct SafetyPlanView: View {
             .background(CopeColor.claySoft).clipShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
     }
 
-    private func contactRow(_ name: String, subtitle: String) -> some View {
+    private func contactRow(_ contact: SafetyContact) -> some View {
         HStack(spacing: 12) {
-            Text("N").font(CopeFont.fraunces(15)).foregroundStyle(CopeColor.clay)
+            Text(contact.initial).font(CopeFont.fraunces(15)).foregroundStyle(CopeColor.clay)
                 .frame(width: 38, height: 38).background(CopeColor.claySoft).clipShape(Circle())
             VStack(alignment: .leading, spacing: 2) {
-                Text(name).font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
-                Text(subtitle).font(CopeFont.caption).foregroundStyle(CopeColor.ink2)
+                Text(contact.name).font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
+                Text(contact.subtitle).font(CopeFont.caption).foregroundStyle(CopeColor.ink2)
             }
             Spacer()
             Image(systemName: "phone.fill").font(.system(size: 16)).foregroundStyle(CopeColor.teal)
