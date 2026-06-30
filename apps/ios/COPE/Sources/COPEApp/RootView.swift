@@ -16,7 +16,7 @@ struct RootView: View {
     @ViewBuilder
     private var content: some View {
         if Self.isUIPreview {
-            TodayDashboardView()
+            MainShellView()
         } else {
             appContent
         }
