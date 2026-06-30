@@ -3,6 +3,7 @@ import FeatureToday
 
 struct RootView: View {
     @EnvironmentObject private var session: SessionViewModel
+    @State private var entered = false
 
     var body: some View {
         content
@@ -18,6 +19,7 @@ struct RootView: View {
     private var content: some View {
         #if DEBUG
         switch ProcessInfo.processInfo.environment["COPE_PREVIEW_SCREEN"] {
+        case "welcome": WelcomeView()
         case "checkin": CheckInView()
         case "safety": SafetyPlanView()
         case "assessment": AssessmentView()
@@ -37,8 +39,22 @@ struct RootView: View {
         if Self.useLegacyAuthFlow {
             appContent
         } else {
-            MainShellView()
+            ZStack {
+                if entered {
+                    MainShellView().transition(.opacity)
+                } else {
+                    WelcomeView(
+                        onGetStarted: { enterApp() },
+                        onSignIn: { enterApp() }
+                    )
+                    .transition(.opacity)
+                }
+            }
         }
+    }
+
+    private func enterApp() {
+        withAnimation(.easeInOut(duration: 0.5)) { entered = true }
     }
 
     private static var useLegacyAuthFlow: Bool {
