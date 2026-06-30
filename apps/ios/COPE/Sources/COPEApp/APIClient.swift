@@ -471,6 +471,42 @@ private struct AuthResponseUser: Decodable {
     }
 }
 
+struct JournalEntryDTO: Decodable {
+    let id: String
+    let entryDate: String
+    let wordCount: Int
+    let sharedWithClinician: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case entryDate = "entry_date"
+        case wordCount = "word_count"
+        case sharedWithClinician = "shared_with_clinician"
+    }
+}
+
+private struct JournalListDTO: Decodable {
+    let items: [JournalEntryDTO]
+}
+
+struct MedicationTodayDTO: Decodable {
+    let id: String
+    let name: String
+    let dose: String
+    let doseUnit: String
+    let frequency: String
+    let taken: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name = "medication_name"
+        case dose
+        case doseUnit = "dose_unit"
+        case frequency
+        case taken
+    }
+}
+
 protocol DailyEntryAPIProviding: Sendable {
     func todayDailyEntry() async throws -> DailyEntrySummary?
     func saveDailyEntry(_ draft: DailyEntryDraft) async throws -> DailyEntryWriteResult
@@ -732,6 +768,25 @@ actor APIClient {
             return array
         }
         let keyed = try Self.decodeData(from: response, as: [String: PendingAssessment].self)
+        return keyed.sorted { (Int($0.key) ?? 0) < (Int($1.key) ?? 0) }.map(\.value)
+    }
+
+    func journalEntries() async throws -> [JournalEntryDTO] {
+        let response = try await executeAuthorized {
+            try await JournalAPI.apiV1JournalGet(page: nil, limit: 50)
+        }
+        return try Self.decodeData(from: response, as: JournalListDTO.self).items
+    }
+
+    func medicationsToday() async throws -> [MedicationTodayDTO] {
+        let response = try await executeAuthorized {
+            try await MedicationsAPI.apiV1MedicationsTodayGet()
+        }
+        // Tolerate both a JSON array and an index-keyed object ({"0":{...}}).
+        if let array = try? Self.decodeData(from: response, as: [MedicationTodayDTO].self) {
+            return array
+        }
+        let keyed = try Self.decodeData(from: response, as: [String: MedicationTodayDTO].self)
         return keyed.sorted { (Int($0.key) ?? 0) < (Int($1.key) ?? 0) }.map(\.value)
     }
 

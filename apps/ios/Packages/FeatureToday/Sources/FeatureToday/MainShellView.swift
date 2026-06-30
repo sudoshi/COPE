@@ -10,15 +10,21 @@ public struct MainShellView: View {
 
     private let today: TodayModel
     private let profile: ProfileModel
+    private let medications: MedicationsModel
+    private let journal: JournalModel
     private let onCheckInSubmit: (CheckInResult) -> Void
 
     public init(
         today: TodayModel = .sample,
         profile: ProfileModel = .sample,
+        medications: MedicationsModel = .sample,
+        journal: JournalModel = .sample,
         onCheckInSubmit: @escaping (CheckInResult) -> Void = { _ in }
     ) {
         self.today = today
         self.profile = profile
+        self.medications = medications
+        self.journal = journal
         self.onCheckInSubmit = onCheckInSubmit
         var initial: Tab = .today
         #if DEBUG
@@ -28,6 +34,7 @@ public struct MainShellView: View {
         case "you": initial = .you
         default: break
         }
+        if ProcessInfo.processInfo.environment["COPE_OPEN"] == "journal" { initial = .you }
         #endif
         _tab = State(initialValue: initial)
     }
@@ -54,10 +61,10 @@ public struct MainShellView: View {
     @ViewBuilder
     private var content: some View {
         switch tab {
-        case .today: TodayDashboardView(model: today, onOpenCare: { tab = .care })
+        case .today: TodayDashboardView(model: today, medications: medications, onOpenCare: { tab = .care })
         case .insights: InsightsView()
         case .care: CareView()
-        case .you: ProfileView(model: profile)
+        case .you: ProfileView(model: profile, journal: journal)
         }
     }
 

@@ -7,9 +7,11 @@ public struct ProfileView: View {
     @State private var showOnboarding = false
     @State private var showJournal = false
     private let model: ProfileModel
+    private let journal: JournalModel
 
-    public init(model: ProfileModel = .sample) {
+    public init(model: ProfileModel = .sample, journal: JournalModel = .sample) {
         self.model = model
+        self.journal = journal
     }
 
     public var body: some View {
@@ -32,7 +34,8 @@ public struct ProfileView: View {
         }
         .background(CopeColor.canvas.ignoresSafeArea())
         .copeFullCover(isPresented: $showOnboarding) { OnboardingView() }
-        .copeFullCover(isPresented: $showJournal) { JournalView() }
+        .copeFullCover(isPresented: $showJournal) { JournalView(model: journal) }
+        .debugAutoOpen("journal") { showJournal = true }
     }
 
     private var header: some View {

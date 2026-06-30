@@ -12,11 +12,13 @@ public struct TodayDashboardView: View {
     @State private var showPreVisit = false
 
     private let model: TodayModel
+    private let medications: MedicationsModel
     /// Switches the shell to the Care tab (the message row).
     private let onOpenCare: () -> Void
 
-    public init(model: TodayModel = .sample, onOpenCare: @escaping () -> Void = {}) {
+    public init(model: TodayModel = .sample, medications: MedicationsModel = .sample, onOpenCare: @escaping () -> Void = {}) {
         self.model = model
+        self.medications = medications
         self.onOpenCare = onOpenCare
     }
 
@@ -38,9 +40,10 @@ public struct TodayDashboardView: View {
         .background(CopeColor.canvas.ignoresSafeArea())
         .copeFullCover(isPresented: $showCheckIn) { CheckInView() }
         .copeFullCover(isPresented: $showSafety) { SafetyPlanView() }
-        .copeFullCover(isPresented: $showMeds) { MedicationsView() }
+        .copeFullCover(isPresented: $showMeds) { MedicationsView(model: medications) }
         .copeFullCover(isPresented: $showAssessment) { AssessmentView() }
         .copeFullCover(isPresented: $showPreVisit) { PreVisitView() }
+        .debugAutoOpen("meds") { showMeds = true }
     }
 
     // MARK: Header
