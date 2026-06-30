@@ -4,6 +4,9 @@ import DesignSystem
 /// You / Profile & privacy (build bible §6.11). Demo content for now; consent +
 /// notification controls will move here from the legacy CareView.
 public struct ProfileView: View {
+    @State private var showOnboarding = false
+    @State private var showJournal = false
+
     public init() {}
 
     public var body: some View {
@@ -12,7 +15,7 @@ public struct ProfileView: View {
                 header
                 privacyCard
                 settingsList
-                Button("Replay onboarding") {}
+                Button("Replay onboarding") { showOnboarding = true }
                     .buttonStyle(.copeSecondary)
                 Text("COPE v1.1 · 988 Suicide & Crisis Lifeline built in")
                     .font(CopeFont.figtree(11.5))
@@ -25,6 +28,8 @@ public struct ProfileView: View {
             .padding(.bottom, 40)
         }
         .background(CopeColor.canvas.ignoresSafeArea())
+        .copeFullCover(isPresented: $showOnboarding) { OnboardingView() }
+        .copeFullCover(isPresented: $showJournal) { JournalView() }
     }
 
     private var header: some View {
@@ -66,7 +71,9 @@ public struct ProfileView: View {
 
     private var settingsList: some View {
         VStack(spacing: 0) {
-            row("bell.fill", "Notifications & reminders", first: true)
+            SettingsRow(icon: "book.closed.fill", title: "My journal") { showJournal = true }
+            divider
+            row("bell.fill", "Notifications & reminders")
             divider
             SettingsRow(icon: "faceid", title: "Face ID & app lock", value: "On", showsChevron: false) {}
             divider

@@ -20,6 +20,11 @@ struct RootView: View {
         switch ProcessInfo.processInfo.environment["COPE_PREVIEW_SCREEN"] {
         case "checkin": CheckInView()
         case "safety": SafetyPlanView()
+        case "assessment": AssessmentView()
+        case "meds": MedicationsView()
+        case "journal": JournalView()
+        case "previsit": PreVisitView()
+        case "onboarding": OnboardingView()
         default: defaultContent
         }
         #else

@@ -43,7 +43,7 @@ public struct MainShellView: View {
     @ViewBuilder
     private var content: some View {
         switch tab {
-        case .today: TodayDashboardView()
+        case .today: TodayDashboardView(onOpenCare: { tab = .care })
         case .insights: InsightsView()
         case .care: CareView()
         case .you: ProfileView()

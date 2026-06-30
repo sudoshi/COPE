@@ -8,8 +8,16 @@ import DesignSystem
 public struct TodayDashboardView: View {
     @State private var showCheckIn = false
     @State private var showSafety = false
+    @State private var showMeds = false
+    @State private var showAssessment = false
+    @State private var showPreVisit = false
 
-    public init() {}
+    /// Switches the shell to the Care tab (the message row).
+    private let onOpenCare: () -> Void
+
+    public init(onOpenCare: @escaping () -> Void = {}) {
+        self.onOpenCare = onOpenCare
+    }
 
     public var body: some View {
         ScrollView {
@@ -27,12 +35,11 @@ public struct TodayDashboardView: View {
             .padding(.bottom, 40)
         }
         .background(CopeColor.canvas.ignoresSafeArea())
-        .copeFullCover(isPresented: $showCheckIn) {
-            CheckInView()
-        }
-        .copeFullCover(isPresented: $showSafety) {
-            SafetyPlanView()
-        }
+        .copeFullCover(isPresented: $showCheckIn) { CheckInView() }
+        .copeFullCover(isPresented: $showSafety) { SafetyPlanView() }
+        .copeFullCover(isPresented: $showMeds) { MedicationsView() }
+        .copeFullCover(isPresented: $showAssessment) { AssessmentView() }
+        .copeFullCover(isPresented: $showPreVisit) { PreVisitView() }
     }
 
     // MARK: Header
@@ -160,25 +167,25 @@ public struct TodayDashboardView: View {
                 title: "Morning medications",
                 subtitle: "Lamotrigine · Sertraline · 1 of 3 taken",
                 trailing: .badge("2 due")
-            ) {}
+            ) { showMeds = true }
             TodayRow(
                 icon: "checkmark.seal.fill", iconTint: .clay,
                 title: "Weekly PHQ-9 check",
                 subtitle: "From Dr. Alvarez · 5 minutes · due today",
                 trailing: .chevron
-            ) {}
+            ) { showAssessment = true }
             TodayRow(
                 icon: "bubble.left.and.bubble.right.fill", iconTint: .teal,
                 title: "Dr. Alvarez replied",
                 subtitle: "“So glad the new dose is settling in…”",
                 trailing: .chevron, showsUnread: true
-            ) {}
+            ) { onOpenCare() }
             TodayRow(
                 icon: "calendar", iconTint: .clay,
                 title: "Visit Thursday — let's prepare",
                 subtitle: "Pick what to talk about with Dr. Alvarez",
                 trailing: .chevron
-            ) {}
+            ) { showPreVisit = true }
             SafetyButton { showSafety = true }
                 .padding(.top, 6)
         }
