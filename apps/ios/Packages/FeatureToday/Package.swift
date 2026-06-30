@@ -16,7 +16,11 @@ let package = Package(
     targets: [
         .target(
             name: "FeatureToday",
-            dependencies: ["DesignSystem"]
+            dependencies: ["DesignSystem"],
+            resources: [
+                // Soothing full-screen welcome backgrounds (CC0/Unsplash via Lorem Picsum).
+                .copy("Resources/Backgrounds")
+            ]
         )
     ]
 )

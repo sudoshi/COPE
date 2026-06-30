@@ -44,7 +44,10 @@ struct RootView: View {
                     MainShellView().transition(.opacity)
                 } else {
                     WelcomeView(
+                        mode: .returning,
+                        userName: "Maya",
                         onGetStarted: { enterApp() },
+                        onUnlock: { enterApp() },
                         onSignIn: { enterApp() }
                     )
                     .transition(.opacity)

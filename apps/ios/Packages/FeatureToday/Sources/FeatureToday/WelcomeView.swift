@@ -1,80 +1,123 @@
 import SwiftUI
 import DesignSystem
+#if canImport(LocalAuthentication)
+import LocalAuthentication
+#endif
 
 /// The re-imagined start / sign-in screen — a calm front door. A slowly
 /// breathing brand orb (inhale/exhale with outward ripples) over drifting
 /// ambient color, a time-aware greeting, and a gentle translateY entrance.
-/// Designed to soothe and invite, and to make returning feel effortless.
+///
+/// Two modes: `.firstRun` invites a new visitor; `.returning` greets a known
+/// patient by name and offers a one-tap Face ID unlock — making coming back
+/// feel effortless (the core stickiness lever).
 public struct WelcomeView: View {
+    public enum Mode {
+        case firstRun, returning
+    }
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var breathe = false
-    @State private var drift = false
     @State private var appeared = false
 
+    private let mode: Mode
+    private let userName: String?
     private let onGetStarted: () -> Void
+    private let onUnlock: () -> Void
     private let onSignIn: () -> Void
 
-    public init(onGetStarted: @escaping () -> Void = {}, onSignIn: @escaping () -> Void = {}) {
+    public init(
+        mode: Mode = .firstRun,
+        userName: String? = nil,
+        onGetStarted: @escaping () -> Void = {},
+        onUnlock: @escaping () -> Void = {},
+        onSignIn: @escaping () -> Void = {}
+    ) {
+        self.mode = mode
+        self.userName = userName
         self.onGetStarted = onGetStarted
+        self.onUnlock = onUnlock
         self.onSignIn = onSignIn
     }
 
     public var body: some View {
         ZStack {
-            ambient
+            PhotoBackground(reduceMotion: reduceMotion)
             VStack(spacing: 0) {
                 Spacer(minLength: 24)
                 BreathingOrb(breathe: breathe, reduceMotion: reduceMotion)
                     .frame(width: 220, height: 220)
                     .padding(.bottom, 44)
-
-                VStack(spacing: 0) {
-                    Text(greeting).copeSectionLabel(CopeColor.teal)
-                    Text("Welcome to COPE")
-                        .font(CopeFont.display).foregroundStyle(CopeColor.ink)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, 7)
-                    Text("A calmer, more connected way to stay close to your care team — built around how you actually feel.")
-                        .font(CopeFont.body).foregroundStyle(CopeColor.ink2)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, 13).padding(.horizontal, 34)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .offset(y: appeared ? 0 : 14)
-
+                copyBlock.offset(y: appeared ? 0 : 14)
                 Spacer(minLength: 24)
-
-                VStack(spacing: 16) {
-                    Button("Get started") { onGetStarted() }
-                        .buttonStyle(.copePrimary)
-                    Button { onSignIn() } label: {
-                        Text("I already have an account")
-                            .font(CopeFont.bodyStrong)
-                            .foregroundStyle(CopeColor.tealInk)
-                    }
-                    .buttonStyle(.plain)
-                    trustLine.padding(.top, 6)
-                }
-                .padding(.horizontal, 28)
-                .offset(y: appeared ? 0 : 18)
-                .padding(.bottom, 14)
+                actions.offset(y: appeared ? 0 : 18).padding(.bottom, 14)
             }
         }
         .background(CopeColor.canvas.ignoresSafeArea())
         .onAppear(perform: start)
     }
 
-    private var ambient: some View {
-        ZStack {
-            Circle().fill(CopeColor.teal.opacity(0.12)).frame(width: 340, height: 340).blur(radius: 90)
-                .offset(x: drift ? -110 : -80, y: drift ? -280 : -320)
-            Circle().fill(CopeColor.clay.opacity(0.11)).frame(width: 320, height: 320).blur(radius: 90)
-                .offset(x: drift ? 130 : 100, y: drift ? 300 : 350)
-            Circle().fill(CopeColor.amber.opacity(0.06)).frame(width: 260, height: 260).blur(radius: 90)
-                .offset(x: drift ? -150 : -120, y: drift ? 220 : 180)
+    // MARK: Copy
+
+    @ViewBuilder
+    private var copyBlock: some View {
+        VStack(spacing: 0) {
+            Text(greeting).copeSectionLabel(CopeColor.teal)
+            Text(title)
+                .font(CopeFont.display).foregroundStyle(CopeColor.ink)
+                .multilineTextAlignment(.center)
+                .padding(.top, 7)
+            Text(subtitle)
+                .font(CopeFont.body).foregroundStyle(CopeColor.ink2)
+                .multilineTextAlignment(.center)
+                .padding(.top, 13).padding(.horizontal, 34)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .animation(reduceMotion ? nil : .easeInOut(duration: 13).repeatForever(autoreverses: true), value: drift)
-        .ignoresSafeArea()
+    }
+
+    private var title: String {
+        switch mode {
+        case .firstRun: return "Welcome to COPE"
+        case .returning: return userName.map { "Welcome back, \($0)" } ?? "Welcome back"
+        }
+    }
+
+    private var subtitle: String {
+        switch mode {
+        case .firstRun:
+            return "A calmer, more connected way to stay close to your care team — built around how you actually feel."
+        case .returning:
+            return "Your care team is right here. Let's pick up where you left off."
+        }
+    }
+
+    // MARK: Actions
+
+    @ViewBuilder
+    private var actions: some View {
+        VStack(spacing: 16) {
+            switch mode {
+            case .firstRun:
+                Button("Get started") { onGetStarted() }
+                    .buttonStyle(.copePrimary)
+                signInLink("I already have an account")
+            case .returning:
+                Button { biometricUnlock() } label: {
+                    Label("Unlock with Face ID", systemImage: "faceid")
+                }
+                .buttonStyle(.copePrimary)
+                signInLink(userName.map { "Not \($0)? Sign in" } ?? "Use a different account")
+            }
+            trustLine.padding(.top, 6)
+        }
+        .padding(.horizontal, 28)
+    }
+
+    private func signInLink(_ text: String) -> some View {
+        Button { onSignIn() } label: {
+            Text(text).font(CopeFont.bodyStrong).foregroundStyle(CopeColor.tealInk)
+        }
+        .buttonStyle(.plain)
     }
 
     private var trustLine: some View {
@@ -82,6 +125,8 @@ public struct WelcomeView: View {
             .font(CopeFont.figtree(11.5))
             .foregroundStyle(CopeColor.ink3)
     }
+
+    // MARK: Behavior
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -96,7 +141,26 @@ public struct WelcomeView: View {
         guard !reduceMotion else { appeared = true; return }
         withAnimation(.easeOut(duration: 0.7)) { appeared = true }
         breathe = true
-        drift = true
+    }
+
+    /// Attempts a biometric unlock. On device, gates entry on a successful
+    /// Face ID / Touch ID match; where biometrics aren't available (e.g. the
+    /// Simulator) it falls through so the demo still flows. Production binds
+    /// this to a Keychain/Secure-Enclave crypto op (build bible §8).
+    private func biometricUnlock() {
+        #if canImport(LocalAuthentication)
+        let context = LAContext()
+        var error: NSError?
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Unlock COPE") { success, _ in
+                if success {
+                    DispatchQueue.main.async { onUnlock() }
+                }
+            }
+            return
+        }
+        #endif
+        onUnlock()
     }
 }
 
@@ -108,7 +172,6 @@ private struct BreathingOrb: View {
 
     var body: some View {
         ZStack {
-            // Outward breath ripples (staggered).
             ForEach(0..<3, id: \.self) { index in
                 Circle()
                     .stroke(CopeColor.teal.opacity(0.18), lineWidth: 1.5)
@@ -122,13 +185,11 @@ private struct BreathingOrb: View {
                     )
             }
 
-            // Soft glow that swells with the breath.
             Circle().fill(CopeColor.teal).frame(width: 168, height: 168).blur(radius: 48)
                 .opacity(0.32)
                 .scaleEffect(breathe ? 1.1 : 0.9)
                 .animation(reduceMotion ? nil : .easeInOut(duration: 5.6).repeatForever(autoreverses: true), value: breathe)
 
-            // Core orb.
             Circle()
                 .fill(CopeGradient.primary)
                 .frame(width: 136, height: 136)
@@ -145,6 +206,5 @@ private struct BreathingOrb: View {
     }
 }
 
-#Preview {
-    WelcomeView()
-}
+#Preview("First run") { WelcomeView(mode: .firstRun) }
+#Preview("Returning") { WelcomeView(mode: .returning, userName: "Maya") }
