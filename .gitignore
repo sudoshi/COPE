@@ -73,3 +73,11 @@ secrets/
 .env.demo
 .env.production.bak*
 storage/
+
+# Swift Package Manager build artifacts (local SPM packages under apps/ios/Packages)
+.build/
+.swiftpm/
+
+# mobile-contracts generated Android build caches
+packages/mobile-contracts/generated/android/.gradle/
+packages/mobile-contracts/generated/android/bin/

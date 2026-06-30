@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{background:#e7e2d9;font-family:'Figtree',system-ui,sans-serif}
+  /* ===== THEME TOKENS ===== */
+  [data-theme]{
+    --canvas:#f1ece4; --surface:#ffffff; --surface-2:#faf6f0; --surface-3:#f3eee6;
+    --ink:#20251f; --ink-2:#5d625b; --ink-3:#9a9e96; --line:rgba(32,37,31,.09); --line-2:rgba(32,37,31,.05);
+    --teal:#2f9e8f; --teal-deep:#1f6f64; --teal-soft:#e3f1ed; --teal-ink:#1c5f56;
+    --clay:#d68a68; --clay-soft:#f6e7df; --amber:#e3a93f;
+    --shadow:0 1px 2px rgba(32,37,31,.05), 0 12px 32px -18px rgba(32,37,31,.22);
+    --shadow-sm:0 1px 2px rgba(32,37,31,.06);
+    --bar:rgba(255,255,255,.82); --island:#0b0d0c;
+  }
+  [data-theme="dark"]{
+    --canvas:#101413; --surface:#1b211f; --surface-2:#212825; --surface-3:#283029;
+    --ink:#edf0ea; --ink-2:#a4aaa1; --ink-3:#6e746c; --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.05);
+    --teal:#54b9a8; --teal-deep:#7fd3c4; --teal-soft:rgba(84,185,168,.15); --teal-ink:#8fdccd;
+    --clay:#e09e7f; --clay-soft:rgba(224,158,127,.16); --amber:#e9b95a;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 16px 40px -20px rgba(0,0,0,.7);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+    --bar:rgba(27,33,31,.82); --island:#000;
+  }
+  @keyframes cope-rise{from{transform:translateY(9px)}to{transform:none}}
+  @keyframes cope-fade{from{transform:none}to{transform:none}}
+  @keyframes cope-pop{0%{transform:scale(.93)}100%{transform:scale(1)}}
+  @keyframes cope-pulse{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(1.12);opacity:.9}}
+  ::-webkit-scrollbar{width:0;height:0}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:34px;background:transparent;cursor:pointer;outline:none}
+  input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:6px;background:var(--trk,var(--surface-3))}
+  input[type=range]::-moz-range-track{height:10px;border-radius:6px;background:var(--trk,var(--surface-3))}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 6px rgba(0,0,0,.18),0 6px 14px -6px rgba(0,0,0,.3);margin-top:-9px;transition:transform .1s ease}
+  input[type=range]::-webkit-slider-thumb:active{transform:scale(1.12)}
+  input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="min-height:100vh;width:100%;background:radial-gradient(120% 80% at 50% -10%, var(--surface-3), var(--canvas) 60%);display:flex;flex-direction:column;align-items:center;gap:18px;padding:30px 16px 44px;font-family:'Figtree',system-ui,sans-serif">
+
+  <!-- ===== DEMO CONTROL BAR ===== -->
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;max-width:430px">
+    <div style="font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--ink);letter-spacing:.2px">COPE</div>
+    <div style="font-size:11px;color:var(--ink-3);font-weight:500;letter-spacing:.3px">iOS patient app · interactive prototype</div>
+    <div style="flex-basis:100%;height:0"></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center">
+      <button onClick="{{ jumpToday }}" style="{{ chipStyle }}">Today</button>
+      <button onClick="{{ jumpCheckin }}" style="{{ chipStyle }}">Check‑in</button>
+      <button onClick="{{ jumpInsights }}" style="{{ chipStyle }}">Insights</button>
+      <button onClick="{{ jumpMessages }}" style="{{ chipStyle }}">Messages</button>
+      <button onClick="{{ jumpSafety }}" style="{{ chipStyle }}">Safety</button>
+      <button onClick="{{ jumpMeds }}" style="{{ chipStyle }}">Meds</button>
+      <button onClick="{{ jumpAssess }}" style="{{ chipStyle }}">Assess</button>
+      <button onClick="{{ jumpJournal }}" style="{{ chipStyle }}">Journal</button>
+      <button onClick="{{ jumpProfile }}" style="{{ chipStyle }}">Profile</button>
+      <button onClick="{{ jumpOnboard }}" style="{{ chipStyle }}">Onboarding</button>
+      <button onClick="{{ jumpPrevisit }}" style="{{ chipStyle }}">Pre‑visit</button>
+      <button onClick="{{ toggleTheme }}" style="{{ chipStyleAccent }}">{{ themeLabel }}</button>
+    </div>
+  </div>
+
+  <!-- ===== DEVICE ===== -->
+  <div style="position:relative;width:399px;height:858px;border-radius:62px;padding:11px;background:linear-gradient(145deg,#3a3d3b,#191b1a 60%);box-shadow:0 2px 6px rgba(0,0,0,.35),0 50px 90px -50px rgba(0,0,0,.65),inset 0 0 0 2px rgba(255,255,255,.06)">
+    <div style="position:absolute;left:-3px;top:170px;width:3px;height:34px;border-radius:3px 0 0 3px;background:#26282700"></div>
+    <div style="position:relative;width:377px;height:836px;border-radius:52px;overflow:hidden;background:var(--canvas);isolation:isolate">
+
+      <!-- screen content -->
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:var(--canvas)">
+
+        <!-- STATUS BAR -->
+        <div style="position:relative;z-index:40;height:54px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 8px;background:{{ statusBg }}">
+          <div style="font-size:15px;font-weight:600;color:var(--ink);letter-spacing:.3px;font-variant-numeric:tabular-nums">9:41</div>
+          <div style="display:flex;align-items:center;gap:7px;color:var(--ink)">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4.5" width="3" height="7.5" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity=".35"/></svg>
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.6c2 0 3.9.75 5.3 2.05.2.2.5.19.69-.01l.86-.94a.5.5 0 0 0-.02-.71A11 11 0 0 0 8.5.5 11 11 0 0 0 .68 2.99a.5.5 0 0 0-.02.71l.86.94c.19.2.49.21.69.01A7.7 7.7 0 0 1 8.5 2.6Z"/><path d="M8.5 6c1 0 1.93.37 2.64 1 .21.18.52.16.71-.04l.85-.9a.5.5 0 0 0-.03-.73A6 6 0 0 0 8.5 4a6 6 0 0 0-4.17 1.66.5.5 0 0 0-.03.72l.85.9c.19.2.5.22.71.05A4 4 0 0 1 8.5 6Z"/><circle cx="8.5" cy="9.6" r="1.8"/></svg>
+            <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3.2" stroke="currentColor" stroke-opacity=".4" stroke-width="1.1"/><rect x="2.6" y="2.6" width="16" height="7.8" rx="1.8" fill="currentColor"/><rect x="23.4" y="4.2" width="1.6" height="4.6" rx=".8" fill="currentColor" fill-opacity=".5"/></svg>
+          </div>
+          <!-- dynamic island -->
+          <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:118px;height:34px;border-radius:20px;background:var(--island);z-index:50"></div>
+        </div>
+
+        <!-- ROUTED BODY -->
+        <div style="position:relative;flex:1;min-height:0;display:flex;flex-direction:column">
+
+          <!-- ====================== TODAY ====================== -->
+          <sc-if value="{{ showTodayTab }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;min-height:0;overflow-y:auto">
+
+            <sc-if value="{{ tabToday }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:6px 20px 120px">
+              <!-- greeting -->
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;margin:10px 0 18px">
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--teal);letter-spacing:.4px;text-transform:uppercase">Tuesday · Good morning</div>
+                  <div style="font-family:'Fraunces',serif;font-size:30px;font-weight:600;color:var(--ink);line-height:1.1;margin-top:5px">Hi, Maya</div>
+                </div>
+                <button onClick="{{ jumpProfile }}" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--clay-soft);color:var(--clay);font-family:'Fraunces',serif;font-weight:600;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer">M</button>
+              </div>
+
+              <!-- HERO: check-in card -->
+              <button onClick="{{ openCheckin }}" style="width:100%;text-align:left;border:none;cursor:pointer;border-radius:26px;padding:22px;background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 18px 36px -20px var(--teal);position:relative;overflow:hidden;animation:cope-rise .4s ease both">
+                <div style="position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.10)"></div>
+                <div style="position:absolute;right:30px;bottom:-50px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.07)"></div>
+                <div style="position:relative">
+                  <div style="font-size:12.5px;font-weight:600;letter-spacing:.5px;opacity:.9;text-transform:uppercase">Morning check‑in</div>
+                  <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin:7px 0 3px;line-height:1.2">How are you feeling today?</div>
+                  <div style="font-size:13.5px;opacity:.9;font-weight:400;max-width:240px;line-height:1.45">A gentle 2‑minute reflection. Just where you are — no right answers.</div>
+                  <div style="display:inline-flex;align-items:center;gap:8px;margin-top:16px;background:rgba(255,255,255,.18);padding:9px 16px;border-radius:14px;font-size:13.5px;font-weight:600">Begin <span style="font-size:15px">→</span></div>
+                </div>
+              </button>
+
+              <!-- streak / gentle -->
+              <div style="display:flex;gap:10px;margin-top:14px">
+                <div style="flex:1;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:13px 15px;box-shadow:var(--shadow-sm)">
+                  <div style="font-size:12px;color:var(--ink-2);font-weight:500">Gentle streak</div>
+                  <div style="display:flex;align-items:baseline;gap:5px;margin-top:3px"><span style="font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--ink)">11</span><span style="font-size:12px;color:var(--ink-3)">days · 1 freeze left</span></div>
+                </div>
+                <div style="flex:1;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:13px 15px;box-shadow:var(--shadow-sm)">
+                  <div style="font-size:12px;color:var(--ink-2);font-weight:500">Mood, 7‑day</div>
+                  <div style="display:flex;align-items:flex-end;gap:3px;height:26px;margin-top:6px">
+                    <div style="flex:1;height:40%;background:var(--clay);border-radius:3px;opacity:.85"></div>
+                    <div style="flex:1;height:55%;background:var(--amber);border-radius:3px;opacity:.85"></div>
+                    <div style="flex:1;height:45%;background:var(--amber);border-radius:3px;opacity:.85"></div>
+                    <div style="flex:1;height:70%;background:var(--teal);border-radius:3px;opacity:.85"></div>
+                    <div style="flex:1;height:60%;background:var(--teal);border-radius:3px;opacity:.85"></div>
+                    <div style="flex:1;height:80%;background:var(--teal);border-radius:3px;opacity:.85"></div>
+                    <div style="flex:1;height:72%;background:var(--teal);border-radius:3px;opacity:.85"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Today list -->
+              <div style="font-size:13px;font-weight:600;color:var(--ink-2);letter-spacing:.3px;margin:24px 4px 11px;text-transform:uppercase">Today</div>
+
+              <!-- medication -->
+              <button onClick="{{ jumpMeds }}" style="width:100%;text-align:left;cursor:pointer;display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:10px;box-shadow:var(--shadow-sm)">
+                <div style="width:42px;height:42px;border-radius:13px;background:var(--teal-soft);display:flex;align-items:center;justify-content:center;flex:none;color:var(--teal-ink)">
+                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m10.5 20.5-7-7a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+                </div>
+                <div style="flex:1">
+                  <div style="font-size:15px;font-weight:600;color:var(--ink)">Morning medications</div>
+                  <div style="font-size:12.5px;color:var(--ink-2);margin-top:2px">Lamotrigine · Sertraline · 1 of 3 taken</div>
+                </div>
+                <div style="font-size:12px;font-weight:600;color:var(--clay);background:var(--clay-soft);padding:5px 10px;border-radius:10px">2 due</div>
+              </button>
+
+              <!-- assessment due -->
+              <button onClick="{{ jumpAssess }}" style="width:100%;text-align:left;cursor:pointer;display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:10px;box-shadow:var(--shadow-sm)">
+                <div style="width:42px;height:42px;border-radius:13px;background:var(--clay-soft);display:flex;align-items:center;justify-content:center;flex:none;color:var(--clay)">
+                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </div>
+                <div style="flex:1">
+                  <div style="font-size:15px;font-weight:600;color:var(--ink)">Weekly PHQ‑9 check</div>
+                  <div style="font-size:12.5px;color:var(--ink-2);margin-top:2px">From Dr. Alvarez · 5 minutes · due today</div>
+                </div>
+                <div style="color:var(--ink-3)">→</div>
+              </button>
+
+              <!-- care team message -->
+              <button onClick="{{ jumpMessages }}" style="width:100%;text-align:left;cursor:pointer;display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:var(--shadow-sm)">
+                <div style="width:42px;height:42px;border-radius:13px;background:var(--teal-soft);display:flex;align-items:center;justify-content:center;flex:none;color:var(--teal-ink);position:relative">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span style="position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:var(--clay);border:2px solid var(--surface)"></span>
+                </div>
+                <div style="flex:1">
+                  <div style="font-size:15px;font-weight:600;color:var(--ink)">Dr. Alvarez replied</div>
+                  <div style="font-size:12.5px;color:var(--ink-2);margin-top:2px">“So glad the new dose is settling in…”</div>
+                </div>
+                <div style="color:var(--ink-3)">→</div>
+              </button>
+
+              <!-- pre-visit prep -->
+              <button onClick="{{ jumpPrevisit }}" style="width:100%;text-align:left;cursor:pointer;display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;margin-top:10px;box-shadow:var(--shadow-sm)">
+                <div style="width:42px;height:42px;border-radius:13px;background:var(--clay-soft);color:var(--clay);display:flex;align-items:center;justify-content:center;flex:none"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 15h2M14 15h2"/></svg></div>
+                <div style="flex:1"><div style="font-size:15px;font-weight:600;color:var(--ink)">Visit Thursday — let's prepare</div><div style="font-size:12.5px;color:var(--ink-2);margin-top:2px">Pick what to talk about with Dr. Alvarez</div></div>
+                <div style="color:var(--ink-3)">→</div>
+              </button>
+
+              <!-- safety always available -->
+              <button onClick="{{ jumpSafety }}" style="width:100%;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px;background:transparent;border:1px dashed var(--line);border-radius:16px;padding:13px 15px;margin-top:16px">
+                <div style="width:34px;height:34px;border-radius:11px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;flex:none;color:var(--ink-2)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
+                </div>
+                <div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--ink)">My safety plan</div><div style="font-size:12px;color:var(--ink-2)">Always one tap away · 988 lifeline inside</div></div>
+                <div style="color:var(--ink-3)">→</div>
+              </button>
+            </div>
+            </sc-if>
+
+            <!-- ===== INSIGHTS TAB ===== -->
+            <sc-if value="{{ tabInsights }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:8px 20px 120px">
+              <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:600;color:var(--ink);margin:8px 0 3px">Insights</div>
+              <div style="font-size:13.5px;color:var(--ink-2);margin-bottom:20px">Patterns from your check‑ins — yours alone to share.</div>
+
+              <!-- mood trend -->
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow-sm);margin-bottom:14px">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+                  <div style="font-size:14.5px;font-weight:600;color:var(--ink)">Mood</div>
+                  <div style="font-size:12px;color:var(--ink-3)">Last 14 days</div>
+                </div>
+                <svg viewBox="0 0 320 96" width="100%" height="96" preserveAspectRatio="none" style="overflow:visible">
+                  <defs><linearGradient id="moodFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--teal)" stop-opacity=".28"/><stop offset="1" stop-color="var(--teal)" stop-opacity="0"/></linearGradient></defs>
+                  <path d="M0,70 L24,66 L48,72 L72,58 L96,60 L120,48 L144,52 L168,40 L192,44 L216,30 L240,34 L264,26 L288,30 L320,20 L320,96 L0,96 Z" fill="url(#moodFill)"/>
+                  <path d="M0,70 L24,66 L48,72 L72,58 L96,60 L120,48 L144,52 L168,40 L192,44 L216,30 L240,34 L264,26 L288,30 L320,20" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="320" cy="20" r="4.5" fill="var(--teal)" stroke="var(--surface)" stroke-width="2"/>
+                </svg>
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-3);margin-top:8px"><span>Jun 8</span><span>Today</span></div>
+              </div>
+
+              <!-- correlation highlight -->
+              <div style="background:linear-gradient(150deg,var(--teal-soft),var(--surface));border:1px solid var(--teal);border-radius:22px;padding:18px;margin-bottom:14px">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <div style="width:30px;height:30px;border-radius:9px;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg></div>
+                  <div style="font-size:12px;font-weight:600;color:var(--teal-ink);letter-spacing:.3px;text-transform:uppercase">A pattern worth noticing</div>
+                </div>
+                <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink);line-height:1.35">On days you moved your body, your mood the next morning was <span style="color:var(--teal)">+1.8 higher</span> on average.</div>
+              </div>
+
+              <!-- two stat cards -->
+              <div style="display:flex;gap:10px;margin-bottom:14px">
+                <div style="flex:1;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow-sm)">
+                  <div style="font-size:12.5px;color:var(--ink-2);font-weight:500;margin-bottom:8px">Sleep, avg</div>
+                  <div style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--ink)">6.8<span style="font-size:14px;color:var(--ink-3)">h</span></div>
+                  <div style="display:flex;align-items:flex-end;gap:3px;height:24px;margin-top:8px">
+                    <div style="flex:1;height:60%;background:var(--teal);opacity:.45;border-radius:2px"></div><div style="flex:1;height:80%;background:var(--teal);opacity:.55;border-radius:2px"></div><div style="flex:1;height:50%;background:var(--teal);opacity:.45;border-radius:2px"></div><div style="flex:1;height:90%;background:var(--teal);opacity:.7;border-radius:2px"></div><div style="flex:1;height:70%;background:var(--teal);opacity:.6;border-radius:2px"></div><div style="flex:1;height:85%;background:var(--teal);opacity:.7;border-radius:2px"></div>
+                  </div>
+                </div>
+                <div style="flex:1;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow-sm)">
+                  <div style="font-size:12.5px;color:var(--ink-2);font-weight:500;margin-bottom:8px">PHQ‑9</div>
+                  <div style="display:flex;align-items:baseline;gap:6px"><span style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--ink)">9</span><span style="font-size:12px;font-weight:600;color:var(--teal)">↓ from 14</span></div>
+                  <div style="font-size:11.5px;color:var(--ink-3);margin-top:8px;line-height:1.4">Moving from moderate toward mild</div>
+                </div>
+              </div>
+
+              <!-- AI insight -->
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow-sm)">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                  <div style="width:30px;height:30px;border-radius:9px;background:var(--clay-soft);color:var(--clay);display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0-6 6c0 2 .8 3.3 1.8 4.4.7.8 1.2 1.4 1.2 2.6h6c0-1.2.5-1.8 1.2-2.6C18.2 12.3 19 11 19 9a6 6 0 0 0-6-6Z"/><path d="M9 21h6M10 18h4"/></svg></div>
+                  <div style="font-size:14.5px;font-weight:600;color:var(--ink)">Weekly reflection</div>
+                </div>
+                <div style="font-size:13.5px;color:var(--ink-2);line-height:1.55">Your sleep steadied this week and your mornings trended brighter. Anxiety still rises midweek — worth a word with Dr. Alvarez.</div>
+                <div style="font-size:11px;color:var(--ink-3);margin-top:12px;display:flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Generated privately, with your consent · not a diagnosis</div>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- ===== CARE / MESSAGES TAB ===== -->
+            <sc-if value="{{ tabMessages }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;height:100%">
+              <div style="flex:none;padding:8px 20px 14px;border-bottom:1px solid var(--line-2)">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <div style="display:flex">
+                    <div style="width:38px;height:38px;border-radius:50%;background:var(--teal-soft);color:var(--teal-ink);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:15px;border:2px solid var(--canvas)">A</div>
+                    <div style="width:38px;height:38px;border-radius:50%;background:var(--clay-soft);color:var(--clay);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:15px;border:2px solid var(--canvas);margin-left:-12px">S</div>
+                  </div>
+                  <div style="flex:1">
+                    <div style="font-size:16px;font-weight:600;color:var(--ink)">Your care team</div>
+                    <div style="font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span>Usually replies within 1 business day</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="flex:1;min-height:0;overflow-y:auto;padding:18px 20px 16px;display:flex;flex-direction:column;gap:14px">
+                <div style="text-align:center;font-size:11px;color:var(--ink-3);font-weight:500">TUESDAY</div>
+
+                <!-- escalation trust state -->
+                <div style="background:var(--teal-soft);border:1px solid var(--teal);border-radius:18px;padding:14px 16px">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--teal-ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 11 2 2 4-4"/></svg><span style="font-size:12px;font-weight:600;color:var(--teal-ink);letter-spacing:.2px;text-transform:uppercase">Your team is looking out for you</span></div>
+                  <div style="font-size:13px;color:var(--ink-2);line-height:1.5">After this morning's check‑in, Sam was notified and will reach out today. You don't need to do anything.</div>
+                </div>
+
+                <!-- clinician bubble -->
+                <div style="max-width:80%;align-self:flex-start">
+                  <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px 18px 18px 6px;padding:13px 15px;box-shadow:var(--shadow-sm)"><div style="font-size:14px;color:var(--ink);line-height:1.5">So glad the new dose is settling in. How have your mornings felt since we adjusted it?</div></div>
+                  <div style="font-size:11px;color:var(--ink-3);margin:5px 0 0 6px">Dr. Alvarez · 9:02</div>
+                </div>
+
+                <!-- structured prompt -->
+                <div style="align-self:flex-start;max-width:88%;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:var(--shadow-sm)">
+                  <div style="font-size:11px;font-weight:600;color:var(--clay);letter-spacing:.3px;text-transform:uppercase;margin-bottom:8px">Quick check‑in</div>
+                  <div style="font-size:14px;color:var(--ink);font-weight:600;margin-bottom:12px">How are mornings feeling on the new dose?</div>
+                  <div style="display:flex;gap:7px">
+                    <div style="flex:1;text-align:center;background:var(--teal);color:#fff;border-radius:11px;padding:9px;font-size:12.5px;font-weight:600">Better</div>
+                    <div style="flex:1;text-align:center;background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line);border-radius:11px;padding:9px;font-size:12.5px;font-weight:600">Same</div>
+                    <div style="flex:1;text-align:center;background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line);border-radius:11px;padding:9px;font-size:12.5px;font-weight:600">Worse</div>
+                  </div>
+                </div>
+
+                <!-- patient bubble -->
+                <div style="max-width:80%;align-self:flex-end">
+                  <div style="background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff;border-radius:18px 18px 6px 18px;padding:13px 15px"><div style="font-size:14px;line-height:1.5">Better, honestly. Waking up feels less heavy. Still a rough patch around Wednesdays.</div></div>
+                  <div style="font-size:11px;color:var(--ink-3);margin:5px 6px 0 0;text-align:right">You · 9:14 · Read</div>
+                </div>
+              </div>
+
+              <!-- composer -->
+              <div style="flex:none;padding:10px 18px calc(env(safe-area-inset-bottom,0px) + 14px);border-top:1px solid var(--line-2);background:var(--bar);backdrop-filter:blur(20px)">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:11px 16px;font-size:13.5px;color:var(--ink-3)">Message your care team…</div>
+                  <button style="width:40px;height:40px;border-radius:50%;border:none;background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button>
+                </div>
+                <button onClick="{{ jumpSafety }}" style="width:100%;background:none;border:none;cursor:pointer;font-size:11.5px;color:var(--ink-3);margin-top:8px;text-align:center">Not for emergencies — in a crisis, <span style="color:var(--clay);font-weight:600">tap for 988 & your safety plan</span></button>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- ===== YOU / PROFILE TAB ===== -->
+            <sc-if value="{{ tabProfile }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:8px 20px 120px">
+              <div style="display:flex;align-items:center;gap:14px;margin:10px 0 22px">
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--clay-soft);color:var(--clay);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:26px;flex:none">M</div>
+                <div><div style="font-family:'Fraunces',serif;font-size:21px;font-weight:600;color:var(--ink)">Maya Thompson</div><div style="font-size:12.5px;color:var(--ink-2);margin-top:2px">Bayview Behavioral Health</div></div>
+              </div>
+
+              <!-- privacy featured -->
+              <div style="background:linear-gradient(150deg,var(--teal-soft),var(--surface));border:1px solid var(--teal);border-radius:22px;padding:18px;margin-bottom:18px">
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal-ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--ink)">Your privacy, in plain terms</div></div>
+                <div style="font-size:13px;color:var(--ink-2);line-height:1.5;margin-bottom:12px">Your journals and messages are encrypted. We never sell or advertise on your data — ever.</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--teal)"><span style="font-size:13.5px;font-weight:600;color:var(--teal-ink)">See who's viewed your data</span><span style="color:var(--teal-ink)">→</span></div>
+              </div>
+
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:14px">
+                <div style="{{ rowStyle }}"><span style="{{ rowIcon }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M21 19H3l1.6-2A8 8 0 0 0 6 12V9a6 6 0 0 1 12 0v3a8 8 0 0 0 1.4 5Z"/></svg></span><span style="flex:1;font-size:14.5px;font-weight:500;color:var(--ink)">Notifications & reminders</span><span style="color:var(--ink-3)">→</span></div>
+                <div style="{{ rowStyleB }}"><span style="{{ rowIcon }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6Z"/></svg></span><span style="flex:1;font-size:14.5px;font-weight:500;color:var(--ink)">Face ID & app lock</span><span style="font-size:12px;color:var(--teal);font-weight:600">On</span></div>
+                <div style="{{ rowStyleB }}"><span style="{{ rowIcon }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span style="flex:1;font-size:14.5px;font-weight:500;color:var(--ink)">Apple Health data</span><span style="color:var(--ink-3)">→</span></div>
+                <div style="{{ rowStyleB }}"><span style="{{ rowIcon }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/><path d="M3 21a8 8 0 0 1 13.5-5.8"/><path d="M19 16v6M16 19h6"/></svg></span><span style="flex:1;font-size:14.5px;font-weight:500;color:var(--ink)">Care team & sharing</span><span style="color:var(--ink-3)">→</span></div>
+                <div style="{{ rowStyleB }}"><span style="{{ rowIcon }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg></span><span style="flex:1;font-size:14.5px;font-weight:500;color:var(--ink)">Export my data</span><span style="color:var(--ink-3)">→</span></div>
+              </div>
+
+              <button onClick="{{ jumpOnboard }}" style="width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer;font-family:Figtree,sans-serif">Replay onboarding</button>
+              <div style="text-align:center;font-size:11.5px;color:var(--ink-3);margin-top:16px">COPE v1.1 · 988 Suicide & Crisis Lifeline built in</div>
+            </div>
+            </sc-if>
+
+          </div>
+
+          <!-- TAB BAR -->
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:30;padding:9px 16px calc(env(safe-area-inset-bottom,0px) + 22px);background:var(--bar);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--line-2);display:flex;align-items:flex-end;justify-content:space-between">
+            <button onClick="{{ setTabToday }}" style="{{ tabBtnToday }}">
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              <span style="font-size:10px;font-weight:600">Today</span>
+            </button>
+            <button onClick="{{ setTabInsights }}" style="{{ tabBtnInsights }}">
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>
+              <span style="font-size:10px;font-weight:600">Insights</span>
+            </button>
+            <div style="width:60px;flex:none;display:flex;justify-content:center">
+              <button onClick="{{ openCheckin }}" style="width:58px;height:58px;margin-top:-26px;border-radius:50%;border:4px solid var(--bar);background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 12px 24px -10px var(--teal)">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+            </div>
+            <button onClick="{{ setTabMessages }}" style="{{ tabBtnMessages }}">
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span style="font-size:10px;font-weight:600">Care</span>
+            </button>
+            <button onClick="{{ setTabProfile }}" style="{{ tabBtnProfile }}">
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
+              <span style="font-size:10px;font-weight:600">You</span>
+            </button>
+          </div>
+          </sc-if>
+
+          <!-- ====================== CHECK-IN (hero overlay) ====================== -->
+          <sc-if value="{{ ovCheckin }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:60;background:var(--canvas);display:flex;flex-direction:column;animation:cope-fade .25s ease both">
+            <!-- top -->
+            <div style="flex:none;padding:6px 20px 12px">
+              <div style="display:flex;align-items:center;gap:14px">
+                <button onClick="{{ checkinBack }}" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                <div style="flex:1;height:6px;border-radius:3px;background:var(--surface-3);overflow:hidden">
+                  <div style="height:100%;width:{{ checkinProgress }};background:linear-gradient(90deg,var(--teal),var(--teal-deep));border-radius:3px;transition:width .35s cubic-bezier(.4,0,.2,1)"></div>
+                </div>
+                <button onClick="{{ closeCheckin }}" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+              <div style="font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.4px;margin:14px 0 0 2px;text-transform:uppercase">{{ checkinStepLabel }}</div>
+            </div>
+
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:4px 24px 24px">
+              <!-- STEP 0 — MOOD -->
+              <sc-if value="{{ cs0 }}" hint-placeholder-val="{{ true }}">
+              <div style="animation:cope-rise .3s ease both">
+                <div style="font-family:'Fraunces',serif;font-size:27px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:6px">Where's your mood right now?</div>
+                <div style="font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:30px">Drag to the place that feels most true. There's no wrong answer.</div>
+                <div style="display:flex;justify-content:center;margin:8px 0 26px">
+                  <div style="width:150px;height:150px;border-radius:50%;background:{{ moodColor }};box-shadow:0 20px 50px -18px {{ moodColor }};display:flex;align-items:center;justify-content:center;transition:background .3s ease,box-shadow .3s ease;animation:cope-pop .4s ease both">
+                    <span style="font-family:'Fraunces',serif;font-size:46px;font-weight:600;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.18)">{{ moodValue }}</span>
+                  </div>
+                </div>
+                <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--ink);text-align:center;margin-bottom:4px">{{ moodWord }}</div>
+                <div style="font-size:13px;color:var(--ink-3);text-align:center;margin-bottom:22px">{{ moodValue }} out of 10</div>
+                <input type="range" min="1" max="10" step="1" value="{{ moodValue }}" onInput="{{ onMood }}" style="{{ moodSliderStyle }}">
+                <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-3);margin-top:10px;padding:0 2px"><span>Really low</span><span>Really good</span></div>
+              </div>
+              </sc-if>
+
+              <!-- STEP 1 — FEELING WORDS -->
+              <sc-if value="{{ cs1 }}" hint-placeholder-val="{{ false }}">
+              <div style="animation:cope-rise .3s ease both">
+                <div style="font-family:'Fraunces',serif;font-size:27px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:6px">When you sit with it, what's there?</div>
+                <div style="font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:26px">Pick any words that fit — even ones that seem to contradict. Naming it helps your team understand.</div>
+                <div style="display:flex;flex-wrap:wrap;gap:9px">
+                  <sc-for list="{{ feelingChips }}" as="item" hint-placeholder-count="8">
+                    <button onClick="{{ item.toggle }}" style="{{ item.style }}">{{ item.label }}</button>
+                  </sc-for>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:8px;margin-top:24px;font-size:12.5px;color:var(--ink-3);line-height:1.5"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2 2 0 0 0-2-2H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h5.5Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2 2 0 0 1 2-2h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-5.5Z"/></svg>Can't find the word? You can write it your own way at the end.</div>
+              </div>
+              </sc-if>
+
+              <!-- STEP 1 — SLEEP -->
+              <sc-if value="{{ cs2 }}" hint-placeholder-val="{{ false }}">
+              <div style="animation:cope-rise .3s ease both">
+                <div style="font-family:'Fraunces',serif;font-size:27px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:6px">How did you sleep?</div>
+                <div style="font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:28px">Sleep is one of the strongest signals for how the days ahead may go.</div>
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow-sm);margin-bottom:14px">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px"><span style="font-size:14px;font-weight:600;color:var(--ink)">Hours slept</span><span style="font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--teal)">{{ sleepH }}h</span></div>
+                  <input type="range" min="0" max="12" step="0.5" value="{{ sleepHRaw }}" onInput="{{ onSleepH }}" style="{{ tealSliderStyle }}">
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow-sm)">
+                  <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:14px">Sleep quality</div>
+                  <div style="display:flex;gap:8px">
+                    <button onClick="{{ onSleepQ1 }}" style="{{ sq1 }}">Restless</button>
+                    <button onClick="{{ onSleepQ2 }}" style="{{ sq2 }}">Okay</button>
+                    <button onClick="{{ onSleepQ3 }}" style="{{ sq3 }}">Restful</button>
+                  </div>
+                </div>
+              </div>
+              </sc-if>
+
+              <!-- STEP 2 — ENERGY & INTEREST -->
+              <sc-if value="{{ cs3 }}" hint-placeholder-val="{{ false }}">
+              <div style="animation:cope-rise .3s ease both">
+                <div style="font-family:'Fraunces',serif;font-size:27px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:6px">Energy & interest</div>
+                <div style="font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:26px">How much do things feel within reach today?</div>
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow-sm);margin-bottom:14px">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px"><span style="font-size:14px;font-weight:600;color:var(--ink)">Energy</span><span style="font-size:13px;color:var(--ink-2)">{{ energyWord }}</span></div>
+                  <input type="range" min="0" max="10" step="1" value="{{ energy }}" onInput="{{ onEnergy }}" style="{{ tealSliderStyle }}">
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow-sm)">
+                  <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px">Did things you usually enjoy still feel good?</div>
+                  <div style="font-size:12.5px;color:var(--ink-3);margin-bottom:14px">Anhedonia screen</div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <button onClick="{{ onAnh0 }}" style="{{ anh0 }}">Yes, mostly</button>
+                    <button onClick="{{ onAnh1 }}" style="{{ anh1 }}">A little less</button>
+                    <button onClick="{{ onAnh2 }}" style="{{ anh2 }}">Not really</button>
+                  </div>
+                </div>
+              </div>
+              </sc-if>
+
+              <!-- STEP 3 — ANXIETY -->
+              <sc-if value="{{ cs4 }}" hint-placeholder-val="{{ false }}">
+              <div style="animation:cope-rise .3s ease both">
+                <div style="font-family:'Fraunces',serif;font-size:27px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:6px">How anxious are you feeling?</div>
+                <div style="font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:28px">Including any worry, restlessness, or tension in your body.</div>
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--shadow-sm)">
+                  <div style="text-align:center;font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--ink);margin-bottom:20px">{{ anxietyWord }}</div>
+                  <input type="range" min="0" max="10" step="1" value="{{ anxiety }}" onInput="{{ onAnxiety }}" style="{{ claySliderStyle }}">
+                  <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-3);margin-top:10px"><span>Calm</span><span>Very anxious</span></div>
+                </div>
+              </div>
+              </sc-if>
+
+              <!-- STEP 5 — BODY MAP -->
+              <sc-if value="{{ cs5 }}" hint-placeholder-val="{{ false }}">
+              <div style="animation:cope-rise .3s ease both">
+                <div style="font-family:'Fraunces',serif;font-size:27px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:6px">Where do you feel it?</div>
+                <div style="font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:14px">Hard feelings often live in the body. Tap anywhere you notice tension, heaviness, or unease.</div>
+                <div style="position:relative;width:140px;height:272px;margin:8px auto 2px">
+                  <button onClick="{{ tbHead }}" style="{{ bpHead }}"></button>
+                  <button onClick="{{ tbChest }}" style="{{ bpChest }}"></button>
+                  <button onClick="{{ tbStomach }}" style="{{ bpStomach }}"></button>
+                  <button onClick="{{ tbArms }}" style="{{ bpArmL }}"></button>
+                  <button onClick="{{ tbArms }}" style="{{ bpArmR }}"></button>
+                  <button onClick="{{ tbLegs }}" style="{{ bpLegL }}"></button>
+                  <button onClick="{{ tbLegs }}" style="{{ bpLegR }}"></button>
+                </div>
+                <div style="text-align:center;font-size:14px;font-weight:600;color:var(--teal-ink);margin-top:8px">{{ bodySummary }}</div>
+                <div style="display:flex;justify-content:center;margin-top:16px"><button onClick="{{ tbAll }}" style="{{ allPill }}">It's all over</button></div>
+              </div>
+              </sc-if>
+
+              <!-- STEP 4 — MANIA POLE (adaptive) -->
+              <sc-if value="{{ cs6 }}" hint-placeholder-val="{{ false }}">
+              <div style="animation:cope-rise .3s ease both">
+                <div style="display:inline-flex;align-items:center;gap:7px;background:var(--clay-soft);color:var(--clay);font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:11px;margin-bottom:14px">Tailored to your care plan</div>
+                <div style="font-family:'Fraunces',serif;font-size:27px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:6px">Any racing or speeding up?</div>
+                <div style="font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:24px">Thoughts moving fast, less need for sleep, or feeling unusually energized.</div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <button onClick="{{ onMania0 }}" style="{{ mn0 }}"><span style="font-weight:600">Not at all</span><span style="font-size:12.5px;opacity:.8">Steady, like usual</span></button>
+                  <button onClick="{{ onMania1 }}" style="{{ mn1 }}"><span style="font-weight:600">A little</span><span style="font-size:12.5px;opacity:.8">Noticing some speed</span></button>
+                  <button onClick="{{ onMania2 }}" style="{{ mn2 }}"><span style="font-weight:600">Quite a bit</span><span style="font-size:12.5px;opacity:.8">Hard to slow down</span></button>
+                </div>
+              </div>
+              </sc-if>
+
+              <!-- STEP 5 — STRESS & LIFE -->
+              <sc-if value="{{ cs7 }}" hint-placeholder-val="{{ false }}">
+              <div style="animation:cope-rise .3s ease both">
+                <div style="font-family:'Fraunces',serif;font-size:27px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:6px">What's weighing on today?</div>
+                <div style="font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:24px">Tap anything present. This stays between you and your care team.</div>
+                <div style="display:flex;flex-wrap:wrap;gap:9px">
+                  <button onClick="{{ tgWork }}" style="{{ tgWorkS }}">Work / school</button>
+                  <button onClick="{{ tgRel }}" style="{{ tgRelS }}">Relationships</button>
+                  <button onClick="{{ tgSleep }}" style="{{ tgSleepS }}">Sleep</button>
+                  <button onClick="{{ tgMoney }}" style="{{ tgMoneyS }}">Money</button>
+                  <button onClick="{{ tgHealth }}" style="{{ tgHealthS }}">Health</button>
+                  <button onClick="{{ tgSubst }}" style="{{ tgSubstS }}">Substance use</button>
+                  <button onClick="{{ tgAlone }}" style="{{ tgAloneS }}">Feeling alone</button>
+                </div>
+              </div>
+              </sc-if>
+
+              <!-- STEP 6 — SAFETY (C-SSRS gentle) -->
+              <sc-if value="{{ cs8 }}" hint-placeholder-val="{{ false }}">
+              <div style="animation:cope-rise .3s ease both">
+                <div style="font-family:'Fraunces',serif;font-size:25px;font-weight:600;color:var(--ink);line-height:1.2;margin-bottom:6px">One gentle, important question</div>
+                <div style="font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:24px">Over the past day, have you had thoughts that you'd be better off not alive, or of hurting yourself?</div>
+                <div style="display:flex;flex-direction:column;gap:9px">
+                  <button onClick="{{ onSI0 }}" style="{{ si0 }}">Not at all</button>
+                  <button onClick="{{ onSI1 }}" style="{{ si1 }}">Fleeting, passing thoughts</button>
+                  <button onClick="{{ onSI2 }}" style="{{ si2 }}">Some of the time</button>
+                  <button onClick="{{ onSI3 }}" style="{{ si3 }}">A lot of the time</button>
+                </div>
+                <sc-if value="{{ siElevated }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:18px;background:var(--clay-soft);border:1px solid var(--clay);border-radius:20px;padding:18px;animation:cope-rise .3s ease both">
+                  <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--ink);margin-bottom:6px">Thank you for telling us.</div>
+                  <div style="font-size:13.5px;color:var(--ink-2);line-height:1.5;margin-bottom:14px">You're not alone in this. Your safety plan and people who can help are right here.</div>
+                  <button onClick="{{ jumpSafety }}" style="width:100%;background:var(--clay);color:#fff;border:none;border-radius:13px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Open my safety plan</button>
+                  <button style="width:100%;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:13px;padding:13px;font-size:14px;font-weight:600;cursor:pointer">Call or text 988 now</button>
+                </div>
+                </sc-if>
+              </div>
+              </sc-if>
+
+              <!-- STEP 7 — NOTE & SUBMIT -->
+              <sc-if value="{{ cs9 }}" hint-placeholder-val="{{ false }}">
+              <div style="animation:cope-rise .3s ease both">
+                <div style="font-family:'Fraunces',serif;font-size:27px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:6px">Anything you want to add?</div>
+                <div style="font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:20px">Optional. A sentence, a feeling, a moment from your day.</div>
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow-sm);margin-bottom:18px">
+                  <div style="font-size:14px;color:var(--ink-3);line-height:1.5;min-height:72px">Today felt a little lighter than yesterday…</div>
+                  <div style="display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:12px;border-top:1px solid var(--line-2)">
+                    <button style="display:flex;align-items:center;gap:6px;background:var(--teal-soft);color:var(--teal-ink);border:none;border-radius:11px;padding:8px 12px;font-size:12.5px;font-weight:600;cursor:pointer">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
+                      Speak instead
+                    </button>
+                  </div>
+                </div>
+                <!-- recap -->
+                <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:6px">
+                  <div style="font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.3px;text-transform:uppercase;margin-bottom:14px">Your check‑in</div>
+                  <div style="display:flex;flex-direction:column;gap:11px">
+                    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13.5px;color:var(--ink-2)">Mood</span><span style="display:flex;align-items:center;gap:8px"><span style="width:13px;height:13px;border-radius:50%;background:{{ moodColor }}"></span><span style="font-size:13.5px;font-weight:600;color:var(--ink)">{{ moodValue }} · {{ moodWord }}</span></span></div>
+                    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13.5px;color:var(--ink-2)">Sleep</span><span style="font-size:13.5px;font-weight:600;color:var(--ink)">{{ sleepH }}h</span></div>
+                    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13.5px;color:var(--ink-2)">Anxiety</span><span style="font-size:13.5px;font-weight:600;color:var(--ink)">{{ anxietyWord }}</span></div>
+                  </div>
+                </div>
+              </div>
+              </sc-if>
+            </div>
+
+            <!-- footer CTA -->
+            <div style="flex:none;padding:14px 24px calc(env(safe-area-inset-bottom,0px) + 20px);background:linear-gradient(0deg,var(--canvas) 70%,transparent)">
+              <button onClick="{{ checkinNext }}" style="width:100%;background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff;border:none;border-radius:17px;padding:16px;font-size:15.5px;font-weight:600;cursor:pointer;box-shadow:0 14px 28px -14px var(--teal)">{{ checkinCta }}</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ====================== PRE-VISIT AGENDA & SUMMARY ====================== -->
+          <sc-if value="{{ ovPrevisit }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:60;background:var(--canvas);display:flex;flex-direction:column;animation:cope-fade .25s ease both">
+            <div style="flex:none;display:flex;align-items:center;gap:12px;padding:6px 20px 12px">
+              <button onClick="{{ closeOverlay }}" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--ink)">Before your visit</div>
+            </div>
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:4px 20px 24px">
+              <div style="display:flex;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:var(--shadow-sm);margin-bottom:16px">
+                <div style="width:46px;height:46px;border-radius:13px;background:var(--clay-soft);color:var(--clay);display:flex;align-items:center;justify-content:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+                <div style="flex:1"><div style="font-size:15px;font-weight:600;color:var(--ink)">Dr. Alvarez</div><div style="font-size:12.5px;color:var(--ink-2)">Thursday, Jun 26 · 2:00 PM · Telehealth</div></div>
+              </div>
+              <div style="font-size:14px;color:var(--ink-2);line-height:1.55;margin-bottom:22px">A quiet summary of your two weeks. Choose what you want to make sure you talk about — it'll be ready before you meet, so you don't have to find the words in the moment.</div>
+
+              <div style="font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.3px;text-transform:uppercase;margin:0 4px 11px">Your last two weeks</div>
+              <div style="display:flex;gap:10px;margin-bottom:10px">
+                <div style="flex:1;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:var(--shadow-sm)"><div style="font-size:12.5px;color:var(--ink-2);font-weight:500;margin-bottom:6px">Mood</div><div style="display:flex;align-items:baseline;gap:6px"><span style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--ink)">4.8→6.4</span></div><div style="font-size:11.5px;font-weight:600;color:var(--teal);margin-top:5px">↑ trending up</div></div>
+                <div style="flex:1;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:var(--shadow-sm)"><div style="font-size:12.5px;color:var(--ink-2);font-weight:500;margin-bottom:6px">Sleep</div><div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--ink)">6.8<span style="font-size:13px;color:var(--ink-3)">h avg</span></div><div style="font-size:11.5px;font-weight:600;color:var(--ink-3);margin-top:5px">steadier than before</div></div>
+              </div>
+              <div style="display:flex;gap:10px;margin-bottom:24px">
+                <div style="flex:1;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:var(--shadow-sm)"><div style="font-size:12.5px;color:var(--ink-2);font-weight:500;margin-bottom:6px">PHQ‑9</div><div style="display:flex;align-items:baseline;gap:6px"><span style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--ink)">14→9</span></div><div style="font-size:11.5px;font-weight:600;color:var(--teal);margin-top:5px">↓ improving</div></div>
+                <div style="flex:1;background:linear-gradient(150deg,var(--clay-soft),var(--surface));border:1px solid var(--clay);border-radius:18px;padding:15px"><div style="font-size:11px;font-weight:600;color:var(--clay);letter-spacing:.2px;text-transform:uppercase;margin-bottom:5px">Worth flagging</div><div style="font-size:13px;font-weight:600;color:var(--ink);line-height:1.35">Anxiety still spikes midweek</div></div>
+              </div>
+
+              <div style="font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.3px;text-transform:uppercase;margin:0 4px 11px">What I want to talk about</div>
+              <sc-for list="{{ pvAgenda }}" as="item" hint-placeholder-count="3">
+                <button onClick="{{ item.toggle }}" style="{{ item.row }}">
+                  <span style="{{ item.box }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                  <span style="flex:1"><span style="display:block;font-size:14.5px;font-weight:600;color:var(--ink)">{{ item.label }}</span><span style="display:block;font-size:12.5px;color:var(--ink-2);margin-top:2px">{{ item.sub }}</span></span>
+                </button>
+              </sc-for>
+              <div style="display:flex;align-items:center;gap:10px;border:1px dashed var(--line);border-radius:16px;padding:14px 15px;color:var(--ink-3);margin-top:2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span style="font-size:13.5px;font-weight:500">Add something else…</span></div>
+            </div>
+            <div style="flex:none;padding:14px 20px calc(env(safe-area-inset-bottom,0px) + 18px);background:linear-gradient(0deg,var(--canvas) 70%,transparent)">
+              <button onClick="{{ jumpMessages }}" style="width:100%;background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff;border:none;border-radius:17px;padding:16px;font-size:15.5px;font-weight:600;cursor:pointer;box-shadow:0 14px 28px -14px var(--teal)">Share with Dr. Alvarez · {{ pvCount }} items</button>
+              <div style="text-align:center;font-size:11.5px;color:var(--ink-3);margin-top:10px">Only you and your care team can see this.</div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ====================== SAFETY PLAN ====================== -->
+          <sc-if value="{{ ovSafety }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:60;background:var(--canvas);display:flex;flex-direction:column;animation:cope-fade .25s ease both">
+            <div style="flex:none;display:flex;align-items:center;gap:12px;padding:6px 20px 12px">
+              <button onClick="{{ closeOverlay }}" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--ink)">My safety plan</div>
+            </div>
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:4px 20px 30px">
+              <!-- 988 -->
+              <div style="background:linear-gradient(150deg,var(--clay),#c06a4b);border-radius:22px;padding:18px;color:#fff;margin-bottom:8px;box-shadow:0 16px 32px -18px var(--clay)">
+                <div style="font-size:12px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;opacity:.92">If you're in crisis right now</div>
+                <div style="font-family:'Fraunces',serif;font-size:21px;font-weight:600;margin:5px 0 14px">You deserve support this moment.</div>
+                <div style="display:flex;gap:9px">
+                  <div style="flex:1;background:rgba(255,255,255,.95);color:#b3553a;border-radius:13px;padding:12px;text-align:center;font-size:14px;font-weight:700">Call 988</div>
+                  <div style="flex:1;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);border-radius:13px;padding:12px;text-align:center;font-size:14px;font-weight:600">Text 988</div>
+                </div>
+              </div>
+              <div style="text-align:center;font-size:11.5px;color:var(--ink-3);margin:10px 0 18px">Built with Dr. Alvarez · Stanley‑Brown safety plan</div>
+
+              <div style="{{ safSec }}"><div style="{{ safHd }}"><span style="{{ safNum }}">1</span>Signs a hard moment is coming</div><div style="font-size:13.5px;color:var(--ink-2);line-height:1.6">Racing thoughts late at night · Skipping meals · Pulling away from friends</div></div>
+              <div style="{{ safSec }}"><div style="{{ safHd }}"><span style="{{ safNum }}">2</span>Things that help me cope</div><div style="font-size:13.5px;color:var(--ink-2);line-height:1.6">Walk by the water · Cold shower · Box breathing · Playlist “anchor”</div></div>
+              <div style="{{ safSec }}"><div style="{{ safHd }}"><span style="{{ safNum }}">3</span>Reasons to keep going</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"><span style="{{ safPill }}">My sister Nora</span><span style="{{ safPill }}">Finishing my degree</span><span style="{{ safPill }}">Pico (my dog)</span></div></div>
+              <div style="{{ safSec }}"><div style="{{ safHd }}"><span style="{{ safNum }}">4</span>People I can reach out to</div>
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 0"><div style="width:38px;height:38px;border-radius:50%;background:var(--clay-soft);color:var(--clay);display:flex;align-items:center;justify-content:center;font-weight:600;font-family:Fraunces,serif">N</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--ink)">Nora (sister)</div><div style="font-size:12px;color:var(--ink-2)">Tap to call</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg></div>
+              </div>
+              <div style="{{ safSec }}"><div style="{{ safHd }}"><span style="{{ safNum }}">5</span>Making my space safer</div><div style="font-size:13.5px;color:var(--ink-2);line-height:1.6">Medications stored with Nora · Crisis numbers saved to favorites</div></div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ====================== MEDICATIONS ====================== -->
+          <sc-if value="{{ ovMeds }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:60;background:var(--canvas);display:flex;flex-direction:column;animation:cope-fade .25s ease both">
+            <div style="flex:none;display:flex;align-items:center;gap:12px;padding:6px 20px 12px">
+              <button onClick="{{ closeOverlay }}" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <div style="flex:1"><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--ink)">Medications</div></div>
+              <button style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--teal);display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+            </div>
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:4px 20px 30px">
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-sm)">
+                <div style="font-family:'Fraunces',serif;font-size:30px;font-weight:600;color:var(--teal)">{{ medsDoneCount }}/3</div>
+                <div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--ink)">Today's doses</div><div style="font-size:12.5px;color:var(--ink-2)">Keeping a steady rhythm helps your levels stay even.</div></div>
+              </div>
+
+              <div style="font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.3px;text-transform:uppercase;margin:0 4px 10px">Morning · 8:00 AM</div>
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:10px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)">
+                <div style="width:44px;height:44px;border-radius:13px;background:var(--teal-soft);color:var(--teal-ink);display:flex;align-items:center;justify-content:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m10.5 20.5-7-7a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg></div>
+                <div style="flex:1"><div style="font-size:15px;font-weight:600;color:var(--ink)">Lamotrigine</div><div style="font-size:12.5px;color:var(--ink-2)">200 mg · 1 tablet</div></div>
+                <button onClick="{{ toggleLam }}" style="{{ medLamS }}"><span style="{{ medLamKnob }}"></span></button>
+              </div>
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)">
+                <div style="width:44px;height:44px;border-radius:13px;background:var(--teal-soft);color:var(--teal-ink);display:flex;align-items:center;justify-content:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m10.5 20.5-7-7a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg></div>
+                <div style="flex:1"><div style="font-size:15px;font-weight:600;color:var(--ink)">Sertraline</div><div style="font-size:12.5px;color:var(--ink-2)">100 mg · 1 tablet</div></div>
+                <button onClick="{{ toggleSer }}" style="{{ medSerS }}"><span style="{{ medSerKnob }}"></span></button>
+              </div>
+
+              <div style="font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.3px;text-transform:uppercase;margin:0 4px 10px">Evening · 9:00 PM</div>
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)">
+                <div style="width:44px;height:44px;border-radius:13px;background:var(--clay-soft);color:var(--clay);display:flex;align-items:center;justify-content:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m10.5 20.5-7-7a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg></div>
+                <div style="flex:1"><div style="font-size:15px;font-weight:600;color:var(--ink)">Aripiprazole</div><div style="font-size:12.5px;color:var(--ink-2)">5 mg · 1 tablet</div></div>
+                <button onClick="{{ toggleAbi }}" style="{{ medAbiS }}"><span style="{{ medAbiKnob }}"></span></button>
+              </div>
+
+              <div style="background:var(--surface-2);border:1px dashed var(--line);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><div style="font-size:12.5px;color:var(--ink-2);line-height:1.5">Noticing a side effect? <span style="color:var(--teal);font-weight:600">Log it for your team →</span></div></div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ====================== ASSESSMENT (PHQ-9) ====================== -->
+          <sc-if value="{{ ovAssess }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:60;background:var(--canvas);display:flex;flex-direction:column;animation:cope-fade .25s ease both">
+            <div style="flex:none;display:flex;align-items:center;gap:12px;padding:6px 20px 12px">
+              <button onClick="{{ asBack }}" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <div style="flex:1"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink)">PHQ‑9</div></div>
+              <button onClick="{{ closeOverlay }}" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            </div>
+
+            <!-- intro -->
+            <sc-if value="{{ asIntro }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:10px 24px 24px;display:flex;flex-direction:column">
+              <div style="width:52px;height:52px;border-radius:16px;background:var(--clay-soft);color:var(--clay);display:flex;align-items:center;justify-content:center;margin-bottom:20px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+              <div style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--ink);line-height:1.2;margin-bottom:10px">A weekly check on your mood</div>
+              <div style="font-size:14.5px;color:var(--ink-2);line-height:1.55;margin-bottom:22px">Dr. Alvarez asked for this so your care can stay tuned to how you're really doing. Nine questions, about five minutes.</div>
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow-sm)">
+                <div style="font-size:13px;color:var(--ink-2);line-height:1.55"><span style="font-weight:600;color:var(--ink)">Over the last 2 weeks,</span> how often have you been bothered by each of the following?</div>
+              </div>
+              <div style="flex:1"></div>
+              <button onClick="{{ asStartAssess }}" style="width:100%;background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff;border:none;border-radius:17px;padding:16px;font-size:15.5px;font-weight:600;cursor:pointer;box-shadow:0 14px 28px -14px var(--teal)">Begin</button>
+            </div>
+            </sc-if>
+
+            <!-- in question -->
+            <sc-if value="{{ asInQ }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;min-height:0;display:flex;flex-direction:column">
+              <div style="flex:none;padding:0 24px 4px"><div style="height:6px;border-radius:3px;background:var(--surface-3);overflow:hidden"><div style="height:100%;width:{{ asProgress }};background:linear-gradient(90deg,var(--teal),var(--teal-deep));transition:width .35s ease"></div></div><div style="font-size:11.5px;color:var(--ink-3);margin-top:10px;font-weight:600;letter-spacing:.3px">QUESTION {{ asQNum }} OF 9</div></div>
+              <div style="flex:1;min-height:0;overflow-y:auto;padding:10px 24px 20px">
+                <div style="font-size:12.5px;color:var(--ink-3);margin-bottom:8px">Over the last 2 weeks…</div>
+                <div style="font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:28px">{{ asQuestion }}</div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <button onClick="{{ asPick0 }}" style="{{ asA0 }}">Not at all</button>
+                  <button onClick="{{ asPick1 }}" style="{{ asA1 }}">Several days</button>
+                  <button onClick="{{ asPick2 }}" style="{{ asA2 }}">More than half the days</button>
+                  <button onClick="{{ asPick3 }}" style="{{ asA3 }}">Nearly every day</button>
+                </div>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- done -->
+            <sc-if value="{{ asDone }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:14px 24px 24px;display:flex;flex-direction:column;align-items:center;text-align:center">
+              <div style="width:140px;height:140px;border-radius:50%;background:var(--teal-soft);border:2px solid var(--teal);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:16px 0 20px"><span style="font-family:'Fraunces',serif;font-size:46px;font-weight:600;color:var(--teal-ink);line-height:1">{{ asScore }}</span><span style="font-size:12px;color:var(--teal-ink);font-weight:600">of 27</span></div>
+              <div style="font-family:'Fraunces',serif;font-size:23px;font-weight:600;color:var(--ink);margin-bottom:6px">{{ asInterp }} symptoms</div>
+              <div style="font-size:14px;color:var(--ink-2);line-height:1.55;max-width:280px;margin-bottom:20px">Thank you for taking the time. Your score has been shared securely with Dr. Alvarez, who'll review it before your next visit.</div>
+              <div style="width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:10px;text-align:left;margin-bottom:auto"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10.01-3-3"/></svg><div style="font-size:12.5px;color:var(--ink-2);line-height:1.5">Compared to 14 two weeks ago — you're trending toward milder symptoms.</div></div>
+              <button onClick="{{ closeOverlay }}" style="width:100%;background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff;border:none;border-radius:17px;padding:16px;font-size:15.5px;font-weight:600;cursor:pointer;margin-top:18px">Done</button>
+            </div>
+            </sc-if>
+          </div>
+          </sc-if>
+
+          <!-- ====================== JOURNAL ====================== -->
+          <sc-if value="{{ ovJournal }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:60;background:var(--canvas);display:flex;flex-direction:column;animation:cope-fade .25s ease both">
+            <div style="flex:none;display:flex;align-items:center;gap:12px;padding:6px 20px 12px">
+              <button onClick="{{ closeOverlay }}" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <div style="flex:1"><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--ink)">Journal</div></div>
+            </div>
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:4px 20px 30px">
+              <!-- compose -->
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow-sm);margin-bottom:18px">
+                <div style="font-size:14px;color:var(--ink-3);margin-bottom:14px">What's on your mind today?</div>
+                <div style="display:flex;gap:9px">
+                  <button style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--teal-soft);color:var(--teal-ink);border:none;border-radius:13px;padding:11px;font-size:13px;font-weight:600;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>Write</button>
+                  <button style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--clay-soft);color:var(--clay);border:none;border-radius:13px;padding:11px;font-size:13px;font-weight:600;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>Speak</button>
+                </div>
+              </div>
+              <!-- prompt of the day -->
+              <div style="background:linear-gradient(150deg,var(--clay-soft),var(--surface));border:1px solid var(--clay);border-radius:18px;padding:15px 16px;margin-bottom:20px"><div style="font-size:11px;font-weight:600;color:var(--clay);letter-spacing:.3px;text-transform:uppercase;margin-bottom:5px">Gentle prompt</div><div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--ink);line-height:1.35">What's one small thing that felt okay today?</div></div>
+
+              <div style="font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.3px;text-transform:uppercase;margin:0 4px 12px">Earlier entries</div>
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:11px;box-shadow:var(--shadow-sm)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px"><div style="display:flex;align-items:center;gap:8px"><span style="width:11px;height:11px;border-radius:50%;background:#8fc08c"></span><span style="font-size:12.5px;color:var(--ink-2);font-weight:500">Yesterday · 9:40 PM</span></div><span style="font-size:10.5px;font-weight:600;color:var(--teal-ink);background:var(--teal-soft);padding:3px 8px;border-radius:8px">Shared with team</span></div>
+                <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--ink);margin-bottom:4px">A better Tuesday</div>
+                <div style="font-size:13.5px;color:var(--ink-2);line-height:1.5">Got out for a walk before the rain. Felt the first bit of lightness in a while…</div>
+              </div>
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:11px;box-shadow:var(--shadow-sm)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px"><div style="display:flex;align-items:center;gap:8px"><span style="width:11px;height:11px;border-radius:50%;background:var(--amber)"></span><span style="font-size:12.5px;color:var(--ink-2);font-weight:500">Sunday · 8:12 AM</span></div><span style="font-size:10.5px;font-weight:600;color:var(--ink-3);display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>Voice</span></div>
+                <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--ink);margin-bottom:4px">Couldn't sleep again</div>
+                <div style="font-size:13.5px;color:var(--ink-2);line-height:1.5">Mind wouldn't settle. Tried the breathing thing Sam showed me…</div>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ====================== ONBOARDING ====================== -->
+          <sc-if value="{{ ovOnboard }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:60;background:var(--canvas);display:flex;flex-direction:column;animation:cope-fade .25s ease both">
+            <div style="flex:none;display:flex;align-items:center;gap:12px;padding:6px 20px 12px">
+              <button onClick="{{ obBack }}" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <div style="flex:1;height:6px;border-radius:3px;background:var(--surface-3);overflow:hidden"><div style="height:100%;width:{{ obProgress }};background:linear-gradient(90deg,var(--teal),var(--teal-deep));transition:width .35s ease"></div></div>
+            </div>
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:8px 24px 20px">
+              <!-- step 0 welcome -->
+              <sc-if value="{{ ob0 }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:30px">
+                <div style="width:96px;height:96px;border-radius:30px;background:linear-gradient(150deg,var(--teal),var(--teal-deep));display:flex;align-items:center;justify-content:center;box-shadow:0 20px 40px -18px var(--teal);margin-bottom:28px"><span style="font-family:'Fraunces',serif;font-size:40px;font-weight:600;color:#fff">c</span></div>
+                <div style="font-family:'Fraunces',serif;font-size:30px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:12px">Welcome to COPE</div>
+                <div style="font-size:15.5px;color:var(--ink-2);line-height:1.55;max-width:290px">A calmer, more connected way to stay close to your care team — built around how you actually feel, day to day.</div>
+              </div>
+              </sc-if>
+              <!-- step 1 privacy -->
+              <sc-if value="{{ ob1 }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="width:52px;height:52px;border-radius:16px;background:var(--teal-soft);color:var(--teal-ink);display:flex;align-items:center;justify-content:center;margin-bottom:18px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                <div style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--ink);line-height:1.2;margin-bottom:10px">First, our promise to you</div>
+                <div style="font-size:14.5px;color:var(--ink-2);line-height:1.55;margin-bottom:20px">Your trust comes before any feature.</div>
+                <div style="display:flex;flex-direction:column;gap:11px">
+                  <div style="{{ obPromise }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Journals & messages are <b>encrypted</b></span></div>
+                  <div style="{{ obPromise }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>We <b>never</b> sell or advertise on your data</span></div>
+                  <div style="{{ obPromise }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>You choose what your care team can see</span></div>
+                </div>
+              </div>
+              </sc-if>
+              <!-- step 2 about you -->
+              <sc-if value="{{ ob2 }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--ink);line-height:1.2;margin-bottom:10px">A little about you</div>
+                <div style="font-size:14.5px;color:var(--ink-2);line-height:1.55;margin-bottom:22px">What brings you to COPE? Tap any that fit — this helps us tailor your check‑ins.</div>
+                <div style="display:flex;flex-wrap:wrap;gap:9px">
+                  <span style="{{ obPillA }}">Low mood</span><span style="{{ obPill }}">Anxiety</span><span style="{{ obPillA }}">Mood swings</span><span style="{{ obPill }}">Sleep</span><span style="{{ obPill }}">Stress</span><span style="{{ obPill }}">Medication support</span>
+                </div>
+                <div style="margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:15px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-sm)"><div style="width:38px;height:38px;border-radius:50%;background:var(--teal-soft);color:var(--teal-ink);display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-weight:600">A</div><div><div style="font-size:14px;font-weight:600;color:var(--ink)">Dr. Alvarez</div><div style="font-size:12px;color:var(--ink-2)">Your psychiatrist · Bayview</div></div></div>
+              </div>
+              </sc-if>
+              <!-- step 3 rhythm -->
+              <sc-if value="{{ ob3 }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--ink);line-height:1.2;margin-bottom:10px">Your daily rhythm</div>
+                <div style="font-size:14.5px;color:var(--ink-2);line-height:1.55;margin-bottom:22px">A short morning moment, an optional evening one. Gentle nudges — never guilt.</div>
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:11px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)"><div style="width:42px;height:42px;border-radius:12px;background:var(--clay-soft);color:var(--clay);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M5 5l1.5 1.5M17.5 17.5 19 19M2 12h2M20 12h2M5 19l1.5-1.5M17.5 6.5 19 5"/></svg></div><div style="flex:1"><div style="font-size:14.5px;font-weight:600;color:var(--ink)">Morning check‑in</div><div style="font-size:12.5px;color:var(--ink-2)">Mood & sleep</div></div><div style="font-size:14px;font-weight:600;color:var(--teal)">8:00 AM</div></div>
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)"><div style="width:42px;height:42px;border-radius:12px;background:var(--teal-soft);color:var(--teal-ink);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></div><div style="flex:1"><div style="font-size:14.5px;font-weight:600;color:var(--ink)">Evening reflection</div><div style="font-size:12.5px;color:var(--ink-2)">Optional · mood & activity</div></div><div style="font-size:14px;font-weight:600;color:var(--teal)">9:00 PM</div></div>
+              </div>
+              </sc-if>
+              <!-- step 4 ready -->
+              <sc-if value="{{ ob4 }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:24px">
+                <div style="width:96px;height:96px;border-radius:50%;background:var(--teal-soft);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;margin-bottom:26px"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+                <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:600;color:var(--ink);line-height:1.18;margin-bottom:12px">You're all set, Maya</div>
+                <div style="font-size:15px;color:var(--ink-2);line-height:1.55;max-width:290px;margin-bottom:18px">Take it one check‑in at a time. Your care team is with you — and the 988 lifeline is always one tap away.</div>
+              </div>
+              </sc-if>
+            </div>
+            <div style="flex:none;padding:14px 24px calc(env(safe-area-inset-bottom,0px) + 20px)"><button onClick="{{ obNext }}" style="width:100%;background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff;border:none;border-radius:17px;padding:16px;font-size:15.5px;font-weight:600;cursor:pointer;box-shadow:0 14px 28px -14px var(--teal)">{{ obCta }}</button></div>
+          </div>
+          </sc-if>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:431,&quot;height&quot;:920}}">
+class Component extends DCLogic {
+  state = {
+    theme: 'light',
+    tab: 'today',
+    overlay: null,
+    step: 0,
+    checkin: { mood: 6, sleepH: 7, sleepQ: 0, energy: 6, anh: 0, anxiety: 3, mania: 0, si: 0, tags: {}, feelings: {}, body: {} },
+    previsit: { dose: true, anx: true, sleep: false, side: false },
+    obStep: 0,
+    asStep: -1,
+    asAns: [null,null,null,null,null,null,null,null,null],
+    meds: { lam: false, ser: true, abi: false },
+    journalId: null,
+  };
+
+  // ---------- helpers ----------
+  moodColors = ['#d9645a','#dd7a5b','#e0935f','#e4ad61','#e7c765','#bfc77a','#8fc08c','#6fb89a','#64a6b0','#5a93c4'];
+  moodWords = ['','Really low','Low','Heavy','Tender','Neutral','Steadying','Okay','Good','Bright','Really good'];
+  get C(){ return this.state.checkin; }
+  setC(k,v){ this.setState({ checkin: { ...this.state.checkin, [k]: v } }); }
+  go(o){ this.setState({ overlay: o }); }
+  num(e){ return parseFloat(e && e.target ? e.target.value : e); }
+
+  phq9 = [
+    'Little interest or pleasure in doing things',
+    'Feeling down, depressed, or hopeless',
+    'Trouble falling asleep, staying asleep, or sleeping too much',
+    'Feeling tired or having little energy',
+    'Poor appetite or overeating',
+    'Feeling bad about yourself, or that you let yourself or your family down',
+    'Trouble concentrating on things like reading or watching TV',
+    'Moving or speaking so slowly that others noticed — or being restless',
+    'Thoughts that you would be better off not here, or of hurting yourself'
+  ];
+  asPick(v){
+    const ans = this.state.asAns.slice();
+    ans[this.state.asStep] = v;
+    const next = this.state.asStep + 1;
+    this.setState({ asAns: ans, asStep: next>9?9:next });
+  }
+  medToggle(on){
+    return 'width:52px;height:31px;border-radius:16px;border:none;cursor:pointer;position:relative;flex:none;transition:background .2s ease;'+
+      (on ? 'background:var(--teal);' : 'background:var(--surface-3);');
+  }
+  medKnob(on){
+    return 'position:absolute;top:3px;left:3px;width:25px;height:25px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.28);transition:transform .2s ease;'+
+      (on ? 'transform:translateX(21px);' : '');
+  }
+
+  chip(active, accent){
+    const base = 'cursor:pointer;border-radius:11px;padding:7px 12px;font-size:12px;font-weight:600;font-family:Figtree,sans-serif;border:1px solid var(--line);transition:all .15s ease;';
+    if(active && accent) return base+'background:var(--teal);color:#fff;border-color:var(--teal);';
+    return base+'background:var(--surface);color:var(--ink-2);';
+  }
+  segBtn(active){
+    return 'flex:1;cursor:pointer;border-radius:13px;padding:12px 8px;font-size:13px;font-weight:600;font-family:Figtree,sans-serif;transition:all .15s ease;'+
+      (active ? 'background:var(--teal);color:#fff;border:1px solid var(--teal);box-shadow:0 8px 18px -10px var(--teal);' : 'background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line);');
+  }
+  stackBtn(active){
+    return 'display:flex;flex-direction:column;gap:3px;text-align:left;cursor:pointer;border-radius:16px;padding:16px 18px;font-family:Figtree,sans-serif;transition:all .15s ease;'+
+      (active ? 'background:var(--teal-soft);color:var(--teal-ink);border:1.5px solid var(--teal);' : 'background:var(--surface);color:var(--ink);border:1px solid var(--line);');
+  }
+  optBtn(active, warm){
+    const c = warm ? 'var(--clay)' : 'var(--teal)';
+    const soft = warm ? 'var(--clay-soft)' : 'var(--teal-soft)';
+    return 'width:100%;text-align:left;cursor:pointer;border-radius:14px;padding:15px 18px;font-size:14.5px;font-weight:600;font-family:Figtree,sans-serif;transition:all .15s ease;'+
+      (active ? `background:${soft};color:var(--ink);border:1.5px solid ${c};` : 'background:var(--surface);color:var(--ink);border:1px solid var(--line);');
+  }
+  slider(track){
+    return 'width:100%;height:34px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;outline:none;'+
+      `--trk:${track};`;
+  }
+
+  bodySel(on){
+    return on ? 'background:var(--teal);border:1.5px solid var(--teal-deep);box-shadow:0 8px 18px -10px var(--teal);' : 'background:var(--surface-3);border:1.5px solid var(--line);';
+  }
+  agBox(on){
+    return 'width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;transition:all .15s ease;'+
+      (on ? 'background:var(--teal);border:1.5px solid var(--teal);color:#fff;' : 'background:var(--surface);border:1.5px solid var(--line);color:transparent;');
+  }
+  agRow(on){
+    return 'width:100%;display:flex;align-items:center;gap:13px;text-align:left;cursor:pointer;border-radius:16px;padding:15px;margin-bottom:10px;transition:all .15s ease;font-family:Figtree,sans-serif;'+
+      (on ? 'background:var(--teal-soft);border:1.5px solid var(--teal);' : 'background:var(--surface);border:1px solid var(--line);');
+  }
+
+  tabBtn(name){
+    const active = this.state.tab===name && this.state.overlay===null;
+    return 'background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;width:54px;padding:4px 0;font-family:Figtree,sans-serif;transition:color .15s ease;'+
+      (active ? 'color:var(--teal);' : 'color:var(--ink-3);');
+  }
+
+  renderVals(){
+    const s = this.state, C = this.C;
+    const mc = this.moodColors[Math.max(0,Math.min(9, C.mood-1))];
+    const steps = ['Mood','In words','Sleep','Energy & interest','Anxiety','Where you feel it','Energy regulation','What\u2019s present','Safety','Reflection'];
+    const stepCount = steps.length;
+    const sleepHWords = C.sleepH;
+    const energyWords = ['Depleted','Very low','Low','Limited','Building','Some','Steady','Good','High','Very high','Abundant'];
+
+    const tag = (k)=>!!C.tags[k];
+    const toggleTag = (k)=>()=>this.setC('tags', { ...C.tags, [k]: !C.tags[k] });
+
+    const lastStep = s.step >= stepCount-1;
+
+    return {
+      theme: s.theme,
+      themeLabel: s.theme==='light' ? 'Dark' : 'Light',
+      statusBg: 'transparent',
+      chipStyle: 'cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:11px;padding:6px 11px;font-size:11.5px;font-weight:600;font-family:Figtree,sans-serif;',
+      chipStyleAccent: 'cursor:pointer;border:1px solid var(--teal);background:var(--teal);color:#fff;border-radius:11px;padding:6px 11px;font-size:11.5px;font-weight:600;font-family:Figtree,sans-serif;',
+      toggleTheme: ()=>this.setState({ theme: s.theme==='light'?'dark':'light' }),
+
+      // jump menu
+      jumpToday: ()=>this.setState({ overlay:null, tab:'today' }),
+      jumpInsights: ()=>this.setState({ overlay:null, tab:'insights' }),
+      jumpMessages: ()=>this.setState({ overlay:null, tab:'messages' }),
+      jumpProfile: ()=>this.setState({ overlay:null, tab:'profile' }),
+      jumpCheckin: ()=>this.setState({ overlay:'checkin', step:0 }),
+      jumpSafety: ()=>this.go('safety'),
+      jumpMeds: ()=>this.go('meds'),
+      jumpAssess: ()=>this.go('assess'),
+      jumpJournal: ()=>this.go('journal'),
+      jumpOnboard: ()=>this.setState({ overlay:'onboard', obStep:0 }),
+      jumpPrevisit: ()=>this.go('previsit'),
+
+      // tab state
+      tab: s.tab,
+      showTodayTab: s.overlay===null,
+      tabToday: s.tab==='today', tabInsights: s.tab==='insights', tabMessages: s.tab==='messages', tabProfile: s.tab==='profile',
+      setTabToday: ()=>this.setState({ tab:'today' }),
+      setTabInsights: ()=>this.setState({ tab:'insights' }),
+      setTabMessages: ()=>this.setState({ tab:'messages' }),
+      setTabProfile: ()=>this.setState({ tab:'profile' }),
+      tabBtnToday: this.tabBtn('today'),
+      tabBtnInsights: this.tabBtn('insights'),
+      tabBtnMessages: this.tabBtn('messages'),
+      tabBtnProfile: this.tabBtn('profile'),
+      rowStyle: 'display:flex;align-items:center;gap:13px;padding:15px 16px;',
+      rowStyleB: 'display:flex;align-items:center;gap:13px;padding:15px 16px;border-top:1px solid var(--line-2);',
+      rowIcon: 'width:34px;height:34px;border-radius:10px;background:var(--surface-2);color:var(--teal-ink);display:flex;align-items:center;justify-content:center;flex:none;',
+
+      // overlays
+      ovCheckin: s.overlay==='checkin',
+      ovSafety: s.overlay==='safety',
+      ovMeds: s.overlay==='meds',
+      ovAssess: s.overlay==='assess',
+      ovJournal: s.overlay==='journal',
+      ovOnboard: s.overlay==='onboard',
+      ovPrevisit: s.overlay==='previsit',
+      pvAgenda: [
+        {key:'dose',label:'The new dose & my mornings',sub:'You noted mornings feel lighter'},
+        {key:'anx',label:'Anxiety midweek',sub:'Spikes around Wednesdays'},
+        {key:'sleep',label:'Sleep still uneven',sub:'Avg 6.8h \u00b7 a few restless nights'},
+        {key:'side',label:'A side effect to mention',sub:'Optional \u2014 add if it comes up'},
+      ].map(a=>({ label:a.label, sub:a.sub, on:!!s.previsit[a.key], toggle:()=>this.setState({previsit:{...s.previsit,[a.key]:!s.previsit[a.key]}}), box:this.agBox(!!s.previsit[a.key]), row:this.agRow(!!s.previsit[a.key]) })),
+      pvCount: ['dose','anx','sleep','side'].filter(k=>s.previsit[k]).length,
+
+      // ---------- check-in ----------
+      openCheckin: ()=>this.setState({ overlay:'checkin', step:0 }),
+      closeCheckin: ()=>this.setState({ overlay:null }),
+      checkinBack: ()=> s.step===0 ? this.setState({ overlay:null }) : this.setState({ step:s.step-1 }),
+      checkinNext: ()=> lastStep ? this.setState({ overlay:null, tab:'today' }) : this.setState({ step:s.step+1 }),
+      checkinProgress: Math.round(((s.step+1)/stepCount)*100)+'%',
+      checkinStepLabel: 'Step '+(s.step+1)+' of '+stepCount+' · '+steps[s.step],
+      checkinCta: lastStep ? 'Complete check‑in' : 'Continue',
+      cs0: s.step===0, cs1: s.step===1, cs2: s.step===2, cs3: s.step===3, cs4: s.step===4, cs5: s.step===5, cs6: s.step===6, cs7: s.step===7, cs8: s.step===8, cs9: s.step===9,
+
+      feelingChips: ['Numb','On edge','Heavy','Hollow','Wired but tired','Foggy','Restless','Overwhelmed','Irritable','Disconnected','Lonely','Ashamed','Hopeful','Calm'].map(w=>({ label:w, toggle:()=>this.setC('feelings',{...C.feelings,[w]:!C.feelings[w]}), style:this.chip(!!C.feelings[w],true) })),
+
+      bpHead: 'position:absolute;left:50%;top:0;transform:translateX(-50%);width:46px;height:46px;border-radius:50%;cursor:pointer;transition:all .15s ease;'+this.bodySel(!!C.body.head),
+      bpChest: 'position:absolute;left:50%;top:54px;transform:translateX(-50%);width:80px;height:58px;border-radius:24px 24px 14px 14px;cursor:pointer;transition:all .15s ease;'+this.bodySel(!!C.body.chest),
+      bpStomach: 'position:absolute;left:50%;top:116px;transform:translateX(-50%);width:72px;height:56px;border-radius:14px 14px 22px 22px;cursor:pointer;transition:all .15s ease;'+this.bodySel(!!C.body.stomach),
+      bpArmL: 'position:absolute;left:50%;top:56px;transform:translateX(-74px);width:20px;height:96px;border-radius:12px;cursor:pointer;transition:all .15s ease;'+this.bodySel(!!C.body.arms),
+      bpArmR: 'position:absolute;left:50%;top:56px;transform:translateX(54px);width:20px;height:96px;border-radius:12px;cursor:pointer;transition:all .15s ease;'+this.bodySel(!!C.body.arms),
+      bpLegL: 'position:absolute;left:50%;top:174px;transform:translateX(-38px);width:30px;height:98px;border-radius:14px;cursor:pointer;transition:all .15s ease;'+this.bodySel(!!C.body.legs),
+      bpLegR: 'position:absolute;left:50%;top:174px;transform:translateX(8px);width:30px;height:98px;border-radius:14px;cursor:pointer;transition:all .15s ease;'+this.bodySel(!!C.body.legs),
+      tbHead:()=>this.setC('body',{...C.body,head:!C.body.head}),
+      tbChest:()=>this.setC('body',{...C.body,chest:!C.body.chest}),
+      tbStomach:()=>this.setC('body',{...C.body,stomach:!C.body.stomach}),
+      tbArms:()=>this.setC('body',{...C.body,arms:!C.body.arms}),
+      tbLegs:()=>this.setC('body',{...C.body,legs:!C.body.legs}),
+      tbAll:()=>this.setC('body',{...C.body,all:!C.body.all}),
+      allPill: this.chip(!!C.body.all,true),
+      bodySummary: (()=>{ const n={head:'Head',chest:'Chest',stomach:'Stomach',arms:'Arms',legs:'Legs',all:'All over'}; const sel=Object.keys(n).filter(k=>C.body[k]).map(k=>n[k]); return sel.length?sel.join(' · '):'Tap wherever you notice it'; })(),
+
+      moodValue: C.mood,
+      moodColor: mc,
+      moodWord: this.moodWords[C.mood],
+      onMood: (e)=>this.setC('mood', this.num(e)),
+      moodSliderStyle: this.slider('linear-gradient(90deg,#d9645a,#e0935f,#e7c765,#8fc08c,#5a93c4)'),
+
+      sleepH: C.sleepH, sleepHRaw: C.sleepH,
+      onSleepH: (e)=>this.setC('sleepH', this.num(e)),
+      tealSliderStyle: this.slider('linear-gradient(90deg,var(--teal-soft),var(--teal))'),
+      claySliderStyle: this.slider('linear-gradient(90deg,var(--clay-soft),var(--clay))'),
+      onSleepQ1: ()=>this.setC('sleepQ',1), onSleepQ2: ()=>this.setC('sleepQ',2), onSleepQ3: ()=>this.setC('sleepQ',3),
+      sq1: this.segBtn(C.sleepQ===1), sq2: this.segBtn(C.sleepQ===2), sq3: this.segBtn(C.sleepQ===3),
+
+      energy: C.energy, energyWord: energyWords[C.energy],
+      onEnergy: (e)=>this.setC('energy', this.num(e)),
+      onAnh0: ()=>this.setC('anh',0), onAnh1: ()=>this.setC('anh',1), onAnh2: ()=>this.setC('anh',2),
+      anh0: this.chip(C.anh===0,true), anh1: this.chip(C.anh===1,true), anh2: this.chip(C.anh===2,true),
+
+      anxiety: C.anxiety,
+      anxietyWord: ['Calm','Calm','Mostly settled','A little tense','Tense','Noticeably anxious','Anxious','Quite anxious','Very anxious','Very anxious','Overwhelmed'][C.anxiety],
+      onAnxiety: (e)=>this.setC('anxiety', this.num(e)),
+
+      onMania0: ()=>this.setC('mania',0), onMania1: ()=>this.setC('mania',1), onMania2: ()=>this.setC('mania',2),
+      mn0: this.stackBtn(C.mania===0), mn1: this.stackBtn(C.mania===1), mn2: this.stackBtn(C.mania===2),
+
+      tgWork: toggleTag('work'), tgWorkS: this.chip(tag('work'),true),
+      tgRel: toggleTag('rel'), tgRelS: this.chip(tag('rel'),true),
+      tgSleep: toggleTag('sleep'), tgSleepS: this.chip(tag('sleep'),true),
+      tgMoney: toggleTag('money'), tgMoneyS: this.chip(tag('money'),true),
+      tgHealth: toggleTag('health'), tgHealthS: this.chip(tag('health'),true),
+      tgSubst: toggleTag('subst'), tgSubstS: this.chip(tag('subst'),true),
+      tgAlone: toggleTag('alone'), tgAloneS: this.chip(tag('alone'),true),
+
+      onSI0: ()=>this.setC('si',0), onSI1: ()=>this.setC('si',1), onSI2: ()=>this.setC('si',2), onSI3: ()=>this.setC('si',3),
+      si0: this.optBtn(C.si===0,true), si1: this.optBtn(C.si===1,true), si2: this.optBtn(C.si===2,true), si3: this.optBtn(C.si===3,true),
+      siElevated: C.si>=2,
+
+      // ---------- safety ----------
+      closeOverlay: ()=>this.setState({ overlay:null }),
+      safSec: 'background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:11px;box-shadow:var(--shadow-sm);',
+      safHd: 'display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:600;color:var(--ink);margin-bottom:8px;',
+      safNum: 'width:24px;height:24px;border-radius:50%;background:var(--teal-soft);color:var(--teal-ink);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none;',
+      safPill: 'background:var(--clay-soft);color:var(--clay);border-radius:11px;padding:7px 12px;font-size:13px;font-weight:600;',
+      obPromise: 'display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:14px 16px;font-size:14px;color:var(--ink);box-shadow:var(--shadow-sm);',
+      obPill: 'background:var(--surface);color:var(--ink-2);border:1px solid var(--line);border-radius:13px;padding:9px 15px;font-size:13.5px;font-weight:600;',
+      obPillA: 'background:var(--teal);color:#fff;border:1px solid var(--teal);border-radius:13px;padding:9px 15px;font-size:13.5px;font-weight:600;',
+
+      // ---------- meds ----------
+      medLam: s.meds.lam, medSer: s.meds.ser, medAbi: s.meds.abi,
+      toggleLam: ()=>this.setState({ meds:{...s.meds,lam:!s.meds.lam} }),
+      toggleSer: ()=>this.setState({ meds:{...s.meds,ser:!s.meds.ser} }),
+      toggleAbi: ()=>this.setState({ meds:{...s.meds,abi:!s.meds.abi} }),
+      medLamS: this.medToggle(s.meds.lam), medSerS: this.medToggle(s.meds.ser), medAbiS: this.medToggle(s.meds.abi),
+      medLamKnob: this.medKnob(s.meds.lam), medSerKnob: this.medKnob(s.meds.ser), medAbiKnob: this.medKnob(s.meds.abi),
+      medsDoneCount: [s.meds.lam,s.meds.ser,s.meds.abi].filter(Boolean).length,
+
+      // ---------- assessment (PHQ-9) ----------
+      asStep: s.asStep,
+      asIntro: s.asStep<0,
+      asInQ: s.asStep>=0 && s.asStep<=8,
+      asDone: s.asStep===9,
+      asStartAssess: ()=>this.setState({ asStep:0, asAns:[null,null,null,null,null,null,null,null,null] }),
+      asQNum: s.asStep+1,
+      asProgress: Math.round(((Math.max(0,s.asStep))/9)*100)+'%',
+      asQuestion: this.phq9[Math.max(0,Math.min(8,s.asStep))],
+      asPick0: ()=>this.asPick(0), asPick1: ()=>this.asPick(1), asPick2: ()=>this.asPick(2), asPick3: ()=>this.asPick(3),
+      asA0: this.optBtn(s.asAns[s.asStep]===0,false), asA1: this.optBtn(s.asAns[s.asStep]===1,false), asA2: this.optBtn(s.asAns[s.asStep]===2,false), asA3: this.optBtn(s.asAns[s.asStep]===3,false),
+      asBack: ()=> s.asStep<=0 ? this.setState({ overlay:null }) : this.setState({ asStep:s.asStep-1 }),
+      asScore: s.asAns.reduce((a,b)=>a+(b||0),0),
+      asInterp: (()=>{ const t=s.asAns.reduce((a,b)=>a+(b||0),0); if(t<5)return 'Minimal'; if(t<10)return 'Mild'; if(t<15)return 'Moderate'; if(t<20)return 'Moderately severe'; return 'Severe'; })(),
+
+      // ---------- onboarding ----------
+      obStep: s.obStep,
+      ob0: s.obStep===0, ob1: s.obStep===1, ob2: s.obStep===2, ob3: s.obStep===3, ob4: s.obStep===4,
+      obNext: ()=> s.obStep>=4 ? this.setState({ overlay:null, tab:'today' }) : this.setState({ obStep:s.obStep+1 }),
+      obBack: ()=> s.obStep===0 ? this.setState({ overlay:null }) : this.setState({ obStep:s.obStep-1 }),
+      obProgress: Math.round(((s.obStep+1)/5)*100)+'%',
+      obCta: s.obStep>=4 ? 'Enter COPE' : (s.obStep===0 ? 'Get started' : 'Continue'),
+    };
+  }
+}
+</script>
+</body>
+</html>

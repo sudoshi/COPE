@@ -1,9 +1,36 @@
 import SwiftUI
+import FeatureToday
 
 struct RootView: View {
     @EnvironmentObject private var session: SessionViewModel
 
     var body: some View {
+        content
+            .onOpenURL { url in
+                session.handleOpenURL(url)
+            }
+    }
+
+    /// DEBUG-only: launch straight into the gold-standard UI without auth/backend
+    /// when `COPE_UI_PREVIEW=1`. Production behavior is unchanged.
+    @ViewBuilder
+    private var content: some View {
+        if Self.isUIPreview {
+            TodayDashboardView()
+        } else {
+            appContent
+        }
+    }
+
+    private static var isUIPreview: Bool {
+        #if DEBUG
+        return ProcessInfo.processInfo.environment["COPE_UI_PREVIEW"] == "1"
+        #else
+        return false
+        #endif
+    }
+
+    private var appContent: some View {
         ZStack {
             CopeColor.background
                 .ignoresSafeArea()
@@ -30,9 +57,6 @@ struct RootView: View {
             } else {
                 LoginView()
             }
-        }
-        .onOpenURL { url in
-            session.handleOpenURL(url)
         }
     }
 }
