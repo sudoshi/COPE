@@ -28,7 +28,7 @@ struct PhotoBackground: View {
                     .opacity(i == index ? 1 : 0)
             }
         }
-        .blur(radius: 2)
+        .blur(radius: 0)
         .overlay(scrim)
         .clipped()
         .ignoresSafeArea()
