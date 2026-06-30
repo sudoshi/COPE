@@ -22,119 +22,72 @@ async function generatePopulationSnapshots(dateStr: string): Promise<void> {
   // Compute per-clinician aggregates and upsert into population_snapshots.
   // All active clinicians who have ≥1 active patient are included.
   await sql`
+    WITH base AS (
+      SELECT DISTINCT
+        c.organisation_id, ctm.clinician_id, p.id AS patient_id, p.status, p.risk_level
+      FROM care_team_members ctm
+      JOIN clinicians c ON c.id = ctm.clinician_id AND c.is_active = TRUE
+      JOIN patients p
+        ON p.id = ctm.patient_id AND ctm.unassigned_at IS NULL AND p.is_active = TRUE
+    ),
+    mood AS (
+      SELECT patient_id, SUM(mood) AS mood_sum, COUNT(mood) AS mood_n,
+             SUM(coping) AS coping_sum, COUNT(coping) AS coping_n
+      FROM daily_entries WHERE entry_date >= ${dateStr}::DATE - 7 GROUP BY patient_id
+    ),
+    sleep AS (
+      SELECT patient_id, SUM(total_minutes) AS sleep_sum, COUNT(total_minutes) AS sleep_n
+      FROM sleep_logs WHERE entry_date >= ${dateStr}::DATE - 7 GROUP BY patient_id
+    ),
+    yesterday AS (
+      SELECT DISTINCT patient_id FROM daily_entries
+      WHERE entry_date = ${dateStr}::DATE - 1 AND submitted_at IS NOT NULL
+    ),
+    alerts AS (
+      SELECT patient_id,
+        COUNT(*) FILTER (WHERE severity = 'critical' AND auto_resolved = FALSE AND acknowledged_at IS NULL) AS crit,
+        COUNT(*) FILTER (WHERE severity = 'warning'  AND auto_resolved = FALSE AND acknowledged_at IS NULL) AS warn
+      FROM clinical_alerts GROUP BY patient_id
+    )
     INSERT INTO population_snapshots (
-      organisation_id,
-      clinician_id,
-      snapshot_date,
-      total_patients,
-      active_patients,
-      crisis_patients,
-      avg_mood_x10,
-      avg_coping_x10,
-      avg_sleep_minutes,
-      risk_critical_count,
-      risk_high_count,
-      risk_moderate_count,
-      risk_low_count,
-      critical_alerts_count,
-      warning_alerts_count,
-      checkin_rate_pct,
-      generated_at
+      organisation_id, clinician_id, snapshot_date,
+      total_patients, active_patients, crisis_patients,
+      avg_mood_x10, avg_coping_x10, avg_sleep_minutes,
+      risk_critical_count, risk_high_count, risk_moderate_count, risk_low_count,
+      critical_alerts_count, warning_alerts_count, checkin_rate_pct, generated_at
     )
     SELECT
-      c.organisation_id,
-      ctm.clinician_id,
-      ${dateStr}::DATE                                                              AS snapshot_date,
-      COUNT(DISTINCT p.id)::SMALLINT                                               AS total_patients,
-      COUNT(DISTINCT p.id) FILTER (WHERE p.status = 'active')::SMALLINT           AS active_patients,
-      COUNT(DISTINCT p.id) FILTER (WHERE p.status = 'crisis')::SMALLINT           AS crisis_patients,
-
-      -- 7-day mood / coping averages (×10 to keep as SMALLINT)
-      ROUND(
-        AVG(de.mood) FILTER (WHERE de.entry_date >= ${dateStr}::DATE - 7) * 10
-      )::SMALLINT                                                                  AS avg_mood_x10,
-      ROUND(
-        AVG(de.coping) FILTER (WHERE de.entry_date >= ${dateStr}::DATE - 7) * 10
-      )::SMALLINT                                                                  AS avg_coping_x10,
-
-      -- 7-day avg sleep in minutes (from sleep_logs)
-      ROUND(
-        AVG(sl.total_minutes) FILTER (WHERE sl.entry_date >= ${dateStr}::DATE - 7)
-      )::SMALLINT                                                                  AS avg_sleep_minutes,
-
-      -- Risk level distribution
-      COUNT(DISTINCT p.id) FILTER (WHERE p.risk_level = 'critical')::SMALLINT     AS risk_critical_count,
-      COUNT(DISTINCT p.id) FILTER (WHERE p.risk_level = 'high')::SMALLINT         AS risk_high_count,
-      COUNT(DISTINCT p.id) FILTER (WHERE p.risk_level = 'moderate')::SMALLINT     AS risk_moderate_count,
-      COUNT(DISTINCT p.id) FILTER (WHERE p.risk_level = 'low')::SMALLINT          AS risk_low_count,
-
-      -- Open (unacknowledged) alert counts
-      COUNT(DISTINCT ca.id) FILTER (
-        WHERE ca.severity = 'critical'
-          AND ca.auto_resolved = FALSE
-          AND ca.acknowledged_at IS NULL
-      )::SMALLINT                                                                  AS critical_alerts_count,
-      COUNT(DISTINCT ca.id) FILTER (
-        WHERE ca.severity = 'warning'
-          AND ca.auto_resolved = FALSE
-          AND ca.acknowledged_at IS NULL
-      )::SMALLINT                                                                  AS warning_alerts_count,
-
-      -- Yesterday check-in rate
-      CASE WHEN COUNT(DISTINCT p.id) > 0 THEN
-        ROUND(
-          100.0
-          * COUNT(DISTINCT de_yesterday.patient_id)
-              FILTER (WHERE de_yesterday.submitted_at IS NOT NULL)
-          / COUNT(DISTINCT p.id)
-        )::SMALLINT
-      END                                                                          AS checkin_rate_pct,
-
-      NOW()                                                                        AS generated_at
-
-    FROM care_team_members ctm
-    JOIN clinicians c ON c.id = ctm.clinician_id AND c.is_active = TRUE
-    JOIN patients p
-      ON p.id = ctm.patient_id
-      AND ctm.unassigned_at IS NULL
-      AND p.is_active = TRUE
-
-    -- 7-day entries for mood/coping/sleep averages
-    LEFT JOIN daily_entries de
-      ON de.patient_id = p.id
-      AND de.entry_date >= ${dateStr}::DATE - 7
-
-    -- Sleep logs linked to those entries
-    LEFT JOIN sleep_logs sl
-      ON sl.patient_id = p.id
-      AND sl.entry_date >= ${dateStr}::DATE - 7
-
-    -- Yesterday's entry for check-in rate
-    LEFT JOIN daily_entries de_yesterday
-      ON de_yesterday.patient_id = p.id
-      AND de_yesterday.entry_date = ${dateStr}::DATE - 1
-
-    -- Open alerts
-    LEFT JOIN clinical_alerts ca
-      ON ca.patient_id = p.id
-
-    GROUP BY c.organisation_id, ctm.clinician_id
-
+      b.organisation_id, b.clinician_id, ${dateStr}::DATE,
+      COUNT(*)::SMALLINT,
+      COUNT(*) FILTER (WHERE b.status = 'active')::SMALLINT,
+      COUNT(*) FILTER (WHERE b.status = 'crisis')::SMALLINT,
+      ROUND(10.0 * SUM(mood.mood_sum)   / NULLIF(SUM(mood.mood_n), 0))::SMALLINT,
+      ROUND(10.0 * SUM(mood.coping_sum) / NULLIF(SUM(mood.coping_n), 0))::SMALLINT,
+      ROUND(SUM(sleep.sleep_sum)::NUMERIC / NULLIF(SUM(sleep.sleep_n), 0))::SMALLINT,
+      COUNT(*) FILTER (WHERE b.risk_level = 'critical')::SMALLINT,
+      COUNT(*) FILTER (WHERE b.risk_level = 'high')::SMALLINT,
+      COUNT(*) FILTER (WHERE b.risk_level = 'moderate')::SMALLINT,
+      COUNT(*) FILTER (WHERE b.risk_level = 'low')::SMALLINT,
+      COALESCE(SUM(alerts.crit), 0)::SMALLINT,
+      COALESCE(SUM(alerts.warn), 0)::SMALLINT,
+      CASE WHEN COUNT(*) > 0 THEN
+        ROUND(100.0 * COUNT(*) FILTER (WHERE yesterday.patient_id IS NOT NULL) / COUNT(*))::SMALLINT
+      END,
+      NOW()
+    FROM base b
+    LEFT JOIN mood      ON mood.patient_id      = b.patient_id
+    LEFT JOIN sleep     ON sleep.patient_id     = b.patient_id
+    LEFT JOIN yesterday ON yesterday.patient_id = b.patient_id
+    LEFT JOIN alerts    ON alerts.patient_id    = b.patient_id
+    GROUP BY b.organisation_id, b.clinician_id
     ON CONFLICT (organisation_id, clinician_id, snapshot_date) DO UPDATE SET
-      total_patients        = EXCLUDED.total_patients,
-      active_patients       = EXCLUDED.active_patients,
-      crisis_patients       = EXCLUDED.crisis_patients,
-      avg_mood_x10          = EXCLUDED.avg_mood_x10,
-      avg_coping_x10        = EXCLUDED.avg_coping_x10,
-      avg_sleep_minutes     = EXCLUDED.avg_sleep_minutes,
-      risk_critical_count   = EXCLUDED.risk_critical_count,
-      risk_high_count       = EXCLUDED.risk_high_count,
-      risk_moderate_count   = EXCLUDED.risk_moderate_count,
-      risk_low_count        = EXCLUDED.risk_low_count,
-      critical_alerts_count = EXCLUDED.critical_alerts_count,
-      warning_alerts_count  = EXCLUDED.warning_alerts_count,
-      checkin_rate_pct      = EXCLUDED.checkin_rate_pct,
-      generated_at          = NOW()
+      total_patients=EXCLUDED.total_patients, active_patients=EXCLUDED.active_patients,
+      crisis_patients=EXCLUDED.crisis_patients, avg_mood_x10=EXCLUDED.avg_mood_x10,
+      avg_coping_x10=EXCLUDED.avg_coping_x10, avg_sleep_minutes=EXCLUDED.avg_sleep_minutes,
+      risk_critical_count=EXCLUDED.risk_critical_count, risk_high_count=EXCLUDED.risk_high_count,
+      risk_moderate_count=EXCLUDED.risk_moderate_count, risk_low_count=EXCLUDED.risk_low_count,
+      critical_alerts_count=EXCLUDED.critical_alerts_count, warning_alerts_count=EXCLUDED.warning_alerts_count,
+      checkin_rate_pct=EXCLUDED.checkin_rate_pct, generated_at=NOW()
   `;
 }
 
