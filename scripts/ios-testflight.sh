@@ -135,12 +135,19 @@ archive_app() {
     [[ -n "$arg" ]] && extra_args+=("$arg")
   done < <(signing_args)
 
+  # Auto-increment the build number so App Store Connect never rejects a
+  # duplicate. YYMMDDHHMM is monotonic and stays under CFBundleVersion's
+  # uint32 limit. Override with COPE_IOS_BUILD_NUMBER if needed.
+  local build_number="${COPE_IOS_BUILD_NUMBER:-$(date +%y%m%d%H%M)}"
+  echo "Build number: $build_number"
+
   xcodebuild \
     -project "$IOS_DIR/COPE.xcodeproj" \
     -scheme "$SCHEME" \
     -configuration "$CONFIGURATION" \
     -archivePath "$ARCHIVE_PATH" \
     "${extra_args[@]}" \
+    CURRENT_PROJECT_VERSION="$build_number" \
     archive
 }
 
