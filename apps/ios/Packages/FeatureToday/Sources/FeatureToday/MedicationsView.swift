@@ -5,9 +5,13 @@ import DesignSystem
 /// toggles + a side-effect prompt. Demo data; logging posts via outbox next.
 public struct MedicationsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var taken: [String: Bool] = ["lam": false, "ser": true, "abi": false]
+    private let model: MedicationsModel
+    @State private var taken: [String: Bool]
 
-    public init() {}
+    public init(model: MedicationsModel = .sample) {
+        self.model = model
+        _taken = State(initialValue: Dictionary(uniqueKeysWithValues: model.allMeds.map { ($0.id, $0.taken) }))
+    }
 
     private var doneCount: Int { taken.values.filter { $0 }.count }
 
@@ -17,12 +21,10 @@ public struct MedicationsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     summaryCard
-                    group("Morning · 8:00 AM") {
-                        medRow("lam", name: "Lamotrigine", dose: "200 mg · 1 tablet", tint: .teal)
-                        medRow("ser", name: "Sertraline", dose: "100 mg · 1 tablet", tint: .teal)
-                    }
-                    group("Evening · 9:00 PM") {
-                        medRow("abi", name: "Aripiprazole", dose: "5 mg · 1 tablet", tint: .clay)
+                    ForEach(model.groups) { grp in
+                        group(grp.time) {
+                            ForEach(grp.meds) { med in medRow(med) }
+                        }
                     }
                     sideEffectPrompt
                 }
@@ -50,10 +52,10 @@ public struct MedicationsView: View {
 
     private var summaryCard: some View {
         HStack(spacing: 12) {
-            Text("\(doneCount)/3").font(CopeFont.fraunces(30)).foregroundStyle(CopeColor.teal)
+            Text("\(doneCount)/\(model.total)").font(CopeFont.fraunces(30)).foregroundStyle(CopeColor.teal)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Today's doses").font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
-                Text("Keeping a steady rhythm helps your levels stay even.")
+                Text(model.summaryNote)
                     .font(CopeFont.caption).foregroundStyle(CopeColor.ink2).fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 0)
@@ -68,18 +70,19 @@ public struct MedicationsView: View {
         }
     }
 
-    private func medRow(_ key: String, name: String, dose: String, tint: TodayRow.IconTint) -> some View {
-        HStack(spacing: 14) {
+    private func medRow(_ med: Medication) -> some View {
+        let teal = !med.isEvening
+        return HStack(spacing: 14) {
             Image(systemName: "pills.fill")
-                .font(.system(size: 18)).foregroundStyle(tint == .teal ? CopeColor.tealInk : CopeColor.clay)
-                .frame(width: 44, height: 44).background(tint == .teal ? CopeColor.tealSoft : CopeColor.claySoft)
+                .font(.system(size: 18)).foregroundStyle(teal ? CopeColor.tealInk : CopeColor.clay)
+                .frame(width: 44, height: 44).background(teal ? CopeColor.tealSoft : CopeColor.claySoft)
                 .clipShape(RoundedRectangle(cornerRadius: CopeRadius.iconTile, style: .continuous))
             VStack(alignment: .leading, spacing: 2) {
-                Text(name).font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
-                Text(dose).font(CopeFont.caption).foregroundStyle(CopeColor.ink2)
+                Text(med.name).font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
+                Text(med.dose).font(CopeFont.caption).foregroundStyle(CopeColor.ink2)
             }
             Spacer(minLength: 8)
-            MedToggle(isOn: Binding(get: { taken[key] ?? false }, set: { taken[key] = $0 }))
+            MedToggle(isOn: Binding(get: { taken[med.id] ?? false }, set: { taken[med.id] = $0 }))
         }
         .copeCard(padding: 15)
     }

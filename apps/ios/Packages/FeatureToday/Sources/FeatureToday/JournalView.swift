@@ -6,7 +6,10 @@ import DesignSystem
 /// share-with-care-team wiring come next.
 public struct JournalView: View {
     @Environment(\.dismiss) private var dismiss
-    public init() {}
+    private let model: JournalModel
+    public init(model: JournalModel = .sample) {
+        self.model = model
+    }
 
     public var body: some View {
         VStack(spacing: 0) {
@@ -16,14 +19,12 @@ public struct JournalView: View {
                     composeCard
                     promptCard
                     Text("Earlier entries").copeSectionLabel(CopeColor.ink3).padding(.leading, 4)
-                    entryCard(
-                        dotColor: Color(hex: 0x8FC08C), meta: "Yesterday · 9:40 PM", shared: true, voice: false,
-                        title: "A better Tuesday",
-                        excerpt: "Got out for a walk before the rain. Felt the first bit of lightness in a while…")
-                    entryCard(
-                        dotColor: CopeColor.amber, meta: "Sunday · 8:12 AM", shared: false, voice: true,
-                        title: "Couldn't sleep again",
-                        excerpt: "Mind wouldn't settle. Tried the breathing thing Sam showed me…")
+                    ForEach(model.entries) { entry in
+                        entryCard(
+                            dotColor: Color(hex: entry.moodHex), meta: entry.meta,
+                            shared: entry.shared, voice: entry.voice,
+                            title: entry.title, excerpt: entry.excerpt)
+                    }
                 }
                 .padding(.horizontal, CopeSpacing.screenH).padding(.bottom, 30)
             }
@@ -68,7 +69,7 @@ public struct JournalView: View {
         FeatureCard(tint: .clay) {
             VStack(alignment: .leading, spacing: 5) {
                 Text("Gentle prompt").copeSectionLabel(CopeColor.clay)
-                Text("What's one small thing that felt okay today?")
+                Text(model.prompt)
                     .font(CopeFont.sectionTitle).foregroundStyle(CopeColor.ink).fixedSize(horizontal: false, vertical: true)
             }
         }

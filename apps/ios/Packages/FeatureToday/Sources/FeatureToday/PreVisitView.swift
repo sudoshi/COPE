@@ -7,20 +7,13 @@ import DesignSystem
 public struct PreVisitView: View {
     @Environment(\.dismiss) private var dismiss
 
-    private struct AgendaItem: Identifiable {
-        let id: String
-        let label: String
-        let sub: String
-    }
-    private static let agenda = [
-        AgendaItem(id: "dose", label: "The new dose & my mornings", sub: "You noted mornings feel lighter"),
-        AgendaItem(id: "anx", label: "Anxiety midweek", sub: "Spikes around Wednesdays"),
-        AgendaItem(id: "sleep", label: "Sleep still uneven", sub: "Avg 6.8h · a few restless nights"),
-        AgendaItem(id: "side", label: "A side effect to mention", sub: "Optional — add if it comes up")
-    ]
-    @State private var included: Set<String> = ["dose", "anx"]
+    private let model: PreVisitModel
+    @State private var included: Set<String>
 
-    public init() {}
+    public init(model: PreVisitModel = .sample) {
+        self.model = model
+        _included = State(initialValue: Set(model.agenda.filter(\.includedByDefault).map(\.id)))
+    }
 
     public var body: some View {
         VStack(spacing: 0) {
@@ -28,13 +21,13 @@ public struct PreVisitView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     appointmentCard
-                    Text("A quiet summary of your two weeks. Choose what you want to make sure you talk about — it'll be ready before you meet, so you don't have to find the words in the moment.")
+                    Text(model.intro)
                         .font(CopeFont.body).foregroundStyle(CopeColor.ink2).fixedSize(horizontal: false, vertical: true)
                     Text("Your last two weeks").copeSectionLabel(CopeColor.ink3).padding(.leading, 4)
                     summaryGrid
                     Text("What I want to talk about").copeSectionLabel(CopeColor.ink3).padding(.leading, 4)
                     VStack(spacing: 10) {
-                        ForEach(Self.agenda) { item in agendaRow(item) }
+                        ForEach(model.agenda) { item in agendaRow(item) }
                         addRow
                     }
                 }
@@ -64,8 +57,8 @@ public struct PreVisitView: View {
                 .frame(width: 46, height: 46).background(CopeColor.claySoft)
                 .clipShape(RoundedRectangle(cornerRadius: CopeRadius.iconTile, style: .continuous))
             VStack(alignment: .leading, spacing: 2) {
-                Text("Dr. Alvarez").font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
-                Text("Thursday, Jun 26 · 2:00 PM · Telehealth").font(CopeFont.caption).foregroundStyle(CopeColor.ink2)
+                Text(model.clinician).font(CopeFont.bodyStrong).foregroundStyle(CopeColor.ink)
+                Text(model.appointment).font(CopeFont.caption).foregroundStyle(CopeColor.ink2)
             }
             Spacer(minLength: 0)
         }
@@ -75,21 +68,21 @@ public struct PreVisitView: View {
     private var summaryGrid: some View {
         VStack(spacing: 10) {
             HStack(spacing: 10) {
-                statCard("Mood", value: "4.8→6.4", note: "↑ trending up", noteColor: CopeColor.teal)
-                statCard("Sleep", value: "6.8h", note: "steadier than before", noteColor: CopeColor.ink3)
+                if model.stats.indices.contains(0) { statCard(model.stats[0]) }
+                if model.stats.indices.contains(1) { statCard(model.stats[1]) }
             }
             HStack(spacing: 10) {
-                statCard("PHQ-9", value: "14→9", note: "↓ improving", noteColor: CopeColor.teal)
+                if model.stats.indices.contains(2) { statCard(model.stats[2]) }
                 flagCard
             }
         }
     }
 
-    private func statCard(_ title: String, value: String, note: String, noteColor: Color) -> some View {
+    private func statCard(_ stat: PreVisitStat) -> some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text(title).font(CopeFont.figtree(12.5, .medium)).foregroundStyle(CopeColor.ink2)
-            Text(value).font(CopeFont.fraunces(22)).foregroundStyle(CopeColor.ink)
-            Text(note).font(CopeFont.figtree(11.5, .semibold)).foregroundStyle(noteColor)
+            Text(stat.title).font(CopeFont.figtree(12.5, .medium)).foregroundStyle(CopeColor.ink2)
+            Text(stat.value).font(CopeFont.fraunces(22)).foregroundStyle(CopeColor.ink)
+            Text(stat.note).font(CopeFont.figtree(11.5, .semibold)).foregroundStyle(stat.notePositive ? CopeColor.teal : CopeColor.ink3)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .copeCard(padding: 15)
@@ -98,7 +91,7 @@ public struct PreVisitView: View {
     private var flagCard: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Worth flagging").copeSectionLabel(CopeColor.clay)
-            Text("Anxiety still spikes midweek").font(CopeFont.figtree(13, .semibold)).foregroundStyle(CopeColor.ink)
+            Text(model.flagTitle).font(CopeFont.figtree(13, .semibold)).foregroundStyle(CopeColor.ink)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -108,7 +101,7 @@ public struct PreVisitView: View {
         .overlay(RoundedRectangle(cornerRadius: CopeRadius.card, style: .continuous).strokeBorder(CopeColor.clay, lineWidth: 1))
     }
 
-    private func agendaRow(_ item: AgendaItem) -> some View {
+    private func agendaRow(_ item: PreVisitItem) -> some View {
         let on = included.contains(item.id)
         return Button {
             if on { included.remove(item.id) } else { included.insert(item.id) }
