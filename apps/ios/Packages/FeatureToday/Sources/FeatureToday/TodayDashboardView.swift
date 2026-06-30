@@ -26,8 +26,8 @@ public struct TodayDashboardView: View {
             .padding(.bottom, 40)
         }
         .background(CopeColor.canvas.ignoresSafeArea())
-        .sheet(isPresented: $showCheckIn) {
-            CheckInTasteView()
+        .copeFullCover(isPresented: $showCheckIn) {
+            CheckInView()
         }
     }
 

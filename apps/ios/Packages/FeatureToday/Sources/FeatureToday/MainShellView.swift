@@ -24,8 +24,8 @@ public struct MainShellView: View {
 
             tabBar
         }
-        .fullScreenCover(isPresented: $showCheckIn) {
-            CheckInTasteView()
+        .copeFullCover(isPresented: $showCheckIn) {
+            CheckInView()
         }
     }
 

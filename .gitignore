@@ -84,3 +84,4 @@ packages/mobile-contracts/generated/android/bin/
 
 # Stray local inspection scripts (may contain DB creds) — never commit
 _inspect.mjs
+_*.mjs

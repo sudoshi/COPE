@@ -16,6 +16,19 @@ struct RootView: View {
     /// when real data wiring lands (opt in now with `COPE_LEGACY_AUTH=1`).
     @ViewBuilder
     private var content: some View {
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["COPE_PREVIEW_SCREEN"] == "checkin" {
+            CheckInView()
+        } else {
+            defaultContent
+        }
+        #else
+        defaultContent
+        #endif
+    }
+
+    @ViewBuilder
+    private var defaultContent: some View {
         if Self.useLegacyAuthFlow {
             appContent
         } else {
