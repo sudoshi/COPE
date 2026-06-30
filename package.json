@@ -15,6 +15,7 @@
     "typecheck": "turbo run typecheck",
     "db:migrate": "turbo run db:migrate --filter=@cope/db",
     "db:seed": "turbo run db:seed --filter=@cope/db",
+    "db:simulate": "node --import tsx/esm packages/db/src/live-simulation.ts",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,sql}\"",
     "demo:infra": "docker compose -f docker-compose.demo.yml up -d",
     "demo:infra:stop": "docker compose -f docker-compose.demo.yml down",
