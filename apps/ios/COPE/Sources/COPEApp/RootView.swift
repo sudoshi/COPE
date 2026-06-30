@@ -3,7 +3,7 @@ import FeatureToday
 
 struct RootView: View {
     @EnvironmentObject private var session: SessionViewModel
-    @State private var entered = false
+    @State private var showLogin = false
 
     var body: some View {
         content
@@ -39,25 +39,63 @@ struct RootView: View {
         if Self.useLegacyAuthFlow {
             appContent
         } else {
-            ZStack {
-                if entered {
-                    MainShellView().transition(.opacity)
-                } else {
-                    WelcomeView(
-                        mode: .returning,
-                        userName: "Maya",
-                        onGetStarted: { enterApp() },
-                        onUnlock: { enterApp() },
-                        onSignIn: { enterApp() }
-                    )
-                    .transition(.opacity)
-                }
-            }
+            authedFlow
         }
     }
 
-    private func enterApp() {
-        withAnimation(.easeInOut(duration: 0.5)) { entered = true }
+    /// Real auth gating the gold-standard UI: Welcome → real login → the app,
+    /// seeded with the authenticated patient's name + streak. Other screens
+    /// still use sample content until their endpoints are wired.
+    @ViewBuilder
+    private var authedFlow: some View {
+        if session.isRestoring {
+            loading
+        } else if session.isAuthenticated, let profile = session.profile {
+            MainShellView(
+                today: Self.todayModel(for: profile),
+                profile: Self.profileModel(for: profile)
+            )
+        } else if session.isAuthenticated {
+            loading
+        } else if showLogin {
+            LoginView()
+        } else {
+            WelcomeView(
+                mode: .firstRun,
+                onGetStarted: { showLogin = true },
+                onUnlock: { showLogin = true },
+                onSignIn: { showLogin = true }
+            )
+        }
+    }
+
+    private var loading: some View {
+        ZStack {
+            CopeColor.background.ignoresSafeArea()
+            ProgressView().tint(CopeColor.primary)
+        }
+    }
+
+    private static func todayModel(for profile: PatientProfileSummary) -> TodayModel {
+        var model = TodayModel.sample
+        model.name = profile.displayName.split(separator: " ").first.map(String.init) ?? profile.displayName
+        model.greeting = greetingLine()
+        model.streakDays = profile.trackingStreak
+        return model
+    }
+
+    private static func profileModel(for profile: PatientProfileSummary) -> ProfileModel {
+        var model = ProfileModel.sample
+        model.name = profile.displayName
+        return model
+    }
+
+    private static func greetingLine() -> String {
+        let now = Date()
+        let weekday = now.formatted(.dateTime.weekday(.wide))
+        let hour = Calendar.current.component(.hour, from: now)
+        let timeOfDay = hour < 12 ? "Good morning" : (hour < 17 ? "Good afternoon" : "Good evening")
+        return "\(weekday) · \(timeOfDay)"
     }
 
     private static var useLegacyAuthFlow: Bool {

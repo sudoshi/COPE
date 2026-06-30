@@ -8,7 +8,18 @@ public struct MainShellView: View {
     @State private var tab: Tab
     @State private var showCheckIn = false
 
-    public init() {
+    private let today: TodayModel
+    private let profile: ProfileModel
+    private let onCheckInSubmit: (CheckInResult) -> Void
+
+    public init(
+        today: TodayModel = .sample,
+        profile: ProfileModel = .sample,
+        onCheckInSubmit: @escaping (CheckInResult) -> Void = { _ in }
+    ) {
+        self.today = today
+        self.profile = profile
+        self.onCheckInSubmit = onCheckInSubmit
         var initial: Tab = .today
         #if DEBUG
         switch ProcessInfo.processInfo.environment["COPE_PREVIEW_TAB"] {
@@ -36,17 +47,17 @@ public struct MainShellView: View {
             tabBar
         }
         .copeFullCover(isPresented: $showCheckIn) {
-            CheckInView()
+            CheckInView(onSubmit: onCheckInSubmit)
         }
     }
 
     @ViewBuilder
     private var content: some View {
         switch tab {
-        case .today: TodayDashboardView(onOpenCare: { tab = .care })
+        case .today: TodayDashboardView(model: today, onOpenCare: { tab = .care })
         case .insights: InsightsView()
         case .care: CareView()
-        case .you: ProfileView()
+        case .you: ProfileView(model: profile)
         }
     }
 

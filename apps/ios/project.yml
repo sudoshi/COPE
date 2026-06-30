@@ -51,7 +51,7 @@ targets:
           APS_ENVIRONMENT: development
         Release:
           PRODUCT_BUNDLE_IDENTIFIER: com.acumenus-cope.app
-          COPE_API_BASE_URL: https://app.cope.health
+          COPE_API_BASE_URL: https://cope.acumenus.net
           APS_ENVIRONMENT: production
     scheme:
       testTargets:
