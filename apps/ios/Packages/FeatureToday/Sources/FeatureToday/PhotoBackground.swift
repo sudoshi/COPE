@@ -16,7 +16,7 @@ struct PhotoBackground: View {
     let reduceMotion: Bool
 
     @State private var index = 0
-    private let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
 
     var body: some View {
         ZStack {
@@ -28,7 +28,7 @@ struct PhotoBackground: View {
                     .opacity(i == index ? 1 : 0)
             }
         }
-        .blur(radius: 7)
+        .blur(radius: 2)
         .overlay(scrim)
         .clipped()
         .ignoresSafeArea()
@@ -44,10 +44,10 @@ struct PhotoBackground: View {
     private var scrim: some View {
         LinearGradient(
             stops: [
-                .init(color: CopeColor.canvas.opacity(0.42), location: 0.0),
-                .init(color: CopeColor.canvas.opacity(0.30), location: 0.28),
-                .init(color: CopeColor.canvas.opacity(0.62), location: 0.62),
-                .init(color: CopeColor.canvas.opacity(0.88), location: 1.0)
+                .init(color: CopeColor.canvas.opacity(0.48), location: 0.0),
+                .init(color: CopeColor.canvas.opacity(0.36), location: 0.28),
+                .init(color: CopeColor.canvas.opacity(0.70), location: 0.60),
+                .init(color: CopeColor.canvas.opacity(0.92), location: 1.0)
             ],
             startPoint: .top, endPoint: .bottom
         )
