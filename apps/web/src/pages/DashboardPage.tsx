@@ -630,6 +630,13 @@ export function DashboardPage() {
     const moods = caseload.map((r) => r.todays_mood).filter((m): m is number => m !== null);
     return moods.length > 0 ? (moods.reduce((a, b) => a + b, 0) / moods.length).toFixed(1) : '—';
   })();
+  // Avg sleep + check-in rate derive from the live caseload so they stay
+  // consistent with "Active Today" (the precomputed snapshot lags a day).
+  const avgSleep = (() => {
+    const mins = caseload.map((r) => r.todays_sleep_minutes).filter((m): m is number => m != null);
+    return mins.length > 0 ? (mins.reduce((a, b) => a + b, 0) / mins.length / 60).toFixed(1) : '—';
+  })();
+  const checkinRate = caseload.length > 0 ? Math.round((checkedInToday / caseload.length) * 100) : 0;
 
   return (
     <div className="view-pad" data-testid="dashboard-page">
@@ -665,14 +672,14 @@ export function DashboardPage() {
         />
         <MetricCard
           label="Avg Sleep"
-          value="—"
-          delta="Click for sleep data"
+          value={loading ? '…' : avgSleep === '—' ? '—' : `${avgSleep}h`}
+          delta="Today's caseload"
           deltaDir="flat"
           onClick={() => !loading && setDrilldown(buildAvgSleepDrilldown(caseload))}
         />
         <MetricCard
           label="Check-In Rate"
-          value={loading ? '…' : (snapshot?.checkin_rate_pct != null ? `${Math.round(snapshot.checkin_rate_pct)}%` : `${caseload.length > 0 ? Math.round((checkedInToday / caseload.length) * 100) : 0}%`)}
+          value={loading ? '…' : `${checkinRate}%`}
           valueClass="safe"
           delta="Today"
           deltaDir="flat"
