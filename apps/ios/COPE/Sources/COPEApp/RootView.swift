@@ -11,23 +11,20 @@ struct RootView: View {
             }
     }
 
-    /// DEBUG-only: launch straight into the gold-standard UI without auth/backend
-    /// when `COPE_UI_PREVIEW=1`. Production behavior is unchanged.
+    /// Internal preview / TestFlight build: launch the gold-standard UI directly.
+    /// The auth-gated production flow is preserved in `appContent` and returns
+    /// when real data wiring lands (opt in now with `COPE_LEGACY_AUTH=1`).
     @ViewBuilder
     private var content: some View {
-        if Self.isUIPreview {
-            MainShellView()
-        } else {
+        if Self.useLegacyAuthFlow {
             appContent
+        } else {
+            MainShellView()
         }
     }
 
-    private static var isUIPreview: Bool {
-        #if DEBUG
-        return ProcessInfo.processInfo.environment["COPE_UI_PREVIEW"] == "1"
-        #else
-        return false
-        #endif
+    private static var useLegacyAuthFlow: Bool {
+        ProcessInfo.processInfo.environment["COPE_LEGACY_AUTH"] == "1"
     }
 
     private var appContent: some View {

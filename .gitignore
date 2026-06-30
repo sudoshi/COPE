@@ -81,3 +81,6 @@ storage/
 # mobile-contracts generated Android build caches
 packages/mobile-contracts/generated/android/.gradle/
 packages/mobile-contracts/generated/android/bin/
+
+# Stray local inspection scripts (may contain DB creds) — never commit
+_inspect.mjs

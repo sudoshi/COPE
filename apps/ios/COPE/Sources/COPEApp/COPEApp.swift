@@ -1,9 +1,15 @@
 import SwiftUI
+import FeatureToday
 
 @main
 struct COPEApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var session = SessionViewModel()
+
+    init() {
+        // Register bundled Fraunces/Figtree fonts before the first view renders.
+        CopeUI.bootstrap()
+    }
 
     var body: some Scene {
         WindowGroup {

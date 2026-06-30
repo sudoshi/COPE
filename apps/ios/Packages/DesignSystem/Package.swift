@@ -12,9 +12,11 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "DesignSystem"
-            // When Fraunces/Figtree .ttf assets are added, bundle them here with
-            // `resources: [.process("Resources")]` — see CopeFontRegistration.swift.
+            name: "DesignSystem",
+            resources: [
+                // Fraunces + Figtree (SIL OFL) — registered at launch via CopeFonts.
+                .process("Resources/Fonts")
+            ]
         ),
         .testTarget(
             name: "DesignSystemTests",

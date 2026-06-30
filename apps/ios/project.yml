@@ -16,6 +16,10 @@ settings:
 packages:
   COPEOpenAPI:
     path: ../../packages/mobile-contracts/generated/ios
+  DesignSystem:
+    path: Packages/DesignSystem
+  FeatureToday:
+    path: Packages/FeatureToday
 targets:
   COPE:
     type: application
@@ -27,6 +31,8 @@ targets:
       - path: COPE/Resources
     dependencies:
       - package: COPEOpenAPI
+      - package: DesignSystem
+      - package: FeatureToday
     settings:
       base:
         INFOPLIST_FILE: COPE/Resources/Info.plist
